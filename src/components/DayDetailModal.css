@@ -1,0 +1,145 @@
+.day-badge {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+  margin-top: -10px;
+}
+
+.badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+
+.badge.today {
+  background: var(--color-today);
+  color: var(--color-today-dark);
+}
+
+.badge.yesterday {
+  background: #E0E7FF;
+  color: #4338CA;
+}
+
+.day-summary {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.summary-count {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.summary-label {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+.no-habits {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  padding: 12px 0;
+  margin-bottom: 16px;
+}
+
+.day-habit-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.day-habit-item {
+  width: 100%;
+}
+
+.day-habit-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color-border);
+  background: #fff;
+  text-align: left;
+  transition: all 0.15s;
+}
+
+.day-habit-btn.done {
+  border-color: var(--color);
+  background: color-mix(in srgb, var(--color) 8%, #fff);
+}
+
+.day-habit-btn.readonly {
+  cursor: default;
+}
+
+.day-habit-btn:not(.readonly):active {
+  opacity: 0.7;
+}
+
+.day-habit-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.day-habit-name {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.day-habit-status {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.day-habit-status.done {
+  background: var(--color);
+  border-color: var(--color);
+  color: #fff;
+}
+
+.edit-note {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+  padding: 8px;
+  background: var(--color-bg);
+  border-radius: 8px;
+}
+
+.day-close-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+
+.day-close-btn:active {
+  opacity: 0.6;
+}

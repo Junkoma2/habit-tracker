@@ -1,0 +1,187 @@
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--color-bg);
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-primary);
+  padding: 16px 20px;
+  padding-top: calc(16px + env(safe-area-inset-top));
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.app-title {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.header-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.header-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  transition: background 0.15s, color 0.15s;
+}
+
+.header-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+}
+
+.header-btn:active {
+  opacity: 0.7;
+}
+
+.app-main {
+  flex: 1;
+  padding: 16px 16px;
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Section */
+.section {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.section-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.edit-toggle-btn {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--color-primary);
+  transition: all 0.15s;
+}
+
+.edit-toggle-btn.active {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+/* Habits grid */
+.habits-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+/* Add habit button */
+.add-habit-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 80px;
+  border-radius: var(--radius-sm);
+  border: 2px dashed var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+.add-habit-btn:active {
+  opacity: 0.6;
+}
+
+.add-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+/* Empty state */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 0 8px;
+}
+
+.empty-text {
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+}
+
+.add-first-btn {
+  background: var(--color-primary);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 100px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+
+.add-first-btn:active {
+  opacity: 0.8;
+}
+
+/* Edit mode list */
+.habits-edit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.add-in-edit-btn {
+  width: 100%;
+  margin-top: 4px;
+  padding: 11px;
+  border-radius: var(--radius-sm);
+  border: 2px dashed var(--color-border);
+  color: var(--color-text-secondary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+
+.add-in-edit-btn:active {
+  opacity: 0.6;
+}

@@ -1,0 +1,80 @@
+.lp-days {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.lp-day-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--color);
+  background: #fff;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.lp-day-btn.completed {
+  background: var(--color);
+}
+
+.lp-day-btn:active {
+  opacity: 0.7;
+}
+
+.lp-day-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lp-day-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color);
+}
+
+.lp-day-btn.completed .lp-day-label {
+  color: #fff;
+}
+
+.lp-day-date {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.lp-day-btn.completed .lp-day-date {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.lp-status {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-bg);
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.lp-status.done {
+  background: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+
+.lp-cancel-btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: opacity 0.15s;
+}
+
+.lp-cancel-btn:active {
+  opacity: 0.6;
+}

@@ -1,0 +1,19 @@
+{
+  "name": "習慣トラッカー",
+  "short_name": "習慣",
+  "description": "毎日の習慣を記録・管理するアプリ",
+  "theme_color": "#6366F1",
+  "background_color": "#F0F2F5",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/habit-tracker/",
+  "start_url": "/habit-tracker/",
+  "icons": [
+    {
+      "src": "/habit-tracker/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
