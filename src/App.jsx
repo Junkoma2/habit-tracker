@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import {
   DndContext,
   closestCenter,
@@ -19,6 +19,7 @@ import AddHabitModal from './components/AddHabitModal'
 import LongPressModal from './components/LongPressModal'
 import DayDetailModal from './components/DayDetailModal'
 import HelpModal from './components/HelpModal'
+import ConfirmModal from './components/ConfirmModal'
 import { getToday, getYesterday } from './utils/date'
 import './App.css'
 
@@ -44,6 +45,8 @@ export default function App() {
   const [selectedDay, setSelectedDay] = useState(null)
   const [editMode, setEditMode] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
+  const [importConfirm, setImportConfirm] = useState(null)
+  const [importError, setImportError] = useState(null)
 
   const today = getToday()
   const yesterday = getYesterday()
@@ -139,17 +142,21 @@ export default function App() {
         if (!Array.isArray(data.habits) || typeof data.records !== 'object') {
           throw new Error()
         }
-        if (window.confirm(`「${file.name}」をインポートします。\n現在のデータはすべて上書きされます。よろしいですか？`)) {
-          setHabits(data.habits)
-          setRecords(data.records)
-        }
+        setImportConfirm({ data, filename: file.name })
       } catch {
-        window.alert('ファイルの形式が正しくありません。')
+        setImportError('ファイルの形式が正しくありません。')
       }
       e.target.value = ''
     }
     reader.readAsText(file)
   }, [])
+
+  const handleImportConfirm = useCallback(() => {
+    if (!importConfirm) return
+    setHabits(importConfirm.data.habits)
+    setRecords(importConfirm.data.records)
+    setImportConfirm(null)
+  }, [importConfirm])
 
   return (
     <div className="app">
@@ -307,6 +314,26 @@ export default function App() {
 
       {showHelp && (
         <HelpModal onClose={() => setShowHelp(false)} />
+      )}
+
+      {importConfirm && (
+        <ConfirmModal
+          message={`「${importConfirm.filename}」をインポートします。\n現在のデータはすべて上書きされます。よろしいですか？`}
+          confirmLabel="インポート"
+          danger={false}
+          onConfirm={handleImportConfirm}
+          onClose={() => setImportConfirm(null)}
+        />
+      )}
+
+      {importError && (
+        <ConfirmModal
+          message={importError}
+          confirmLabel="OK"
+          showCancel={false}
+          onConfirm={() => setImportError(null)}
+          onClose={() => setImportError(null)}
+        />
       )}
 
       {selectedDay && (

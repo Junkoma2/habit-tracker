@@ -1,0 +1,41 @@
+.confirm-body {
+  padding: 4px 16px 24px;
+}
+
+.confirm-message {
+  text-align: center;
+  color: var(--color-text);
+  line-height: 1.6;
+  margin: 8px 0 24px;
+  white-space: pre-wrap;
+}
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.confirm-cancel,
+.confirm-ok {
+  flex: 1;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.confirm-cancel {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.confirm-ok.danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.confirm-ok.safe {
+  background: var(--color-primary);
+  color: #fff;
+}

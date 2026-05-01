@@ -1,8 +1,11 @@
+import { useState } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import ConfirmModal from './ConfirmModal'
 import './HabitEditItem.css'
 
 export default function HabitEditItem({ habit, onEdit, onDelete }) {
+  const [showConfirm, setShowConfirm] = useState(false)
   const {
     attributes,
     listeners,
@@ -18,6 +21,7 @@ export default function HabitEditItem({ habit, onEdit, onDelete }) {
   }
 
   return (
+    <>
     <div
       ref={setNodeRef}
       style={style}
@@ -59,9 +63,7 @@ export default function HabitEditItem({ habit, onEdit, onDelete }) {
 
       <button
         className="habit-edit-action delete"
-        onClick={() => {
-          if (window.confirm(`「${habit.name}」を削除しますか？`)) onDelete(habit.id)
-        }}
+        onClick={() => setShowConfirm(true)}
         aria-label={`${habit.name}を削除`}
       >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -72,5 +74,15 @@ export default function HabitEditItem({ habit, onEdit, onDelete }) {
         </svg>
       </button>
     </div>
+
+    {showConfirm && (
+      <ConfirmModal
+        message={`「${habit.name}」を削除しますか？`}
+        confirmLabel="削除"
+        onConfirm={() => { onDelete(habit.id); setShowConfirm(false) }}
+        onClose={() => setShowConfirm(false)}
+      />
+    )}
+    </>
   )
 }
