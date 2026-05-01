@@ -45,8 +45,8 @@ export default function App() {
   const [editMode, setEditMode] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
 
-  const today = useMemo(() => getToday(), [])
-  const yesterday = useMemo(() => getYesterday(), [])
+  const today = getToday()
+  const yesterday = getYesterday()
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -85,6 +85,14 @@ export default function App() {
 
   const deleteHabit = useCallback((habitId) => {
     setHabits(prev => prev.filter(h => h.id !== habitId))
+    setRecords(prev => {
+      const next = {}
+      for (const [date, ids] of Object.entries(prev)) {
+        const filtered = ids.filter(id => id !== habitId)
+        if (filtered.length > 0) next[date] = filtered
+      }
+      return next
+    })
   }, [])
 
   const handleDragEnd = useCallback(({ active, over }) => {
