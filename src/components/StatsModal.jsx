@@ -73,6 +73,9 @@ export default function StatsModal({ habits, records, onClose }) {
           })}
         </div>
       )}
+      <div className="stats-close-wrap">
+        <button className="stats-close-btn" onClick={onClose}>閉じる</button>
+      </div>
     </Modal>
   )
 }

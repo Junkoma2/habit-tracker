@@ -61,3 +61,17 @@
   color: var(--color-text-secondary);
   text-align: center;
 }
+
+.stats-close-wrap {
+  padding: 4px 16px 24px;
+}
+
+.stats-close-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  font-weight: 600;
+}

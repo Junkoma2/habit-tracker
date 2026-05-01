@@ -73,6 +73,8 @@ export default function App() {
   const [editMode, setEditMode] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
   const [showStats, setShowStats] = useState(false)
+  const [showExportConfirm, setShowExportConfirm] = useState(false)
+  const [showImportConfirm, setShowImportConfirm] = useState(false)
   const [importConfirm, setImportConfirm] = useState(null)
   const [importError, setImportError] = useState(null)
 
@@ -209,7 +211,7 @@ export default function App() {
             </svg>
             <span>ヘルプ</span>
           </button>
-          <button className="header-btn" onClick={handleExport} title="バックアップ">
+          <button className="header-btn" onClick={() => setShowExportConfirm(true)} title="バックアップ">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
@@ -217,7 +219,7 @@ export default function App() {
             </svg>
             <span>保存</span>
           </button>
-          <button className="header-btn" onClick={handleImportClick} title="復元">
+          <button className="header-btn" onClick={() => setShowImportConfirm(true)} title="復元">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="17 8 12 3 7 8" />
@@ -360,6 +362,26 @@ export default function App() {
 
       {showHelp && (
         <HelpModal onClose={() => setShowHelp(false)} />
+      )}
+
+      {showExportConfirm && (
+        <ConfirmModal
+          message="バックアップファイルをダウンロードします。"
+          confirmLabel="ダウンロード"
+          danger={false}
+          onConfirm={() => { handleExport(); setShowExportConfirm(false) }}
+          onClose={() => setShowExportConfirm(false)}
+        />
+      )}
+
+      {showImportConfirm && (
+        <ConfirmModal
+          message={`バックアップファイルを選択して復元します。\n現在のデータは上書きされます。`}
+          confirmLabel="ファイルを選択"
+          danger={true}
+          onConfirm={() => { setShowImportConfirm(false); handleImportClick() }}
+          onClose={() => setShowImportConfirm(false)}
+        />
       )}
 
       {importConfirm && (
