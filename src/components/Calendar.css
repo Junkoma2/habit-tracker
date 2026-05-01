@@ -68,7 +68,7 @@
 .cal-dow.sat { color: #3B82F6; }
 
 .cal-cell {
-  aspect-ratio: 1 / 1.35;
+  min-height: 64px;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -78,7 +78,6 @@
   cursor: pointer;
   transition: background 0.12s;
   gap: 3px;
-  min-height: 0;
 }
 
 .cal-cell:active {

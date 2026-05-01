@@ -18,6 +18,7 @@ import HabitEditItem from './components/HabitEditItem'
 import AddHabitModal from './components/AddHabitModal'
 import LongPressModal from './components/LongPressModal'
 import DayDetailModal from './components/DayDetailModal'
+import HelpModal from './components/HelpModal'
 import { getToday, getYesterday } from './utils/date'
 import './App.css'
 
@@ -40,6 +41,7 @@ export default function App() {
   const [longPressHabit, setLongPressHabit] = useState(null)
   const [selectedDay, setSelectedDay] = useState(null)
   const [editMode, setEditMode] = useState(false)
+  const [showHelp, setShowHelp] = useState(false)
 
   const today = useMemo(() => getToday(), [])
   const yesterday = useMemo(() => getYesterday(), [])
@@ -144,6 +146,14 @@ export default function App() {
       <header className="app-header">
         <h1 className="app-title">習慣トラッカー</h1>
         <div className="header-actions">
+          <button className="header-btn" onClick={() => setShowHelp(true)} title="使い方">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <span>ヘルプ</span>
+          </button>
           <button className="header-btn" onClick={handleExport} title="バックアップ">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -280,6 +290,10 @@ export default function App() {
           }}
           onClose={() => setLongPressHabit(null)}
         />
+      )}
+
+      {showHelp && (
+        <HelpModal onClose={() => setShowHelp(false)} />
       )}
 
       {selectedDay && (
