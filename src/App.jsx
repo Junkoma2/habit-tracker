@@ -32,9 +32,11 @@ function loadData() {
   return { habits: [], records: {} }
 }
 
+const _initial = loadData()
+
 export default function App() {
-  const [habits, setHabits] = useState(() => loadData().habits)
-  const [records, setRecords] = useState(() => loadData().records)
+  const [habits, setHabits] = useState(_initial.habits)
+  const [records, setRecords] = useState(_initial.records)
   const [calendarDate, setCalendarDate] = useState(() => new Date())
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingHabit, setEditingHabit] = useState(null)
@@ -199,6 +201,9 @@ export default function App() {
               <p className="empty-text">習慣を追加してみよう</p>
               <button className="add-first-btn" onClick={() => setShowAddModal(true)}>
                 + 最初の習慣を追加
+              </button>
+              <button className="help-link-btn" onClick={() => setShowHelp(true)}>
+                使い方を見る
               </button>
             </div>
           ) : editMode ? (

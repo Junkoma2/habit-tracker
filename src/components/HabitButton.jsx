@@ -49,6 +49,8 @@ export default function HabitButton({ habit, completed, onPress, onLongPress }) 
     <button
       className={`habit-btn ${completed ? 'completed' : ''}`}
       style={{ '--color': habit.color }}
+      aria-label={`${habit.name}${completed ? '（達成済み）' : ''}`}
+      aria-pressed={completed}
       onClick={handleClick}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}

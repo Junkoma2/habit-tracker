@@ -58,6 +58,9 @@ export default function Modal({ onClose, children, title }) {
       <div
         ref={sheetRef}
         className="modal-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}

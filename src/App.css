@@ -162,6 +162,14 @@
   opacity: 0.8;
 }
 
+.help-link-btn {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  text-decoration: underline;
+  background: none;
+  padding: 4px;
+}
+
 /* Edit mode list */
 .habits-edit-list {
   display: flex;

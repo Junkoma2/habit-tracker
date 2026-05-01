@@ -59,7 +59,9 @@ export default function HabitEditItem({ habit, onEdit, onDelete }) {
 
       <button
         className="habit-edit-action delete"
-        onClick={() => onDelete(habit.id)}
+        onClick={() => {
+          if (window.confirm(`「${habit.name}」を削除しますか？`)) onDelete(habit.id)
+        }}
         aria-label={`${habit.name}を削除`}
       >
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
