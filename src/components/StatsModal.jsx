@@ -2,6 +2,8 @@ import Modal from './Modal'
 import { formatDate, parseLocalDate } from '../utils/date'
 import './StatsModal.css'
 
+const MS_PER_DAY = 86400000
+
 function calcStats(habitId, records) {
   const completedDates = Object.keys(records)
     .filter(date => (records[date] || []).includes(habitId))
@@ -14,7 +16,7 @@ function calcStats(habitId, records) {
   for (let i = 1; i < completedDates.length; i++) {
     const prev = parseLocalDate(completedDates[i - 1])
     const curr = parseLocalDate(completedDates[i])
-    const diff = (curr - prev) / 86400000
+    const diff = (curr - prev) / MS_PER_DAY
     if (diff === 1) {
       run++
       if (run > longest) longest = run
@@ -56,15 +58,24 @@ export default function StatsModal({ habits, records, onClose }) {
                 </div>
                 <div className="stats-row">
                   <div className="stats-item">
-                    <span className="stats-value">{current}</span>
+                    <div className="stats-value-row">
+                      <span className="stats-value">{current}</span>
+                      <span className="stats-unit">日</span>
+                    </div>
                     <span className="stats-label">現在の連続</span>
                   </div>
                   <div className="stats-item">
-                    <span className="stats-value">{longest}</span>
+                    <div className="stats-value-row">
+                      <span className="stats-value">{longest}</span>
+                      <span className="stats-unit">日</span>
+                    </div>
                     <span className="stats-label">最長連続</span>
                   </div>
                   <div className="stats-item">
-                    <span className="stats-value">{total}</span>
+                    <div className="stats-value-row">
+                      <span className="stats-value">{total}</span>
+                      <span className="stats-unit">回</span>
+                    </div>
                     <span className="stats-label">累計達成</span>
                   </div>
                 </div>

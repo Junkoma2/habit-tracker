@@ -49,11 +49,23 @@
   gap: 4px;
 }
 
+.stats-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
 .stats-value {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-primary);
   line-height: 1;
+}
+
+.stats-unit {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
 }
 
 .stats-label {

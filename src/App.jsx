@@ -22,6 +22,7 @@ import HelpModal from './components/HelpModal'
 import ConfirmModal from './components/ConfirmModal'
 import StatsModal from './components/StatsModal'
 import { getToday, getYesterday } from './utils/date'
+import { validateImportData } from './utils/validation'
 import './App.css'
 
 const STORAGE_KEY = 'habit-tracker-v1'
@@ -36,47 +37,12 @@ function loadData() {
 
 const _initial = loadData()
 
-const DATE_RE = /^\d{4}-\d{2}-\d{2}$/
-
-function validateImportData(data) {
-  if (!data || typeof data !== 'object' || Array.isArray(data)) {
-    return 'データの形式が正しくありません。'
-  }
-  if (!Array.isArray(data.habits)) {
-    return '「habits」が配列ではありません。'
-  }
-  for (const [i, h] of data.habits.entries()) {
-    if (!h || typeof h !== 'object') return `habits[${i}] がオブジェクトではありません。`
-    if (typeof h.id !== 'string' || !h.id) return `habits[${i}] に有効な id がありません。`
-    if (typeof h.name !== 'string' || !h.name.trim()) return `habits[${i}] に有効な name がありません。`
-    if (typeof h.color !== 'string' || !h.color) return `habits[${i}] に有効な color がありません。`
-  }
-  if (!data.records || typeof data.records !== 'object' || Array.isArray(data.records)) {
-    return '「records」がオブジェクトではありません。'
-  }
-  for (const [date, ids] of Object.entries(data.records)) {
-    if (!DATE_RE.test(date)) return `records のキー「${date}」が日付形式（YYYY-MM-DD）ではありません。`
-    if (!Array.isArray(ids)) return `records[${date}] が配列ではありません。`
-    if (ids.some(id => typeof id !== 'string')) return `records[${date}] に文字列以外の値が含まれています。`
-  }
-  return null
-}
-
 export default function App() {
   const [habits, setHabits] = useState(_initial.habits)
   const [records, setRecords] = useState(_initial.records)
   const [calendarDate, setCalendarDate] = useState(() => new Date())
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [editingHabit, setEditingHabit] = useState(null)
-  const [longPressHabit, setLongPressHabit] = useState(null)
-  const [selectedDay, setSelectedDay] = useState(null)
   const [editMode, setEditMode] = useState(false)
-  const [showHelp, setShowHelp] = useState(false)
-  const [showStats, setShowStats] = useState(false)
-  const [showExportConfirm, setShowExportConfirm] = useState(false)
-  const [showImportConfirm, setShowImportConfirm] = useState(false)
-  const [importConfirm, setImportConfirm] = useState(null)
-  const [importError, setImportError] = useState(null)
+  const [modal, setModal] = useState(null)
 
   const today = getToday()
   const yesterday = getYesterday()
@@ -89,6 +55,8 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ habits, records }))
   }, [habits, records])
+
+  const closeModal = useCallback(() => setModal(null), [])
 
   const toggleHabit = useCallback((habitId, dateStr) => {
     setRecords(prev => {
@@ -106,15 +74,15 @@ export default function App() {
   const addHabit = useCallback(({ name, color }) => {
     const id = `h_${Date.now()}`
     setHabits(prev => [...prev, { id, name, color }])
-    setShowAddModal(false)
+    setModal(null)
   }, [])
 
   const updateHabit = useCallback(({ name, color }) => {
     setHabits(prev =>
-      prev.map(h => h.id === editingHabit.id ? { ...h, name, color } : h)
+      prev.map(h => h.id === modal.habit.id ? { ...h, name, color } : h)
     )
-    setEditingHabit(null)
-  }, [editingHabit])
+    setModal(null)
+  }, [modal])
 
   const deleteHabit = useCallback((habitId) => {
     setHabits(prev => prev.filter(h => h.id !== habitId))
@@ -126,6 +94,7 @@ export default function App() {
       }
       return next
     })
+    setModal(null)
   }, [])
 
   const handleDragEnd = useCallback(({ active, over }) => {
@@ -138,13 +107,9 @@ export default function App() {
     }
   }, [])
 
-  const isEditableDate = useCallback((dateStr) => {
-    return dateStr === today || dateStr === yesterday
-  }, [today, yesterday])
+  const isEditableDate = (dateStr) => dateStr === today || dateStr === yesterday
 
   const todayRecords = records[today] || []
-
-  const leaveEditMode = () => setEditMode(false)
 
   // --- Export / Import ---
   const fileInputRef = useRef(null)
@@ -171,12 +136,12 @@ export default function App() {
         const data = JSON.parse(ev.target.result)
         const error = validateImportData(data)
         if (error) {
-          setImportError(error)
+          setModal({ type: 'importError', message: error })
         } else {
-          setImportConfirm({ data, filename: file.name })
+          setModal({ type: 'importFile', data, filename: file.name })
         }
       } catch {
-        setImportError('JSONの解析に失敗しました。\nファイルが壊れているか、形式が正しくありません。')
+        setModal({ type: 'importError', message: 'JSONの解析に失敗しました。\nファイルが壊れているか、形式が正しくありません。' })
       }
       e.target.value = ''
     }
@@ -184,18 +149,17 @@ export default function App() {
   }, [])
 
   const handleImportConfirm = useCallback(() => {
-    if (!importConfirm) return
-    setHabits(importConfirm.data.habits)
-    setRecords(importConfirm.data.records)
-    setImportConfirm(null)
-  }, [importConfirm])
+    setHabits(modal.data.habits)
+    setRecords(modal.data.records)
+    setModal(null)
+  }, [modal])
 
   return (
     <div className="app">
       <header className="app-header">
         <h1 className="app-title">習慣トラッカー</h1>
         <div className="header-actions">
-          <button className="header-btn" onClick={() => setShowStats(true)} title="統計">
+          <button className="header-btn" onClick={() => setModal({ type: 'stats' })} title="統計">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="20" x2="18" y2="10" />
               <line x1="12" y1="20" x2="12" y2="4" />
@@ -203,7 +167,7 @@ export default function App() {
             </svg>
             <span>統計</span>
           </button>
-          <button className="header-btn" onClick={() => setShowHelp(true)} title="使い方">
+          <button className="header-btn" onClick={() => setModal({ type: 'help' })} title="使い方">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
               <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
@@ -211,7 +175,7 @@ export default function App() {
             </svg>
             <span>ヘルプ</span>
           </button>
-          <button className="header-btn" onClick={() => setShowExportConfirm(true)} title="バックアップ">
+          <button className="header-btn" onClick={() => setModal({ type: 'exportConfirm' })} title="バックアップ">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" />
@@ -219,7 +183,7 @@ export default function App() {
             </svg>
             <span>保存</span>
           </button>
-          <button className="header-btn" onClick={() => setShowImportConfirm(true)} title="復元">
+          <button className="header-btn" onClick={() => setModal({ type: 'importConfirm' })} title="復元">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="17 8 12 3 7 8" />
@@ -254,10 +218,10 @@ export default function App() {
           {habits.length === 0 ? (
             <div className="empty-state">
               <p className="empty-text">習慣を追加してみよう</p>
-              <button className="add-first-btn" onClick={() => setShowAddModal(true)}>
+              <button className="add-first-btn" onClick={() => setModal({ type: 'add' })}>
                 + 最初の習慣を追加
               </button>
-              <button className="help-link-btn" onClick={() => setShowHelp(true)}>
+              <button className="help-link-btn" onClick={() => setModal({ type: 'help' })}>
                 使い方を見る
               </button>
             </div>
@@ -277,8 +241,8 @@ export default function App() {
                       <HabitEditItem
                         key={habit.id}
                         habit={habit}
-                        onEdit={setEditingHabit}
-                        onDelete={deleteHabit}
+                        onEdit={(h) => setModal({ type: 'edit', habit: h })}
+                        onDelete={(h) => setModal({ type: 'deleteConfirm', habitId: h.id, habitName: h.name })}
                       />
                     ))}
                   </div>
@@ -286,7 +250,7 @@ export default function App() {
               </DndContext>
               <button
                 className="add-in-edit-btn"
-                onClick={() => { leaveEditMode(); setShowAddModal(true) }}
+                onClick={() => { setEditMode(false); setModal({ type: 'add' }) }}
               >
                 ＋ 習慣を追加
               </button>
@@ -299,10 +263,10 @@ export default function App() {
                   habit={habit}
                   completed={todayRecords.includes(habit.id)}
                   onPress={(h) => toggleHabit(h.id, today)}
-                  onLongPress={setLongPressHabit}
+                  onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
                 />
               ))}
-              <button className="add-habit-btn" onClick={() => setShowAddModal(true)}>
+              <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>
                 <span className="add-icon">＋</span>
                 <span>追加</span>
               </button>
@@ -317,101 +281,100 @@ export default function App() {
             habits={habits}
             records={records}
             today={today}
-            onDayClick={setSelectedDay}
+            onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
           />
         </section>
       </main>
 
-      {showAddModal && (
-        <AddHabitModal
-          onSave={addHabit}
-          onClose={() => setShowAddModal(false)}
-        />
+      {modal?.type === 'add' && (
+        <AddHabitModal onSave={addHabit} onClose={closeModal} />
       )}
 
-      {editingHabit && (
+      {modal?.type === 'edit' && (
         <AddHabitModal
-          initialHabit={editingHabit}
+          initialHabit={modal.habit}
           onSave={updateHabit}
-          onClose={() => setEditingHabit(null)}
+          onClose={closeModal}
         />
       )}
 
-      {longPressHabit && (
+      {modal?.type === 'longPress' && (
         <LongPressModal
-          habit={longPressHabit}
+          habit={modal.habit}
           today={today}
           yesterday={yesterday}
-          isCompletedToday={todayRecords.includes(longPressHabit.id)}
-          isCompletedYesterday={(records[yesterday] || []).includes(longPressHabit.id)}
-          onSelect={(dateStr) => {
-            toggleHabit(longPressHabit.id, dateStr)
-            setLongPressHabit(null)
-          }}
-          onClose={() => setLongPressHabit(null)}
+          isCompletedToday={todayRecords.includes(modal.habit.id)}
+          isCompletedYesterday={(records[yesterday] || []).includes(modal.habit.id)}
+          onSelect={(dateStr) => { toggleHabit(modal.habit.id, dateStr); closeModal() }}
+          onClose={closeModal}
         />
       )}
 
-      {showStats && (
-        <StatsModal
-          habits={habits}
-          records={records}
-          onClose={() => setShowStats(false)}
-        />
+      {modal?.type === 'stats' && (
+        <StatsModal habits={habits} records={records} onClose={closeModal} />
       )}
 
-      {showHelp && (
-        <HelpModal onClose={() => setShowHelp(false)} />
+      {modal?.type === 'help' && (
+        <HelpModal onClose={closeModal} />
       )}
 
-      {showExportConfirm && (
+      {modal?.type === 'exportConfirm' && (
         <ConfirmModal
           message="バックアップファイルをダウンロードします。"
           confirmLabel="ダウンロード"
           danger={false}
-          onConfirm={() => { handleExport(); setShowExportConfirm(false) }}
-          onClose={() => setShowExportConfirm(false)}
+          onConfirm={() => { handleExport(); closeModal() }}
+          onClose={closeModal}
         />
       )}
 
-      {showImportConfirm && (
+      {modal?.type === 'importConfirm' && (
         <ConfirmModal
           message={`バックアップファイルを選択して復元します。\n現在のデータは上書きされます。`}
           confirmLabel="ファイルを選択"
           danger={true}
-          onConfirm={() => { setShowImportConfirm(false); handleImportClick() }}
-          onClose={() => setShowImportConfirm(false)}
+          onConfirm={() => { closeModal(); handleImportClick() }}
+          onClose={closeModal}
         />
       )}
 
-      {importConfirm && (
+      {modal?.type === 'importFile' && (
         <ConfirmModal
-          message={`「${importConfirm.filename}」をインポートします。\n現在のデータはすべて上書きされます。よろしいですか？`}
+          message={`「${modal.filename}」をインポートします。\n現在のデータはすべて上書きされます。よろしいですか？`}
           confirmLabel="インポート"
           danger={false}
           onConfirm={handleImportConfirm}
-          onClose={() => setImportConfirm(null)}
+          onClose={closeModal}
         />
       )}
 
-      {importError && (
+      {modal?.type === 'importError' && (
         <ConfirmModal
-          message={importError}
+          message={modal.message}
           confirmLabel="OK"
           showCancel={false}
-          onConfirm={() => setImportError(null)}
-          onClose={() => setImportError(null)}
+          onConfirm={closeModal}
+          onClose={closeModal}
         />
       )}
 
-      {selectedDay && (
+      {modal?.type === 'deleteConfirm' && (
+        <ConfirmModal
+          message={`「${modal.habitName}」を削除しますか？\n過去の記録もすべて削除されます。`}
+          confirmLabel="削除"
+          onConfirm={() => deleteHabit(modal.habitId)}
+          onClose={closeModal}
+        />
+      )}
+
+      {modal?.type === 'day' && (
         <DayDetailModal
-          dateStr={selectedDay}
+          dateStr={modal.dateStr}
           habits={habits}
-          completedIds={records[selectedDay] || []}
-          isEditable={isEditableDate(selectedDay)}
-          onToggle={(habitId) => toggleHabit(habitId, selectedDay)}
-          onClose={() => setSelectedDay(null)}
+          completedIds={records[modal.dateStr] || []}
+          isEditable={isEditableDate(modal.dateStr)}
+          onToggle={(habitId) => toggleHabit(habitId, modal.dateStr)}
+          onClose={closeModal}
         />
       )}
     </div>
