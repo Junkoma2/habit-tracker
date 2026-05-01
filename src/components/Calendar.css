@@ -68,7 +68,7 @@
 .cal-dow.sat { color: #3B82F6; }
 
 .cal-cell {
-  aspect-ratio: 1 / 1.1;
+  aspect-ratio: 1 / 1.35;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -128,9 +128,14 @@
   flex-shrink: 0;
 }
 
-.cal-dot-more {
-  font-size: 0.55rem;
-  color: var(--color-text-secondary);
+.cal-count {
+  font-size: 0.6rem;
   font-weight: 700;
+  color: var(--color-text-secondary);
   line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.cal-count.all {
+  color: var(--color-primary);
 }

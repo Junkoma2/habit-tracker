@@ -74,6 +74,9 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
           const isToday = dateStr === today
           const dayRecords = records[dateStr] || []
           const completedHabits = habits.filter(h => dayRecords.includes(h.id))
+          const total = habits.length
+          const count = completedHabits.length
+          const allDone = total > 0 && count === total
 
           return (
             <div
@@ -100,6 +103,11 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
                   <span className="cal-dot-more">+</span>
                 )}
               </div>
+              {total > 0 && count > 0 && (
+                <span className={`cal-count ${allDone ? 'all' : ''}`}>
+                  {count}/{total}
+                </span>
+              )}
             </div>
           )
         })}
