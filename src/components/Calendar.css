@@ -1,5 +1,7 @@
 .calendar {
   width: 100%;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .calendar-nav {

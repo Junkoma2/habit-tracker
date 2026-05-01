@@ -9,8 +9,17 @@ export default function Modal({ onClose, children, title }) {
   }, [])
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-sheet" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="modal-backdrop"
+      onClick={onClose}
+      onTouchMove={(e) => e.stopPropagation()}
+    >
+      <div
+        className="modal-sheet"
+        onClick={(e) => e.stopPropagation()}
+        onTouchStart={(e) => e.stopPropagation()}
+        onTouchMove={(e) => e.stopPropagation()}
+      >
         <div className="modal-handle" />
         {title && <h2 className="modal-title">{title}</h2>}
         {children}
