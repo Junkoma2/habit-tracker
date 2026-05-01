@@ -20,6 +20,7 @@ import LongPressModal from './components/LongPressModal'
 import DayDetailModal from './components/DayDetailModal'
 import HelpModal from './components/HelpModal'
 import ConfirmModal from './components/ConfirmModal'
+import StatsModal from './components/StatsModal'
 import { getToday, getYesterday } from './utils/date'
 import './App.css'
 
@@ -45,6 +46,7 @@ export default function App() {
   const [selectedDay, setSelectedDay] = useState(null)
   const [editMode, setEditMode] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
+  const [showStats, setShowStats] = useState(false)
   const [importConfirm, setImportConfirm] = useState(null)
   const [importError, setImportError] = useState(null)
 
@@ -163,6 +165,14 @@ export default function App() {
       <header className="app-header">
         <h1 className="app-title">習慣トラッカー</h1>
         <div className="header-actions">
+          <button className="header-btn" onClick={() => setShowStats(true)} title="統計">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10" />
+              <line x1="12" y1="20" x2="12" y2="4" />
+              <line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
+            <span>統計</span>
+          </button>
           <button className="header-btn" onClick={() => setShowHelp(true)} title="使い方">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="12" cy="12" r="10" />
@@ -309,6 +319,14 @@ export default function App() {
             setLongPressHabit(null)
           }}
           onClose={() => setLongPressHabit(null)}
+        />
+      )}
+
+      {showStats && (
+        <StatsModal
+          habits={habits}
+          records={records}
+          onClose={() => setShowStats(false)}
         />
       )}
 
