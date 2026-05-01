@@ -2,6 +2,13 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+input, textarea, [contenteditable] {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 :root {
@@ -26,6 +33,7 @@ html, body {
   height: 100%;
   width: 100%;
   overflow-x: hidden;
+  overscroll-behavior: none;
 }
 
 body {

@@ -1,3 +1,35 @@
+.pull-indicator {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-primary);
+  color: rgba(255, 255, 255, 0.9);
+  height: 0;
+}
+
+.pull-indicator.refreshing {
+  height: 44px;
+  opacity: 1;
+  transition: height 0.2s ease, opacity 0.2s ease;
+}
+
+.pull-arrow {
+  transition: transform 0.2s ease;
+}
+
+.pull-arrow.flip {
+  transform: rotate(180deg);
+}
+
+@keyframes pull-spin {
+  to { transform: rotate(360deg); }
+}
+
+.pull-spin {
+  animation: pull-spin 0.8s linear infinite;
+}
+
 .app {
   min-height: 100dvh;
   display: flex;

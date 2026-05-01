@@ -43,6 +43,10 @@ export default function App() {
   const [calendarDate, setCalendarDate] = useState(() => new Date())
   const [editMode, setEditMode] = useState(false)
   const [modal, setModal] = useState(null)
+  const [pullY, setPullY] = useState(0)
+  const [refreshing, setRefreshing] = useState(false)
+  const pullStartY = useRef(null)
+  const PULL_THRESHOLD = 80
 
   const today = getToday()
   const yesterday = getYesterday()
@@ -154,8 +158,63 @@ export default function App() {
     setModal(null)
   }, [modal])
 
+  const handleTouchStart = useCallback((e) => {
+    if (window.scrollY === 0) {
+      pullStartY.current = e.touches[0].clientY
+    }
+  }, [])
+
+  const handleTouchMove = useCallback((e) => {
+    if (pullStartY.current === null) return
+    const dy = e.touches[0].clientY - pullStartY.current
+    if (dy > 0) {
+      setPullY(Math.min(dy * 0.4, PULL_THRESHOLD + 16))
+    } else {
+      pullStartY.current = null
+      setPullY(0)
+    }
+  }, [])
+
+  const handleTouchEnd = useCallback(() => {
+    if (pullY >= PULL_THRESHOLD) {
+      setRefreshing(true)
+      setPullY(0)
+      const fresh = loadData()
+      setHabits(fresh.habits)
+      setRecords(fresh.records)
+      setTimeout(() => setRefreshing(false), 700)
+    } else {
+      setPullY(0)
+    }
+    pullStartY.current = null
+  }, [pullY])
+
   return (
-    <div className="app">
+    <div
+      className="app"
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div
+        className={`pull-indicator${refreshing ? ' refreshing' : ''}${pullY >= PULL_THRESHOLD ? ' ready' : ''}`}
+        style={!refreshing ? { height: pullY, opacity: pullY / PULL_THRESHOLD } : undefined}
+      >
+        {refreshing ? (
+          <svg className="pull-spin" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+          </svg>
+        ) : (
+          <svg
+            className={`pull-arrow${pullY >= PULL_THRESHOLD ? ' flip' : ''}`}
+            width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          >
+            <line x1="12" y1="5" x2="12" y2="19" />
+            <polyline points="19 12 12 19 5 12" />
+          </svg>
+        )}
+      </div>
+
       <header className="app-header">
         <h1 className="app-title">習慣トラッカー</h1>
         <div className="header-actions">
