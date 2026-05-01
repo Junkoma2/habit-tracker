@@ -77,7 +77,7 @@ export default function HabitEditItem({ habit, onEdit, onDelete }) {
 
     {showConfirm && (
       <ConfirmModal
-        message={`「${habit.name}」を削除しますか？`}
+        message={`「${habit.name}」を削除しますか？\n過去の記録もすべて削除されます。`}
         confirmLabel="削除"
         onConfirm={() => { onDelete(habit.id); setShowConfirm(false) }}
         onClose={() => setShowConfirm(false)}
