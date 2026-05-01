@@ -6,36 +6,53 @@ export default function HelpModal({ onClose }) {
     <Modal onClose={onClose} title="使い方">
       <div className="help-content">
         <section className="help-section">
-          <h3 className="help-heading">今日の習慣</h3>
+          <h3 className="help-heading">習慣を記録する</h3>
           <ul className="help-list">
-            <li>習慣ボタンをタップすると当日の達成をトグルできます</li>
-            <li>長押し（0.5秒）すると今日・昨日を選んで記録できます</li>
-            <li>「編集」ボタンで並び替え・名前変更・削除ができます</li>
+            <li>習慣ボタンをタップすると今日の達成をオン／オフできます。</li>
+            <li>長押し（0.5秒）すると今日・昨日を選んで記録できます。うっかり忘れたときに便利です。</li>
+            <li>「編集」ボタンで習慣の並び替え・名前変更・削除ができます。</li>
           </ul>
         </section>
 
         <section className="help-section">
-          <h3 className="help-heading">カレンダー</h3>
+          <h3 className="help-heading">カレンダーで振り返る</h3>
           <ul className="help-list">
-            <li>各日付のドットは達成した習慣の色を表します</li>
-            <li>日付をタップすると詳細が確認できます</li>
-            <li>当日・前日のみ詳細画面から記録を編集できます</li>
+            <li>達成した習慣がその色のドットで表示されます。</li>
+            <li>日付をタップするとその日の記録を確認できます。</li>
+            <li>当日と前日だけ、タップした画面から記録を修正できます。</li>
           </ul>
         </section>
 
         <section className="help-section">
-          <h3 className="help-heading">バックアップ・復元</h3>
+          <h3 className="help-heading">統計を見る</h3>
           <ul className="help-list">
-            <li>「保存」でデータをJSONファイルとしてダウンロードできます</li>
-            <li>「復元」でJSONファイルを読み込んでデータを上書きできます</li>
+            <li>右上の棒グラフアイコンから統計を確認できます。</li>
+            <li>習慣ごとに「現在の連続日数」「最長連続日数」「累計達成回数」が表示されます。</li>
           </ul>
         </section>
 
         <section className="help-section">
-          <h3 className="help-heading">データ保存先</h3>
+          <h3 className="help-heading">画面を更新する</h3>
           <ul className="help-list">
-            <li>データはこの端末のブラウザ内に保存されます</li>
-            <li>ブラウザのデータを消去するとリセットされます</li>
+            <li>画面を下に引っ張って離すと最新の状態に更新されます。</li>
+            <li>アプリを開いたまま日付が変わったときなどに使えます。</li>
+          </ul>
+        </section>
+
+        <section className="help-section">
+          <h3 className="help-heading">データのバックアップ・復元</h3>
+          <ul className="help-list">
+            <li>「保存」でデータをファイルとしてダウンロードできます。</li>
+            <li>「復元」でファイルを読み込んでデータを元に戻せます。機種変更のときにも使えます。</li>
+            <li>復元すると現在のデータはすべて上書きされます。</li>
+          </ul>
+        </section>
+
+        <section className="help-section">
+          <h3 className="help-heading">プライバシーについて</h3>
+          <ul className="help-list">
+            <li>データはこの端末のブラウザだけに保存されます。外部サーバーには送られないので、他の人に見られる心配はありません。</li>
+            <li>ブラウザの「サイトデータを消去」を行うとデータが消えます。定期的にバックアップをおすすめします。</li>
           </ul>
         </section>
       </div>
