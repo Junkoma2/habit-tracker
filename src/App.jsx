@@ -46,6 +46,7 @@ export default function App() {
   const [pullY, setPullY] = useState(0)
   const [refreshing, setRefreshing] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const pullStartY = useRef(null)
   const gestureStartY = useRef(null)
   const justScrolledToTop = useRef(false)
@@ -75,6 +76,7 @@ export default function App() {
       } else {
         scrolledRef.current = false
         setScrolled(false)
+        setMenuOpen(false)
         scrollStopTimer.current = setTimeout(() => {
           justScrolledToTop.current = false
         }, 300)
@@ -204,6 +206,7 @@ export default function App() {
         // 下スワイプ → フッター閉じる
         scrolledRef.current = false
         setScrolled(false)
+        setMenuOpen(false)
         gestureStartY.current = null
       }
     }
@@ -289,6 +292,32 @@ export default function App() {
           </button>
         </div>
         <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleFileChange} />
+
+        <div className="hamburger-wrapper">
+          <button className="hamburger-btn" onClick={() => setMenuOpen(v => !v)} aria-label="メニュー">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+          </button>
+          {menuOpen && (
+            <>
+              <div className="header-menu-overlay" onClick={() => setMenuOpen(false)} />
+              <div className="header-menu">
+                {[
+                  { type: 'stats', label: '統計', icon: <><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></> },
+                  { type: 'help', label: 'ヘルプ', icon: <><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></> },
+                  { type: 'exportConfirm', label: '保存', icon: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></> },
+                  { type: 'importConfirm', label: '復元', icon: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></> },
+                ].map(({ type, label, icon }) => (
+                  <button key={type} className="header-menu-item" onClick={() => { setModal({ type }); setMenuOpen(false) }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">{icon}</svg>
+                    <span>{label}</span>
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </header>
 
       <main className="app-main">

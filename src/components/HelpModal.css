@@ -1,3 +1,11 @@
+.help-version {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin-bottom: 12px;
+  margin-top: -8px;
+}
+
 .help-content {
   display: flex;
   flex-direction: column;
