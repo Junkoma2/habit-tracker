@@ -64,6 +64,12 @@
   color: #fff;
 }
 
+.lp-day-btn.unavailable {
+  border-color: var(--color-border);
+  opacity: 0.45;
+  cursor: default;
+}
+
 .lp-cancel-btn {
   width: 100%;
   padding: 13px;

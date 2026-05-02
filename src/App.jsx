@@ -101,9 +101,9 @@ export default function App() {
 
   const addHabit = useCallback(({ name, color }) => {
     const id = `h_${Date.now()}`
-    setHabits(prev => [...prev, { id, name, color }])
+    setHabits(prev => [...prev, { id, name, color, createdAt: today }])
     setModal(null)
-  }, [])
+  }, [today])
 
   const updateHabit = useCallback(({ name, color }) => {
     setHabits(prev =>

@@ -110,7 +110,7 @@
 }
 
 .app.scrolled .app-main {
-  padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  padding-bottom: calc(80px + env(safe-area-inset-bottom));
 }
 
 /* Section */
@@ -267,7 +267,7 @@
 }
 
 .app.scrolled .app-footer {
-  height: calc(56px + env(safe-area-inset-bottom));
+  height: calc(64px + env(safe-area-inset-bottom));
 }
 
 .footer-btn {

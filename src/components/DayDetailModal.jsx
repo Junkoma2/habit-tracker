@@ -17,7 +17,8 @@ export default function DayDetailModal({
     dateStr === today ? '今日' :
     dateStr === yesterday ? '昨日' : null
 
-  const completedCount = habits.filter(h => completedIds.includes(h.id)).length
+  const activeHabits = habits.filter(h => !h.createdAt || dateStr >= h.createdAt)
+  const completedCount = activeHabits.filter(h => completedIds.includes(h.id)).length
 
   return (
     <Modal onClose={onClose} title={formatDisplayDate(dateStr)}>
@@ -31,14 +32,14 @@ export default function DayDetailModal({
 
       <div className="day-summary">
         <span className="summary-count">{completedCount}</span>
-        <span className="summary-label"> / {habits.length} 習慣達成</span>
+        <span className="summary-label"> / {activeHabits.length} 習慣達成</span>
       </div>
 
-      {habits.length === 0 ? (
+      {activeHabits.length === 0 ? (
         <p className="no-habits">習慣がまだ登録されていません</p>
       ) : (
         <ul className="day-habit-list">
-          {habits.map(habit => {
+          {activeHabits.map(habit => {
             const done = completedIds.includes(habit.id)
             return (
               <li key={habit.id} className="day-habit-item">
