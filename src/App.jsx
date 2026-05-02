@@ -45,7 +45,9 @@ export default function App() {
   const [modal, setModal] = useState(null)
   const [pullY, setPullY] = useState(0)
   const [refreshing, setRefreshing] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const pullStartY = useRef(null)
+  const gestureStartY = useRef(null)
   const PULL_THRESHOLD = 80
 
   const today = getToday()
@@ -59,6 +61,15 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ habits, records }))
   }, [habits, records])
+
+  useEffect(() => {
+    const onScroll = () => {
+      if (window.scrollY > 0) setScrolled(true)
+      else setScrolled(false)
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const closeModal = useCallback(() => setModal(null), [])
 
@@ -159,16 +170,27 @@ export default function App() {
   }, [modal])
 
   const handleTouchStart = useCallback((e) => {
+    gestureStartY.current = e.touches[0].clientY
     if (window.scrollY === 0) {
       pullStartY.current = e.touches[0].clientY
     }
   }, [])
 
   const handleTouchMove = useCallback((e) => {
+    const currentY = e.touches[0].clientY
+
+    // 上方向スワイプでフッター展開
+    if (gestureStartY.current !== null) {
+      const dy = currentY - gestureStartY.current
+      if (dy < -20) setScrolled(true)
+    }
+
+    // pull-to-refresh
     if (pullStartY.current === null) return
-    const dy = e.touches[0].clientY - pullStartY.current
+    const dy = currentY - pullStartY.current
     if (dy > 0) {
       setPullY(Math.min(dy * 0.4, PULL_THRESHOLD + 16))
+      setScrolled(false)
     } else {
       pullStartY.current = null
       setPullY(0)
@@ -176,6 +198,7 @@ export default function App() {
   }, [])
 
   const handleTouchEnd = useCallback(() => {
+    gestureStartY.current = null
     if (pullY >= PULL_THRESHOLD) {
       setRefreshing(true)
       setPullY(0)
@@ -191,7 +214,7 @@ export default function App() {
 
   return (
     <div
-      className="app"
+      className={`app${scrolled ? ' scrolled' : ''}`}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -218,46 +241,32 @@ export default function App() {
       <header className="app-header">
         <h1 className="app-title">習慣トラッカー</h1>
         <div className="header-actions">
-          <button className="header-btn" onClick={() => setModal({ type: 'stats' })} title="統計">
+          <button className="header-btn" onClick={() => setModal({ type: 'stats' })}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="20" x2="18" y2="10" />
-              <line x1="12" y1="20" x2="12" y2="4" />
-              <line x1="6" y1="20" x2="6" y2="14" />
+              <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
             </svg>
             <span>統計</span>
           </button>
-          <button className="header-btn" onClick={() => setModal({ type: 'help' })} title="使い方">
+          <button className="header-btn" onClick={() => setModal({ type: 'help' })}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-              <line x1="12" y1="17" x2="12.01" y2="17" />
+              <circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" />
             </svg>
             <span>ヘルプ</span>
           </button>
-          <button className="header-btn" onClick={() => setModal({ type: 'exportConfirm' })} title="バックアップ">
+          <button className="header-btn" onClick={() => setModal({ type: 'exportConfirm' })}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
             </svg>
             <span>保存</span>
           </button>
-          <button className="header-btn" onClick={() => setModal({ type: 'importConfirm' })} title="復元">
+          <button className="header-btn" onClick={() => setModal({ type: 'importConfirm' })}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
             </svg>
             <span>復元</span>
           </button>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".json"
-            style={{ display: 'none' }}
-            onChange={handleFileChange}
-          />
         </div>
+        <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleFileChange} />
       </header>
 
       <main className="app-main">
@@ -436,6 +445,33 @@ export default function App() {
           onClose={closeModal}
         />
       )}
+
+      <footer className="app-footer">
+        <button className="footer-btn" onClick={() => setModal({ type: 'stats' })}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
+          </svg>
+          <span>統計</span>
+        </button>
+        <button className="footer-btn" onClick={() => setModal({ type: 'help' })}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span>ヘルプ</span>
+        </button>
+        <button className="footer-btn" onClick={() => setModal({ type: 'exportConfirm' })}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          <span>保存</span>
+        </button>
+        <button className="footer-btn" onClick={() => setModal({ type: 'importConfirm' })}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <span>復元</span>
+        </button>
+      </footer>
     </div>
   )
 }
