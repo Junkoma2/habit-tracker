@@ -50,6 +50,7 @@ export default function App() {
   const gestureStartY = useRef(null)
   const justScrolledToTop = useRef(false)
   const scrollStopTimer = useRef(null)
+  const scrolledRef = useRef(false)
   const PULL_THRESHOLD = 80
 
   const today = getToday()
@@ -67,12 +68,13 @@ export default function App() {
   useEffect(() => {
     const onScroll = () => {
       if (window.scrollY > 0) {
+        scrolledRef.current = true
         setScrolled(true)
         justScrolledToTop.current = true
         clearTimeout(scrollStopTimer.current)
       } else {
+        scrolledRef.current = false
         setScrolled(false)
-        // トップに到達してから300ms後に解除
         scrollStopTimer.current = setTimeout(() => {
           justScrolledToTop.current = false
         }, 300)
@@ -182,8 +184,8 @@ export default function App() {
 
   const handleTouchStart = useCallback((e) => {
     gestureStartY.current = e.touches[0].clientY
-    // スクロールで戻ってきた直後はpull-to-refreshを許可しない
-    if (window.scrollY === 0 && !justScrolledToTop.current) {
+    // フッター表示中・スクロール戻り直後はpull-to-refreshを許可しない
+    if (window.scrollY === 0 && !justScrolledToTop.current && !scrolledRef.current) {
       pullStartY.current = e.touches[0].clientY
     }
   }, [])
@@ -194,7 +196,11 @@ export default function App() {
     // 上方向スワイプでフッター展開
     if (gestureStartY.current !== null) {
       const dy = currentY - gestureStartY.current
-      if (dy < -20) setScrolled(true)
+      if (dy < -20 && !scrolledRef.current) {
+        scrolledRef.current = true
+        setScrolled(true)
+        pullStartY.current = null  // 同じジェスチャーでpull-to-refreshが起きないよう無効化
+      }
     }
 
     // pull-to-refresh
@@ -202,7 +208,6 @@ export default function App() {
     const dy = currentY - pullStartY.current
     if (dy > 0) {
       setPullY(Math.min(dy * 0.4, PULL_THRESHOLD + 16))
-      setScrolled(false)
     } else {
       pullStartY.current = null
       setPullY(0)
