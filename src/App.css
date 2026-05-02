@@ -132,11 +132,6 @@
   background: rgba(255, 255, 255, 0.15);
 }
 
-.header-menu-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 19;
-}
 
 .header-menu {
   position: absolute;
