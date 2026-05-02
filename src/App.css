@@ -181,7 +181,7 @@
 }
 
 .app.scrolled .app-main {
-  padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  padding-bottom: calc(84px + env(safe-area-inset-bottom));
 }
 
 /* Section */
@@ -328,18 +328,16 @@
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-around;
   height: 10px;
   overflow: hidden;
   z-index: 20;
-  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              padding-bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .app.scrolled .app-footer {
-  height: calc(56px + 12px + env(safe-area-inset-bottom));
-  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  height: calc(64px + env(safe-area-inset-bottom));
 }
 
 .footer-btn {
@@ -349,7 +347,7 @@
   gap: 3px;
   flex: 1;
   color: var(--color-text-secondary);
-  padding: 8px 4px;
+  padding: 10px 4px 8px;
   border-radius: 10px;
   font-size: 0.62rem;
   font-weight: 600;
