@@ -48,6 +48,8 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false)
   const pullStartY = useRef(null)
   const gestureStartY = useRef(null)
+  const justScrolledToTop = useRef(false)
+  const scrollStopTimer = useRef(null)
   const PULL_THRESHOLD = 80
 
   const today = getToday()
@@ -64,8 +66,17 @@ export default function App() {
 
   useEffect(() => {
     const onScroll = () => {
-      if (window.scrollY > 0) setScrolled(true)
-      else setScrolled(false)
+      if (window.scrollY > 0) {
+        setScrolled(true)
+        justScrolledToTop.current = true
+        clearTimeout(scrollStopTimer.current)
+      } else {
+        setScrolled(false)
+        // トップに到達してから300ms後に解除
+        scrollStopTimer.current = setTimeout(() => {
+          justScrolledToTop.current = false
+        }, 300)
+      }
     }
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -171,7 +182,8 @@ export default function App() {
 
   const handleTouchStart = useCallback((e) => {
     gestureStartY.current = e.touches[0].clientY
-    if (window.scrollY === 0) {
+    // スクロールで戻ってきた直後はpull-to-refreshを許可しない
+    if (window.scrollY === 0 && !justScrolledToTop.current) {
       pullStartY.current = e.touches[0].clientY
     }
   }, [])
