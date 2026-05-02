@@ -16,4 +16,8 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(getVersion()),
   },
+  server: {
+    port: process.env.PORT ? parseInt(process.env.PORT) : 5173,
+    strictPort: !!process.env.PORT,
+  },
 })
