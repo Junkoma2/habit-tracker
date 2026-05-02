@@ -193,13 +193,18 @@ export default function App() {
   const handleTouchMove = useCallback((e) => {
     const currentY = e.touches[0].clientY
 
-    // 上方向スワイプでフッター展開
     if (gestureStartY.current !== null) {
       const dy = currentY - gestureStartY.current
-      if (dy < -20 && !scrolledRef.current) {
+      if (!scrolledRef.current && dy < -20) {
+        // 上スワイプ → フッター展開
         scrolledRef.current = true
         setScrolled(true)
-        pullStartY.current = null  // 同じジェスチャーでpull-to-refreshが起きないよう無効化
+        pullStartY.current = null
+      } else if (scrolledRef.current && dy > 20) {
+        // 下スワイプ → フッター閉じる
+        scrolledRef.current = false
+        setScrolled(false)
+        gestureStartY.current = null
       }
     }
 
