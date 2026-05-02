@@ -2,8 +2,8 @@
   text-align: center;
   font-size: 0.75rem;
   color: var(--color-text-secondary);
-  margin-bottom: 12px;
-  margin-top: -8px;
+  margin-bottom: 16px;
+  margin-top: 4px;
 }
 
 .help-content {

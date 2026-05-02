@@ -1,11 +1,9 @@
 import Modal from './Modal'
-import { version } from '../../package.json'
 import './HelpModal.css'
 
 export default function HelpModal({ onClose }) {
   return (
     <Modal onClose={onClose} title="使い方">
-      <p className="help-version">バージョン {version}</p>
       <div className="help-content">
         <section className="help-section">
           <h3 className="help-heading">習慣を記録する</h3>
@@ -59,6 +57,7 @@ export default function HelpModal({ onClose }) {
         </section>
       </div>
 
+      <p className="help-version">バージョン {__APP_VERSION__}</p>
       <button className="help-close-btn" onClick={onClose}>閉じる</button>
     </Modal>
   )
