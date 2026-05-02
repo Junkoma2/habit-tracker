@@ -21,11 +21,13 @@ import DayDetailModal from './components/DayDetailModal'
 import HelpModal from './components/HelpModal'
 import ConfirmModal from './components/ConfirmModal'
 import StatsModal from './components/StatsModal'
+import ThemeModal, { THEMES, applyTheme } from './components/ThemeModal'
 import { getToday, getYesterday } from './utils/date'
 import { validateImportData } from './utils/validation'
 import './App.css'
 
 const STORAGE_KEY = 'habit-tracker-v1'
+const THEME_STORAGE_KEY = 'habit-tracker-theme'
 
 function loadData() {
   try {
@@ -37,9 +39,18 @@ function loadData() {
 
 const _initial = loadData()
 
+function loadTheme() {
+  try {
+    const saved = localStorage.getItem(THEME_STORAGE_KEY)
+    if (saved) return THEMES.find(t => t.id === saved) ?? THEMES[0]
+  } catch {}
+  return THEMES[0]
+}
+
 export default function App() {
   const [habits, setHabits] = useState(_initial.habits)
   const [records, setRecords] = useState(_initial.records)
+  const [themeId, setThemeId] = useState(() => { const t = loadTheme(); applyTheme(t); return t.id })
   const [calendarDate, setCalendarDate] = useState(() => new Date())
   const [editMode, setEditMode] = useState(false)
   const [modal, setModal] = useState(null)
@@ -185,6 +196,12 @@ export default function App() {
     reader.readAsText(file)
   }, [])
 
+  const handleThemeSelect = useCallback((theme) => {
+    applyTheme(theme)
+    setThemeId(theme.id)
+    localStorage.setItem(THEME_STORAGE_KEY, theme.id)
+  }, [])
+
   const handleImportConfirm = useCallback(() => {
     setHabits(modal.data.habits)
     setRecords(modal.data.records)
@@ -314,6 +331,7 @@ export default function App() {
                   { type: 'help', label: 'ヘルプ', icon: <><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></> },
                   { type: 'exportConfirm', label: '保存', icon: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" /></> },
                   { type: 'importConfirm', label: '復元', icon: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" y1="3" x2="12" y2="15" /></> },
+                  { type: 'theme', label: '設定', icon: <><circle cx="12" cy="12" r="3" /><path d="M19.07 4.93a10 10 0 0 1 0 14.14" /><path d="M4.93 4.93a10 10 0 0 0 0 14.14" /></> },
                 ].map(({ type, label, icon }) => (
                   <button key={type} className="header-menu-item" onClick={() => { setModal({ type }); setMenuOpen(false) }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">{icon}</svg>
@@ -479,6 +497,14 @@ export default function App() {
           confirmLabel="OK"
           showCancel={false}
           onConfirm={closeModal}
+          onClose={closeModal}
+        />
+      )}
+
+      {modal?.type === 'theme' && (
+        <ThemeModal
+          currentThemeId={themeId}
+          onSelect={(theme) => { handleThemeSelect(theme); closeModal() }}
           onClose={closeModal}
         />
       )}
