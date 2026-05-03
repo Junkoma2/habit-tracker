@@ -39,7 +39,7 @@ html, body {
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI',
     'Segoe UI', sans-serif;
-  background: var(--color-bg);
+  background: var(--color-surface);
   color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
