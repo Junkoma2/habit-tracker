@@ -1,4 +1,4 @@
-const CACHE = 'habit-tracker-v1'
+const CACHE = 'habit-tracker-__APP_VERSION__'
 const BASE = '/habit-tracker'
 
 self.addEventListener('install', (e) => {
