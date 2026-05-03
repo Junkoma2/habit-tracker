@@ -6,11 +6,11 @@
   background: var(--color-primary);
   color: rgba(255, 255, 255, 0.9);
   height: 0;
-  padding-top: env(safe-area-inset-top);
 }
 
 .pull-indicator.refreshing {
   height: calc(44px + env(safe-area-inset-top));
+  padding-top: env(safe-area-inset-top);
   opacity: 1;
   transition: height 0.2s ease, opacity 0.2s ease;
 }
@@ -177,14 +177,14 @@
 .app-main {
   flex: 1;
   padding: 16px 16px;
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  padding-bottom: calc(var(--footer-peek-height) + max(16px, env(safe-area-inset-bottom)));
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
 .app.scrolled .app-main {
-  padding-bottom: calc(var(--footer-open-height) + 16px);
+  padding-bottom: calc(var(--footer-open-height) + env(safe-area-inset-bottom) + 16px);
 }
 
 /* Section */
@@ -320,7 +320,7 @@
 /* Footer */
 .app-footer {
   position: fixed;
-  bottom: calc(-1 * env(safe-area-inset-bottom));
+  bottom: 0;
   left: 0;
   right: 0;
   margin: 0 auto;
@@ -337,13 +337,11 @@
   padding-bottom: env(safe-area-inset-bottom);
   overflow: hidden;
   z-index: 20;
-  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              padding-bottom 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .app.scrolled .app-footer {
   height: calc(var(--footer-open-height) + env(safe-area-inset-bottom));
-  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .footer-btn {
