@@ -26,8 +26,9 @@ export default function HelpModal({ onClose }) {
         <section className="help-section">
           <h3 className="help-heading">統計を見る</h3>
           <ul className="help-list">
-            <li>統計アイコンから習慣ごとの記録を確認できます。</li>
+            <li>画面下の「統計」ボタンから習慣ごとの記録を確認できます。</li>
             <li>「現在の連続日数」「最長連続日数」「累計達成回数」が表示されます。</li>
+            <li>今日がまだ未達でも、昨日まで連続していれば連続日数は維持されます。</li>
           </ul>
         </section>
 
@@ -35,15 +36,15 @@ export default function HelpModal({ onClose }) {
           <h3 className="help-heading">画面を更新する</h3>
           <ul className="help-list">
             <li>画面を下に引っ張って離すと最新の状態に更新されます。</li>
-            <li>アプリを開いたまま日付が変わったときなどに使えます。</li>
+            <li>「更新中...」と表示されたら離してください。アプリの更新があれば自動で反映されます。</li>
           </ul>
         </section>
 
         <section className="help-section">
           <h3 className="help-heading">データのバックアップ・復元</h3>
           <ul className="help-list">
-            <li>「保存」でデータをファイルとしてダウンロードできます。</li>
-            <li>「復元」でファイルを読み込んでデータを元に戻せます。機種変更のときにも使えます。</li>
+            <li>設定の「バックアップを保存」でデータをファイルとしてダウンロードできます。</li>
+            <li>「バックアップから復元」でファイルを読み込んでデータを元に戻せます。機種変更のときにも使えます。</li>
             <li>復元すると現在のデータはすべて上書きされます。</li>
           </ul>
         </section>
