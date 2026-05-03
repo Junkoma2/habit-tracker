@@ -68,6 +68,8 @@ export default function App() {
   const [refreshing, setRefreshing] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [undoAction, setUndoAction] = useState(null)
+  const undoTimerRef = useRef(null)
   const pullStartY = useRef(null)
   const justScrolledToTop = useRef(false)
   const scrollStopTimer = useRef(null)
@@ -113,17 +115,35 @@ export default function App() {
   const closeModal = useCallback(() => setModal(null), [])
 
   const toggleHabit = useCallback((habitId, dateStr) => {
+    const wasOn = (records[dateStr] || []).includes(habitId)
     setRecords(prev => {
-      const dayRecords = prev[dateStr] || []
-      const isOn = dayRecords.includes(habitId)
+      const dr = prev[dateStr] || []
+      const on = dr.includes(habitId)
       return {
         ...prev,
-        [dateStr]: isOn
-          ? dayRecords.filter(id => id !== habitId)
-          : [...dayRecords, habitId],
+        [dateStr]: on ? dr.filter(id => id !== habitId) : [...dr, habitId],
       }
     })
-  }, [])
+    clearTimeout(undoTimerRef.current)
+    if (wasOn) {
+      setUndoAction({ habitId, dateStr })
+      undoTimerRef.current = setTimeout(() => setUndoAction(null), 4000)
+    } else {
+      setUndoAction(null)
+    }
+  }, [records])
+
+  const handleUndo = useCallback(() => {
+    if (!undoAction) return
+    clearTimeout(undoTimerRef.current)
+    const { habitId, dateStr } = undoAction
+    setRecords(prev => {
+      const dr = prev[dateStr] || []
+      if (dr.includes(habitId)) return prev
+      return { ...prev, [dateStr]: [...dr, habitId] }
+    })
+    setUndoAction(null)
+  }, [undoAction])
 
   const addHabit = useCallback(({ name, color }) => {
     const id = `h_${Date.now()}`
@@ -414,6 +434,7 @@ export default function App() {
                   </div>
                 </SortableContext>
               </DndContext>
+              <p className="edit-mode-hint">⠿ をドラッグして並び替え</p>
               <button
                 className="add-in-edit-btn"
                 onClick={() => { setEditMode(false); setModal({ type: 'add' }) }}
@@ -564,6 +585,13 @@ export default function App() {
           onToggle={(habitId) => toggleHabit(habitId, modal.dateStr)}
           onClose={closeModal}
         />
+      )}
+
+      {undoAction && (
+        <div className="undo-toast">
+          <span className="undo-message">達成を取り消しました</span>
+          <button className="undo-btn" onClick={handleUndo}>元に戻す</button>
+        </div>
       )}
 
       <footer className="app-footer">
