@@ -1,4 +1,4 @@
-import { useRef, useCallback } from 'react'
+import { useRef, useCallback, useState } from 'react'
 import './HabitButton.css'
 
 const LONG_PRESS_DELAY = 500
@@ -7,6 +7,7 @@ export default function HabitButton({ habit, completed, onPress, onLongPress }) 
   const timerRef = useRef(null)
   const isLongPressRef = useRef(false)
   const startPosRef = useRef(null)
+  const [popping, setPopping] = useState(false)
 
   const handlePointerDown = useCallback((e) => {
     isLongPressRef.current = false
@@ -40,14 +41,19 @@ export default function HabitButton({ habit, completed, onPress, onLongPress }) 
 
   const handleClick = useCallback(() => {
     if (!isLongPressRef.current) {
+      if (!completed) {
+        setPopping(true)
+        if (navigator.vibrate) navigator.vibrate(30)
+        setTimeout(() => setPopping(false), 300)
+      }
       onPress(habit)
     }
     isLongPressRef.current = false
-  }, [habit, onPress])
+  }, [habit, onPress, completed])
 
   return (
     <button
-      className={`habit-btn ${completed ? 'completed' : ''}`}
+      className={`habit-btn${completed ? ' completed' : ''}${popping ? ' pop' : ''}`}
       style={{ '--color': habit.color }}
       aria-label={`${habit.name}${completed ? '（達成済み）' : ''}`}
       aria-pressed={completed}

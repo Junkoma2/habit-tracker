@@ -32,6 +32,22 @@
   opacity: 0.85;
 }
 
+@keyframes habit-pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.habit-btn.pop {
+  animation: habit-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .habit-btn.pop {
+    animation: none;
+  }
+}
+
 .habit-dot {
   width: 8px;
   height: 8px;
