@@ -33,7 +33,16 @@ const THEME_STORAGE_KEY = 'habit-tracker-theme'
 function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) return JSON.parse(raw)
+    if (raw) {
+      const data = JSON.parse(raw)
+      if (
+        data && typeof data === 'object' && !Array.isArray(data) &&
+        Array.isArray(data.habits) &&
+        data.records && typeof data.records === 'object' && !Array.isArray(data.records)
+      ) {
+        return data
+      }
+    }
   } catch {}
   return { habits: [], records: {} }
 }
@@ -242,8 +251,29 @@ export default function App() {
         try {
           const reg = await navigator.serviceWorker.getRegistration()
           if (reg) {
-            await reg.update()
-            swUpdated = !!(reg.installing || reg.waiting)
+            swUpdated = await new Promise(resolve => {
+              let done = false
+              const finish = (val) => { if (!done) { done = true; resolve(val) } }
+
+              // controllerchange: skipWaiting+clients.claim で即座にアクティベートされた場合も検知できる
+              navigator.serviceWorker.addEventListener('controllerchange', () => finish(true), { once: true })
+
+              reg.update()
+                .then(() => {
+                  const sw = reg.installing || reg.waiting
+                  if (sw) {
+                    sw.addEventListener('statechange', function handler() {
+                      if (this.state === 'activated') {
+                        sw.removeEventListener('statechange', handler)
+                        finish(true)
+                      }
+                    })
+                  }
+                  // update()完了から1秒待ってもchangeがなければ更新なし
+                  setTimeout(() => finish(false), 1000)
+                })
+                .catch(() => finish(false))
+            })
           }
         } catch {}
       }
