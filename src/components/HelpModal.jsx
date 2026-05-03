@@ -26,8 +26,8 @@ export default function HelpModal({ onClose }) {
         <section className="help-section">
           <h3 className="help-heading">統計を見る</h3>
           <ul className="help-list">
-            <li>右上の棒グラフアイコンから統計を確認できます。</li>
-            <li>習慣ごとに「現在の連続日数」「最長連続日数」「累計達成回数」が表示されます。</li>
+            <li>統計アイコンから習慣ごとの記録を確認できます。</li>
+            <li>「現在の連続日数」「最長連続日数」「累計達成回数」が表示されます。</li>
           </ul>
         </section>
 
