@@ -6,6 +6,13 @@ export function calcCurrentStreak(habitId, records) {
   let count = 0
   const d = new Date()
   d.setHours(0, 0, 0, 0)
+
+  // 今日が未達なら昨日から遡る（当日中はまだ達成できるため途切れ扱いにしない）
+  const todayStr = formatDate(d)
+  if (!(records[todayStr] || []).includes(habitId)) {
+    d.setDate(d.getDate() - 1)
+  }
+
   while (true) {
     const dateStr = formatDate(d)
     if ((records[dateStr] || []).includes(habitId)) {
