@@ -62,3 +62,8 @@ input {
   height: 100%;
   background: var(--color-bg);
 }
+
+body.modal-open,
+body.modal-open #root {
+  background: var(--color-surface);
+}
