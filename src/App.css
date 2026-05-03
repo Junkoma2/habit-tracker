@@ -318,6 +318,7 @@
 }
 
 /* Footer */
+/* 外層: 背景を画面最下端まで塗る。高さ = ボタン領域 + safe-area-inset-bottom */
 .app-footer {
   position: fixed;
   bottom: 0;
@@ -330,11 +331,7 @@
   -webkit-backdrop-filter: blur(16px);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
   height: calc(var(--footer-peek-height) + env(safe-area-inset-bottom));
-  padding-bottom: env(safe-area-inset-bottom);
   overflow: hidden;
   z-index: 20;
   transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
@@ -342,6 +339,20 @@
 
 .app.scrolled .app-footer {
   height: calc(var(--footer-open-height) + env(safe-area-inset-bottom));
+}
+
+/* 内層: ボタンの配置領域。safe-area分を除いたコンテンツ高さのみ */
+.app-footer-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: var(--footer-peek-height);
+  overflow: hidden;
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.app.scrolled .app-footer-inner {
+  height: var(--footer-open-height);
 }
 
 .footer-btn {
