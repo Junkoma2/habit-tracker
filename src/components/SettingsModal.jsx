@@ -28,12 +28,16 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
             key={theme.id}
             className={`theme-swatch${currentThemeId === theme.id ? ' selected' : ''}`}
             onClick={() => onSelectTheme(theme)}
-            aria-label={theme.label}
+            aria-label={`${theme.label}${currentThemeId === theme.id ? '（選択中）' : ''}`}
           >
             <span className="swatch-circle" style={{ background: theme.primary }} />
             <span className="swatch-label">{theme.label}</span>
+            <div className="swatch-chips">
+              <span className="swatch-chip" style={{ background: theme.primary }} />
+              <span className="swatch-chip" style={{ background: theme.today }} />
+            </div>
             {currentThemeId === theme.id && (
-              <span className="swatch-check">
+              <span className="swatch-check" style={{ background: theme.primary }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>

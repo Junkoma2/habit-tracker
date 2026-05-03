@@ -32,6 +32,8 @@
 
 .theme-swatch.selected {
   border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary);
+  background: var(--color-primary-light);
 }
 
 .swatch-circle {
@@ -45,6 +47,23 @@
   font-size: 0.78rem;
   color: var(--color-text-secondary);
   font-weight: 500;
+  transition: color 0.15s, font-weight 0.15s;
+}
+
+.theme-swatch.selected .swatch-label {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.swatch-chips {
+  display: flex;
+  gap: 4px;
+}
+
+.swatch-chip {
+  width: 14px;
+  height: 7px;
+  border-radius: 3px;
 }
 
 .swatch-check {
