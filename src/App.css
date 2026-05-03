@@ -31,6 +31,12 @@
   animation: pull-spin 0.8s linear infinite;
 }
 
+.pull-label {
+  font-size: 0.8rem;
+  margin-left: 6px;
+  letter-spacing: 0.02em;
+}
+
 .app {
   --footer-height: 48px;
   --footer-safe-padding: env(safe-area-inset-bottom);

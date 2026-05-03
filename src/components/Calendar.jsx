@@ -51,8 +51,8 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
         <div className="cal-month-label">
           <span>{year}年{month + 1}月</span>
           {!isCurrentMonth && (
-            <button className="today-jump-btn" onClick={goToToday}>
-              今月
+            <button className="today-jump-btn" onClick={goToToday} aria-label="今月へ戻る">
+              今月へ
             </button>
           )}
         </div>

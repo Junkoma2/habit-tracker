@@ -345,17 +345,25 @@ export default function App() {
         style={!refreshing ? { height: pullY, opacity: pullY / PULL_THRESHOLD } : undefined}
       >
         {refreshing ? (
-          <svg className="pull-spin" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-          </svg>
+          <>
+            <svg className="pull-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+            </svg>
+            <span className="pull-label">更新中...</span>
+          </>
         ) : (
-          <svg
-            className={`pull-arrow${pullY >= PULL_THRESHOLD ? ' flip' : ''}`}
-            width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-          >
-            <line x1="12" y1="5" x2="12" y2="19" />
-            <polyline points="19 12 12 19 5 12" />
-          </svg>
+          <>
+            <svg
+              className={`pull-arrow${pullY >= PULL_THRESHOLD ? ' flip' : ''}`}
+              width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <polyline points="19 12 12 19 5 12" />
+            </svg>
+            <span className="pull-label">
+              {pullY >= PULL_THRESHOLD ? '離して更新' : '下に引っ張って更新'}
+            </span>
+          </>
         )}
       </div>
 
