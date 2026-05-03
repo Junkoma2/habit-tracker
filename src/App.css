@@ -177,7 +177,7 @@
 .app-main {
   flex: 1;
   padding: 16px 16px;
-  padding-bottom: calc(var(--footer-peek-height) + max(16px, env(safe-area-inset-bottom)));
+  padding-bottom: calc(var(--footer-peek-height) + env(safe-area-inset-bottom) + 16px);
   display: flex;
   flex-direction: column;
   gap: 16px;
