@@ -487,6 +487,7 @@ export default function App() {
 
       {modal?.type === 'exportConfirm' && (
         <ConfirmModal
+          title="バックアップ保存"
           message="バックアップファイルをダウンロードします。"
           confirmLabel="ダウンロード"
           danger={false}
@@ -497,6 +498,7 @@ export default function App() {
 
       {modal?.type === 'importConfirm' && (
         <ConfirmModal
+          title="バックアップから復元"
           message={`バックアップファイルを選択して復元します。\n現在のデータは上書きされます。`}
           confirmLabel="ファイルを選択"
           danger={true}
@@ -512,6 +514,7 @@ export default function App() {
           : 'なし'
         return (
           <ConfirmModal
+            title="インポートの確認"
             message={`「${modal.filename}」をインポートします。\n\n習慣: ${modal.data.habits.length}件\n記録日数: ${recordDates.length}日\n期間: ${rangeText}\n\n現在のデータはすべて上書きされます。`}
             confirmLabel="インポート"
             danger={false}
@@ -523,6 +526,7 @@ export default function App() {
 
       {modal?.type === 'importError' && (
         <ConfirmModal
+          title="読み込みエラー"
           message={modal.message}
           confirmLabel="OK"
           showCancel={false}
@@ -543,6 +547,7 @@ export default function App() {
 
       {modal?.type === 'deleteConfirm' && (
         <ConfirmModal
+          title="習慣の削除"
           message={`「${modal.habitName}」を削除しますか？\n過去の記録もすべて削除されます。`}
           confirmLabel="削除"
           onConfirm={() => deleteHabit(modal.habitId)}
