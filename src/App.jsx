@@ -110,11 +110,6 @@ export default function App() {
     return () => document.removeEventListener('click', handler)
   }, [menuOpen])
 
-  useEffect(() => {
-    document.body.classList.toggle('modal-open', Boolean(modal))
-    return () => document.body.classList.remove('modal-open')
-  }, [modal])
-
   const closeModal = useCallback(() => setModal(null), [])
 
   const toggleHabit = useCallback((habitId, dateStr) => {
