@@ -47,7 +47,7 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
   return (
     <div className="calendar">
       <div className="calendar-nav">
-        <button className="cal-nav-btn" onClick={goToPrev}>‹</button>
+        <button className="cal-nav-btn" onClick={goToPrev} aria-label="前の月">‹</button>
         <div className="cal-month-label">
           <span>{year}年{month + 1}月</span>
           {!isCurrentMonth && (
@@ -56,7 +56,7 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
             </button>
           )}
         </div>
-        <button className="cal-nav-btn" onClick={goToNext}>›</button>
+        <button className="cal-nav-btn" onClick={goToNext} aria-label="次の月">›</button>
       </div>
 
       <div className="calendar-grid">
@@ -79,6 +79,7 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
           const count = completedHabits.length
           const allDone = total > 0 && count === total
 
+          const label = `${y}年${m + 1}月${d}日${count > 0 ? `、${count}件達成` : ''}`
           return (
             <div
               key={dateStr}
@@ -89,7 +90,11 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
                 dow === 0 ? 'sun' : '',
                 dow === 6 ? 'sat' : '',
               ].filter(Boolean).join(' ')}
+              role="button"
+              tabIndex={other ? -1 : 0}
+              aria-label={label}
               onClick={() => onDayClick(dateStr)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onDayClick(dateStr) } }}
             >
               <span className="cal-day-num">{d}</span>
               <div className="cal-dots">
