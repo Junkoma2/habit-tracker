@@ -32,8 +32,8 @@
 }
 
 .app {
-  --footer-height: 45px;
-  --footer-safe-padding: min(env(safe-area-inset-bottom), 16px);
+  --footer-height: 48px;
+  --footer-safe-padding: env(safe-area-inset-bottom);
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -339,20 +339,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 2px;
   flex: 0 1 112px;
   color: var(--color-text-secondary);
-  padding: 4px;
+  padding: 5px 4px;
   border-radius: 10px;
-  font-size: 0.6rem;
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.03em;
   transition: color 0.15s, background 0.15s;
 }
 
 .footer-btn svg {
-  width: 18px;
-  height: 18px;
+  width: 19px;
+  height: 19px;
 }
 
 .footer-btn:active {
