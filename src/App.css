@@ -32,8 +32,7 @@
 }
 
 .app {
-  --footer-peek-height: 10px;
-  --footer-open-height: 64px;
+  --footer-height: 64px;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -177,14 +176,10 @@
 .app-main {
   flex: 1;
   padding: 16px 16px;
-  padding-bottom: calc(var(--footer-peek-height) + env(safe-area-inset-bottom) + 16px);
+  padding-bottom: calc(var(--footer-height) + env(safe-area-inset-bottom) + 16px);
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.app.scrolled .app-main {
-  padding-bottom: calc(var(--footer-open-height) + env(safe-area-inset-bottom) + 16px);
 }
 
 /* Section */
@@ -318,7 +313,6 @@
 }
 
 /* Footer */
-/* 外層: padding-bottomでsafe-area分を確保し背景を画面最下端まで塗る */
 .app-footer {
   position: fixed;
   bottom: 0;
@@ -326,27 +320,18 @@
   right: 0;
   margin: 0 auto;
   max-width: 480px;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
   padding-bottom: env(safe-area-inset-bottom);
   z-index: 20;
 }
 
-/* 内層: ボタンの配置領域。コンテンツ高さのみでoverflow:hiddenによりpeek時は非表示 */
 .app-footer-inner {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: var(--footer-peek-height);
-  overflow: hidden;
-  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.app.scrolled .app-footer-inner {
-  height: var(--footer-open-height);
+  height: var(--footer-height);
 }
 
 .footer-btn {
@@ -361,16 +346,7 @@
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.03em;
-  opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.2s ease 0.1s, transform 0.2s ease 0.1s, color 0.15s, background 0.15s;
-  pointer-events: none;
-}
-
-.app.scrolled .footer-btn {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+  transition: color 0.15s, background 0.15s;
 }
 
 .footer-btn:active {
