@@ -1,4 +1,12 @@
+/* 通常フローから外してヘッダーを押し下げないようにする */
 .pull-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  z-index: 30;
   overflow: hidden;
   display: flex;
   align-items: center;
