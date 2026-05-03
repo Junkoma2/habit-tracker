@@ -34,7 +34,8 @@
 .app {
   --footer-height: 48px;
   --footer-safe-padding: env(safe-area-inset-bottom);
-  min-height: 100dvh;
+  min-height: 100%;
+  min-height: 100svh;
   display: flex;
   flex-direction: column;
   max-width: 480px;
