@@ -32,7 +32,8 @@
 }
 
 .app {
-  --footer-height: 49px;
+  --footer-height: 45px;
+  --footer-safe-padding: min(env(safe-area-inset-bottom), 16px);
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -176,7 +177,7 @@
 .app-main {
   flex: 1;
   padding: 16px 16px;
-  padding-bottom: calc(var(--footer-height) + env(safe-area-inset-bottom) + 16px);
+  padding-bottom: calc(var(--footer-height) + var(--footer-safe-padding) + 16px);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -323,7 +324,7 @@
   background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: var(--footer-safe-padding);
   z-index: 20;
 }
 
@@ -338,15 +339,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  flex: 1;
+  gap: 1px;
+  flex: 0 1 112px;
   color: var(--color-text-secondary);
-  padding: 6px 4px;
+  padding: 4px;
   border-radius: 10px;
-  font-size: 0.62rem;
+  font-size: 0.6rem;
   font-weight: 600;
   letter-spacing: 0.03em;
   transition: color 0.15s, background 0.15s;
+}
+
+.footer-btn svg {
+  width: 18px;
+  height: 18px;
 }
 
 .footer-btn:active {
