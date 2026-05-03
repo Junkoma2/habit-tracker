@@ -1,6 +1,9 @@
 .modal-backdrop {
   position: fixed;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: calc(-1 * env(safe-area-inset-bottom));
+  left: 0;
   background: rgba(0, 0, 0, 0.45);
   z-index: 100;
   display: flex;
