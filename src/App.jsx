@@ -23,6 +23,7 @@ import ConfirmModal from './components/ConfirmModal'
 import StatsModal from './components/StatsModal'
 import SettingsModal, { THEMES, applyTheme } from './components/SettingsModal'
 import { getToday, getYesterday } from './utils/date'
+import { calcCurrentStreak } from './utils/stats'
 import { validateImportData } from './utils/validation'
 import './App.css'
 
@@ -178,6 +179,12 @@ export default function App() {
   const handleFileChange = useCallback((e) => {
     const file = e.target.files?.[0]
     if (!file) return
+    const MAX_FILE_SIZE = 2 * 1024 * 1024
+    if (file.size > MAX_FILE_SIZE) {
+      setModal({ type: 'importError', message: 'ファイルサイズが大きすぎます（上限 2MB）。\nバックアップファイルを確認してください。' })
+      e.target.value = ''
+      return
+    }
     const reader = new FileReader()
     reader.onload = (ev) => {
       try {
@@ -412,6 +419,7 @@ export default function App() {
                   key={habit.id}
                   habit={habit}
                   completed={todayRecords.includes(habit.id)}
+                  streak={calcCurrentStreak(habit.id, records)}
                   onPress={(h) => toggleHabit(h.id, today)}
                   onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
                 />
@@ -488,15 +496,21 @@ export default function App() {
         />
       )}
 
-      {modal?.type === 'importFile' && (
-        <ConfirmModal
-          message={`「${modal.filename}」をインポートします。\n現在のデータはすべて上書きされます。よろしいですか？`}
-          confirmLabel="インポート"
-          danger={false}
-          onConfirm={handleImportConfirm}
-          onClose={closeModal}
-        />
-      )}
+      {modal?.type === 'importFile' && (() => {
+        const recordDates = Object.keys(modal.data.records).sort()
+        const rangeText = recordDates.length > 0
+          ? `${recordDates[0]} 〜 ${recordDates[recordDates.length - 1]}`
+          : 'なし'
+        return (
+          <ConfirmModal
+            message={`「${modal.filename}」をインポートします。\n\n習慣: ${modal.data.habits.length}件\n記録日数: ${recordDates.length}日\n期間: ${rangeText}\n\n現在のデータはすべて上書きされます。`}
+            confirmLabel="インポート"
+            danger={false}
+            onConfirm={handleImportConfirm}
+            onClose={closeModal}
+          />
+        )
+      })()}
 
       {modal?.type === 'importError' && (
         <ConfirmModal

@@ -1,45 +1,6 @@
 import Modal from './Modal'
-import { formatDate, parseLocalDate } from '../utils/date'
+import { calcStats } from '../utils/stats'
 import './StatsModal.css'
-
-const MS_PER_DAY = 86400000
-
-function calcStats(habitId, records) {
-  const completedDates = Object.keys(records)
-    .filter(date => (records[date] || []).includes(habitId))
-    .sort()
-
-  const total = completedDates.length
-  if (total === 0) return { current: 0, longest: 0, total: 0 }
-
-  let longest = 1, run = 1
-  for (let i = 1; i < completedDates.length; i++) {
-    const prev = parseLocalDate(completedDates[i - 1])
-    const curr = parseLocalDate(completedDates[i])
-    const diff = (curr - prev) / MS_PER_DAY
-    if (diff === 1) {
-      run++
-      if (run > longest) longest = run
-    } else {
-      run = 1
-    }
-  }
-
-  let current = 0
-  const d = new Date()
-  d.setHours(0, 0, 0, 0)
-  while (true) {
-    const dateStr = formatDate(d)
-    if ((records[dateStr] || []).includes(habitId)) {
-      current++
-      d.setDate(d.getDate() - 1)
-    } else {
-      break
-    }
-  }
-
-  return { current, longest, total }
-}
 
 export default function StatsModal({ habits, records, onClose }) {
   return (
