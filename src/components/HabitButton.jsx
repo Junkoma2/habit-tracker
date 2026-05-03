@@ -3,7 +3,7 @@ import './HabitButton.css'
 
 const LONG_PRESS_DELAY = 500
 
-export default function HabitButton({ habit, completed, onPress, onLongPress }) {
+export default function HabitButton({ habit, completed, streak, onPress, onLongPress }) {
   const timerRef = useRef(null)
   const isLongPressRef = useRef(false)
   const startPosRef = useRef(null)
@@ -69,6 +69,7 @@ export default function HabitButton({ habit, completed, onPress, onLongPress }) 
         style={{ backgroundColor: completed ? '#fff' : habit.color }}
       />
       <span className="habit-name">{habit.name}</span>
+      {streak > 1 && <span className="habit-streak">{streak}日</span>}
       {completed && <span className="habit-check">✓</span>}
     </button>
   )

@@ -23,6 +23,7 @@ import ConfirmModal from './components/ConfirmModal'
 import StatsModal from './components/StatsModal'
 import SettingsModal, { THEMES, applyTheme } from './components/SettingsModal'
 import { getToday, getYesterday } from './utils/date'
+import { calcCurrentStreak } from './utils/stats'
 import { validateImportData } from './utils/validation'
 import './App.css'
 
@@ -418,6 +419,7 @@ export default function App() {
                   key={habit.id}
                   habit={habit}
                   completed={todayRecords.includes(habit.id)}
+                  streak={calcCurrentStreak(habit.id, records)}
                   onPress={(h) => toggleHabit(h.id, today)}
                   onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
                 />
