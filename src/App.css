@@ -32,8 +32,8 @@
 }
 
 .app {
-  --footer-height: 45px;
-  --footer-safe-padding: min(env(safe-area-inset-bottom), 16px);
+  --footer-height: 48px;
+  --footer-safe-offset: env(safe-area-inset-bottom);
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -177,7 +177,7 @@
 .app-main {
   flex: 1;
   padding: 16px 16px;
-  padding-bottom: calc(var(--footer-height) + var(--footer-safe-padding) + 16px);
+  padding-bottom: calc(var(--footer-height) + var(--footer-safe-offset) + 16px);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -316,7 +316,7 @@
 /* Footer */
 .app-footer {
   position: fixed;
-  bottom: 0;
+  bottom: var(--footer-safe-offset);
   left: 0;
   right: 0;
   margin: 0 auto;
@@ -324,8 +324,17 @@
   background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
-  padding-bottom: var(--footer-safe-padding);
   z-index: 20;
+}
+
+.app-footer::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  height: var(--footer-safe-offset);
+  background: var(--color-surface);
 }
 
 .app-footer-inner {
@@ -339,20 +348,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 2px;
   flex: 0 1 112px;
   color: var(--color-text-secondary);
-  padding: 4px;
+  padding: 5px 4px;
   border-radius: 10px;
-  font-size: 0.6rem;
+  font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 0.03em;
   transition: color 0.15s, background 0.15s;
 }
 
 .footer-btn svg {
-  width: 18px;
-  height: 18px;
+  width: 19px;
+  height: 19px;
 }
 
 .footer-btn:active {
