@@ -246,15 +246,30 @@ export default function App() {
     }
   }, [])
 
-  const handleTouchEnd = useCallback(() => {
+  const handleTouchEnd = useCallback(async () => {
     gestureStartY.current = null
     if (pullY >= PULL_THRESHOLD) {
       setRefreshing(true)
       setPullY(0)
+
+      let swUpdated = false
+      if ('serviceWorker' in navigator) {
+        try {
+          const reg = await navigator.serviceWorker.getRegistration()
+          if (reg) {
+            await reg.update()
+            swUpdated = !!(reg.installing || reg.waiting)
+          }
+        } catch {}
+      }
+
       const fresh = loadData()
       setHabits(fresh.habits)
       setRecords(fresh.records)
-      setTimeout(() => setRefreshing(false), 700)
+      setTimeout(() => {
+        setRefreshing(false)
+        if (swUpdated) window.location.reload()
+      }, 700)
     } else {
       setPullY(0)
     }
