@@ -1,12 +1,5 @@
-/* 通常フローから外してヘッダーを押し下げないようにする */
+/* ヘッダー直下に配置し、通常フローで展開する */
 .pull-indicator {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  max-width: 480px;
-  margin: 0 auto;
-  z-index: 30;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -17,8 +10,7 @@
 }
 
 .pull-indicator.refreshing {
-  height: calc(44px + env(safe-area-inset-top));
-  padding-top: env(safe-area-inset-top);
+  height: 44px;
   opacity: 1;
   transition: height 0.2s ease, opacity 0.2s ease;
 }
@@ -326,7 +318,7 @@
 }
 
 /* Footer */
-/* 外層: 背景を画面最下端まで塗る。高さ = ボタン領域 + safe-area-inset-bottom */
+/* 外層: padding-bottomでsafe-area分を確保し背景を画面最下端まで塗る */
 .app-footer {
   position: fixed;
   bottom: 0;
@@ -339,17 +331,11 @@
   -webkit-backdrop-filter: blur(16px);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
-  height: calc(var(--footer-peek-height) + env(safe-area-inset-bottom));
-  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
   z-index: 20;
-  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.app.scrolled .app-footer {
-  height: calc(var(--footer-open-height) + env(safe-area-inset-bottom));
-}
-
-/* 内層: ボタンの配置領域。safe-area分を除いたコンテンツ高さのみ */
+/* 内層: ボタンの配置領域。コンテンツ高さのみでoverflow:hiddenによりpeek時は非表示 */
 .app-footer-inner {
   display: flex;
   align-items: center;
