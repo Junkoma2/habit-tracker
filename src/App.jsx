@@ -76,7 +76,6 @@ export default function App() {
   const [pullReturning, setPullReturning] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [menuOpen, setMenuOpen] = useState(false)
   const [viewportDebugInfo, setViewportDebugInfo] = useState('')
   const [undoAction, setUndoAction] = useState(null)
   const undoTimerRef = useRef(null)
@@ -135,7 +134,6 @@ export default function App() {
         clearTimeout(scrollStopTimer.current)
       } else {
         setScrolled(false)
-        setMenuOpen(false)
         scrollStopTimer.current = setTimeout(() => {
           justScrolledToTop.current = false
         }, 300)
@@ -145,13 +143,6 @@ export default function App() {
     onScroll()
     return () => scrollEl.removeEventListener('scroll', onScroll)
   }, [])
-
-  useEffect(() => {
-    if (!menuOpen) return
-    const handler = () => setMenuOpen(false)
-    document.addEventListener('click', handler)
-    return () => document.removeEventListener('click', handler)
-  }, [menuOpen])
 
   const closeModal = useCallback(() => setModal(null), [])
 
@@ -405,29 +396,6 @@ export default function App() {
           </button>
         </div>
         <input ref={fileInputRef} type="file" accept=".json" style={{ display: 'none' }} onChange={handleFileChange} />
-
-        <div className="hamburger-wrapper">
-          <button className="hamburger-btn" onClick={(e) => { e.stopPropagation(); setMenuOpen(v => !v) }} aria-label="メニュー">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-              <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-          {menuOpen && (
-            <>
-              <div className="header-menu">
-                {[
-                  { type: 'help', label: 'ヘルプ', icon: <><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></> },
-                  { type: 'settings', label: '設定', icon: <><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></> },
-                ].map(({ type, label, icon }) => (
-                  <button key={type} className="header-menu-item" onClick={() => { setModal({ type }); setMenuOpen(false) }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">{icon}</svg>
-                    <span>{label}</span>
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
       </header>
 
       <div
