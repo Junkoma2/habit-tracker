@@ -60,7 +60,7 @@
 
 @supports (-webkit-touch-callout: none) {
   .app {
-    --footer-safe-padding: 12px;
+    --footer-safe-padding: 20px;
     --footer-browser-shift: 8px;
   }
 }
