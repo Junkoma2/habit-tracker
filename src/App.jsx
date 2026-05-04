@@ -89,6 +89,7 @@ export default function App() {
   const [pullY, setPullY] = useState(0)
   const [pullReturning, setPullReturning] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const [refreshComplete, setRefreshComplete] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [viewportDebugInfo, setViewportDebugInfo] = useState('')
   const [undoAction, setUndoAction] = useState(null)
@@ -369,14 +370,21 @@ export default function App() {
       setHabits(fresh.habits)
       setRecords(fresh.records)
       setTimeout(() => {
-        // .returning を先に付与してから refreshing を落とすことで
-        // CSS height: 44px → inline 0px のトランジションを確実に起動する
-        setPullReturning(true)
-        requestAnimationFrame(() => {
-          setRefreshing(false)
-          if (swUpdated) window.location.reload()
-          setTimeout(() => setPullReturning(false), 400)
-        })
+        // 完了アイコンを表示してユーザーに更新完了を伝える
+        setRefreshComplete(true)
+        setTimeout(() => {
+          // .returning を先に付与してから refreshing を落とすことで
+          // CSS height: 60px → inline 0px のトランジションを確実に起動する
+          setPullReturning(true)
+          requestAnimationFrame(() => {
+            setRefreshing(false)
+            if (swUpdated) window.location.reload()
+            setTimeout(() => {
+              setPullReturning(false)
+              setRefreshComplete(false)
+            }, 700)
+          })
+        }, 380)
       }, 700)
     } else {
       setPullReturning(true)
@@ -419,13 +427,23 @@ export default function App() {
         className={`pull-indicator${refreshing ? ' refreshing' : ''}${pullY >= PULL_THRESHOLD ? ' ready' : ''}${pullReturning ? ' returning' : ''}`}
         style={!refreshing ? { height: pullY, opacity: pullY / PULL_THRESHOLD } : undefined}
       >
-        {refreshing ? (
-          <>
-            <svg className="pull-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-              <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-            </svg>
-            <span className="pull-label">更新中...</span>
-          </>
+        {(refreshing || pullReturning) ? (
+          refreshComplete ? (
+            // 更新完了アイコン（ヘッダへ吸い込まれる間も表示）
+            <>
+              <svg className="pull-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+              <span className="pull-label">更新しました</span>
+            </>
+          ) : (
+            <>
+              <svg className="pull-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+              </svg>
+              <span className="pull-label">更新中...</span>
+            </>
+          )
         ) : (
           <>
             <svg
