@@ -71,6 +71,7 @@ export default function App() {
     try { return localStorage.getItem(LAST_BACKUP_KEY) || null } catch { return null }
   })
   const [pullY, setPullY] = useState(0)
+  const [pullReturning, setPullReturning] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -314,11 +315,22 @@ export default function App() {
       setHabits(fresh.habits)
       setRecords(fresh.records)
       setTimeout(() => {
+        // refreshing終了時: inline styleに切り替えてから0へ遷移させる
+        setPullReturning(true)
+        setPullY(PULL_THRESHOLD)
         setRefreshing(false)
         if (swUpdated) window.location.reload()
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            setPullY(0)
+            setTimeout(() => setPullReturning(false), 350)
+          })
+        })
       }, 700)
     } else {
+      setPullReturning(true)
       setPullY(0)
+      setTimeout(() => setPullReturning(false), 350)
     }
     pullStartY.current = null
   }, [pullY])
@@ -373,7 +385,7 @@ export default function App() {
       </header>
 
       <div
-        className={`pull-indicator${refreshing ? ' refreshing' : ''}${pullY >= PULL_THRESHOLD ? ' ready' : ''}`}
+        className={`pull-indicator${refreshing ? ' refreshing' : ''}${pullY >= PULL_THRESHOLD ? ' ready' : ''}${pullReturning ? ' returning' : ''}`}
         style={!refreshing ? { height: pullY, opacity: pullY / PULL_THRESHOLD } : undefined}
       >
         {refreshing ? (

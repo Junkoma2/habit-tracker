@@ -69,7 +69,7 @@ export default function HabitButton({ habit, completed, streak, onPress, onLongP
         style={{ backgroundColor: completed ? '#fff' : habit.color }}
       />
       <span className="habit-name">{habit.name}</span>
-      {streak > 1 && <span className="habit-streak">{streak}日</span>}
+      {streak > 1 && <span className="habit-streak">{streak}日継続</span>}
       {completed && <span className="habit-check">✓</span>}
     </button>
   )
