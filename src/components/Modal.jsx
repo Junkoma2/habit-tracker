@@ -6,16 +6,14 @@ const CLOSE_THRESHOLD = 80
 export default function Modal({ onClose, children, title }) {
   const sheetRef = useRef(null)
   const startYRef = useRef(0)
-
-  useEffect(() => {
-    sheetRef.current?.focus()
-  }, [])
   const dragYRef = useRef(0)
-
-  useEffect(() => {
-    sheetRef.current?.focus()
-  }, [])
   const draggingRef = useRef(false)
+
+  // アニメーション完了後にフォーカスを移動（重複effectを解消）
+  useEffect(() => {
+    const timer = setTimeout(() => sheetRef.current?.focus(), 220)
+    return () => clearTimeout(timer)
+  }, [])
 
   const handleTouchStart = (e) => {
     if (sheetRef.current.scrollTop > 0) return
