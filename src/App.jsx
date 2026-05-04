@@ -62,6 +62,9 @@ function loadTheme() {
 
 export default function App() {
   const viewportDebug = new URLSearchParams(window.location.search).has('debugViewport')
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true
   const [habits, setHabits] = useState(_initial.habits)
   const [records, setRecords] = useState(_initial.records)
   const [themeId, setThemeId] = useState(() => { const t = loadTheme(); applyTheme(t); return t.id })
@@ -375,7 +378,7 @@ export default function App() {
 
   return (
     <div
-      className={`app${scrolled ? ' scrolled' : ''}`}
+      className={`app ${isStandalone ? 'standalone' : 'browser'}${scrolled ? ' scrolled' : ''}`}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}

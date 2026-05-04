@@ -46,8 +46,9 @@
 }
 
 .app {
-  --footer-height: 34px;
+  --footer-height: 52px;
   --footer-safe-padding: 0px;
+  --footer-browser-shift: 14px;
   height: var(--app-screen-height);
   display: flex;
   flex-direction: column;
@@ -117,7 +118,7 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding: 16px 16px;
-  padding-bottom: 16px;
+  padding-bottom: calc(var(--footer-height) + 16px);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -255,14 +256,26 @@
 
 /* Footer */
 .app-footer {
-  flex: 0 0 auto;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
   margin: 0 auto;
   width: 100%;
   max-width: 480px;
-  background: transparent;
+  background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
   padding-bottom: var(--footer-safe-padding);
   z-index: 20;
+}
+
+.app.browser .app-footer {
+  transform: translateY(var(--footer-browser-shift));
+}
+
+.app.standalone .app-footer {
+  transform: none;
 }
 
 .app-footer-inner {
@@ -270,8 +283,6 @@
   align-items: center;
   justify-content: space-around;
   height: var(--footer-height);
-  background: var(--color-surface);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
 }
 
 .undo-toast {
