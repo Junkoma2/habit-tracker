@@ -40,13 +40,20 @@
 .app {
   --footer-height: 34px;
   --footer-safe-padding: clamp(8px, calc(env(safe-area-inset-bottom) - 18px), 16px);
-  min-height: 100%;
-  min-height: 100svh;
+  height: 100vh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
   max-width: 480px;
   margin: 0 auto;
   background: var(--color-bg);
+  overflow: hidden;
+}
+
+@supports (height: 100dvh) {
+  .app {
+    height: 100dvh;
+  }
 }
 
 .app-header {
@@ -182,9 +189,12 @@
 }
 
 .app-main {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 16px 16px;
-  padding-bottom: calc(var(--footer-height) + var(--footer-safe-padding) + 16px);
+  padding-bottom: 16px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -322,10 +332,7 @@
 
 /* Footer */
 .app-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  flex: 0 0 auto;
   margin: 0 auto;
   width: 100%;
   max-width: 480px;
