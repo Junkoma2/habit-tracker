@@ -184,7 +184,6 @@
 .app-main {
   flex: 1;
   padding: 16px 16px;
-  padding-bottom: calc(var(--footer-height) + var(--footer-safe-padding) + 16px);
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -322,17 +321,13 @@
 
 /* Footer */
 .app-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   margin: 0 auto;
+  width: 100%;
   max-width: 480px;
   background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
   padding-bottom: var(--footer-safe-padding);
-  z-index: 20;
 }
 
 .app-footer-inner {
