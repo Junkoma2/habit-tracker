@@ -77,6 +77,7 @@ export default function App() {
   const pullStartY = useRef(null)
   const justScrolledToTop = useRef(false)
   const scrollStopTimer = useRef(null)
+  const mainRef = useRef(null)
   const PULL_THRESHOLD = 80
 
   const today = getToday()
@@ -92,8 +93,29 @@ export default function App() {
   }, [habits, records])
 
   useEffect(() => {
+    const setViewportHeight = () => {
+      const height = window.visualViewport?.height || window.innerHeight
+      document.documentElement.style.setProperty('--app-viewport-height', `${height}px`)
+    }
+
+    setViewportHeight()
+    window.visualViewport?.addEventListener('resize', setViewportHeight)
+    window.visualViewport?.addEventListener('scroll', setViewportHeight)
+    window.addEventListener('resize', setViewportHeight)
+
+    return () => {
+      window.visualViewport?.removeEventListener('resize', setViewportHeight)
+      window.visualViewport?.removeEventListener('scroll', setViewportHeight)
+      window.removeEventListener('resize', setViewportHeight)
+    }
+  }, [])
+
+  useEffect(() => {
+    const scrollEl = mainRef.current
+    if (!scrollEl) return
+
     const onScroll = () => {
-      if (window.scrollY > 0) {
+      if (scrollEl.scrollTop > 0) {
         setScrolled(true)
         justScrolledToTop.current = true
         clearTimeout(scrollStopTimer.current)
@@ -105,8 +127,9 @@ export default function App() {
         }, 300)
       }
     }
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    scrollEl.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+    return () => scrollEl.removeEventListener('scroll', onScroll)
   }, [])
 
   useEffect(() => {
@@ -234,7 +257,7 @@ export default function App() {
 
   const handleTouchStart = useCallback((e) => {
     // スクロール戻り直後はpull-to-refreshを許可しない
-    if (window.scrollY === 0 && !justScrolledToTop.current) {
+    if ((mainRef.current?.scrollTop ?? 0) === 0 && !justScrolledToTop.current) {
       pullStartY.current = e.touches[0].clientY
     }
   }, [])
@@ -379,7 +402,7 @@ export default function App() {
         )}
       </div>
 
-      <main className="app-main">
+      <main ref={mainRef} className="app-main">
         <section className="section">
           <div className="section-header">
             <h2 className="section-title">今日の習慣</h2>
