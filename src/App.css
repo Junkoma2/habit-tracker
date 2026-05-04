@@ -46,8 +46,8 @@
 }
 
 .app {
-  --footer-height: 52px;
-  --footer-safe-padding: 6px;
+  --footer-height: 60px;
+  --footer-safe-padding: 10px;
   --footer-browser-shift: 10px;
   height: var(--app-screen-height);
   display: flex;
@@ -366,8 +366,8 @@
 }
 
 .footer-btn svg {
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 30px;
 }
 
 .footer-btn:active {
