@@ -11,6 +11,10 @@ export default function Modal({ onClose, children, title }) {
     sheetRef.current?.focus()
   }, [])
   const dragYRef = useRef(0)
+
+  useEffect(() => {
+    sheetRef.current?.focus()
+  }, [])
   const draggingRef = useRef(false)
 
   const handleTouchStart = (e) => {
