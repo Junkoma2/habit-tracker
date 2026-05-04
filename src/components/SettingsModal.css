@@ -21,13 +21,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 14px 8px;
+  gap: 8px;
+  padding: 14px 8px 12px;
   border-radius: var(--radius-sm);
   border: 2px solid var(--color-border);
   background: var(--color-surface);
-  transition: border-color 0.15s;
+  transition: border-color 0.15s, background 0.15s;
   position: relative;
+  cursor: pointer;
 }
 
 .theme-swatch.selected {
@@ -36,15 +37,32 @@
   background: var(--color-primary-light);
 }
 
-.swatch-circle {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  display: block;
+.swatch-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+.swatch-preview-btn {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.02em;
+}
+
+.swatch-preview-today {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.65rem;
+  font-weight: 700;
 }
 
 .swatch-label {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary);
   font-weight: 500;
   transition: color 0.15s, font-weight 0.15s;
@@ -55,17 +73,6 @@
   font-weight: 700;
 }
 
-.swatch-chips {
-  display: flex;
-  gap: 4px;
-}
-
-.swatch-chip {
-  width: 14px;
-  height: 7px;
-  border-radius: 3px;
-}
-
 .swatch-check {
   position: absolute;
   top: 6px;
@@ -73,7 +80,6 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;

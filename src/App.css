@@ -343,6 +343,47 @@
   height: var(--footer-height);
 }
 
+.undo-toast {
+  position: fixed;
+  bottom: calc(var(--footer-height) + var(--footer-safe-padding) + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #1e293b;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  white-space: nowrap;
+  z-index: 30;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  animation: toast-in 0.2s ease;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.undo-btn {
+  background: none;
+  border: none;
+  color: var(--color-today);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.edit-mode-hint {
+  font-size: 0.75rem;
+  color: var(--color-text-sub);
+  text-align: center;
+  margin: 4px 0 8px;
+}
+
 .footer-btn {
   display: flex;
   flex-direction: column;
