@@ -23,6 +23,7 @@ import ConfirmModal from './components/ConfirmModal'
 import StatsModal from './components/StatsModal'
 import SettingsModal, { THEMES, applyTheme } from './components/SettingsModal'
 import Toast from './components/Toast'
+import ArchivedHabitItem from './components/ArchivedHabitItem'
 import { getToday, getYesterday } from './utils/date'
 import { calcCurrentStreak } from './utils/stats'
 import { validateImportData } from './utils/validation'
@@ -157,6 +158,16 @@ export default function App() {
     setModal(null)
   }, [])
 
+  const archiveHabit = useCallback((habitId) => {
+    setHabits(prev => prev.map(h => h.id === habitId ? { ...h, archivedAt: today } : h))
+    setModal(null)
+  }, [today])
+
+  const restoreHabit = useCallback((habitId) => {
+    setHabits(prev => prev.map(h => h.id === habitId ? { ...h, archivedAt: null } : h))
+    setModal(null)
+  }, [])
+
   const handleDragEnd = useCallback(({ active, over }) => {
     if (over && active.id !== over.id) {
       setHabits(prev => {
@@ -169,6 +180,8 @@ export default function App() {
 
   const isEditableDate = (dateStr) => dateStr === today || dateStr === yesterday
 
+  const activeHabits = habits.filter(h => !h.archivedAt)
+  const archivedHabits = habits.filter(h => h.archivedAt)
   const todayRecords = records[today] || []
 
   // --- Export / Import ---
@@ -411,15 +424,16 @@ export default function App() {
                 onDragEnd={handleDragEnd}
               >
                 <SortableContext
-                  items={habits.map(h => h.id)}
+                  items={activeHabits.map(h => h.id)}
                   strategy={verticalListSortingStrategy}
                 >
                   <div className="habits-edit-list">
-                    {habits.map(habit => (
+                    {activeHabits.map(habit => (
                       <HabitEditItem
                         key={habit.id}
                         habit={habit}
                         onEdit={(h) => setModal({ type: 'edit', habit: h })}
+                        onArchive={(h) => setModal({ type: 'archiveConfirm', habitId: h.id, habitName: h.name })}
                         onDelete={(h) => setModal({ type: 'deleteConfirm', habitId: h.id, habitName: h.name })}
                       />
                     ))}
@@ -432,10 +446,23 @@ export default function App() {
               >
                 ＋ 習慣を追加
               </button>
+              {archivedHabits.length > 0 && (
+                <div className="archived-section">
+                  <p className="archived-section-title">終了した習慣</p>
+                  {archivedHabits.map(habit => (
+                    <ArchivedHabitItem
+                      key={habit.id}
+                      habit={habit}
+                      onRestore={(h) => restoreHabit(h.id)}
+                      onDelete={(h) => setModal({ type: 'deleteConfirm', habitId: h.id, habitName: h.name })}
+                    />
+                  ))}
+                </div>
+              )}
             </>
           ) : (
             <div className="habits-grid">
-              {habits.map(habit => (
+              {activeHabits.map(habit => (
                 <HabitButton
                   key={habit.id}
                   habit={habit}
@@ -558,11 +585,22 @@ export default function App() {
         />
       )}
 
+      {modal?.type === 'archiveConfirm' && (
+        <ConfirmModal
+          title="習慣を終了"
+          message={`「${modal.habitName}」を終了しますか？\n\n過去の記録は保持されます。\nいつでも再開できます。`}
+          confirmLabel="終了する"
+          danger={false}
+          onConfirm={() => archiveHabit(modal.habitId)}
+          onClose={closeModal}
+        />
+      )}
+
       {modal?.type === 'deleteConfirm' && (
         <ConfirmModal
-          title="習慣の削除"
-          message={`「${modal.habitName}」を削除しますか？\n過去の記録もすべて削除されます。`}
-          confirmLabel="削除"
+          title="習慣を完全に削除"
+          message={`「${modal.habitName}」を完全に削除しますか？\n\n⚠ 過去の記録もすべて削除されます。\nこの操作は取り消せません。`}
+          confirmLabel="完全に削除"
           onConfirm={() => deleteHabit(modal.habitId)}
           onClose={closeModal}
         />

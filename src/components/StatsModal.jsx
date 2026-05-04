@@ -19,6 +19,7 @@ export default function StatsModal({ habits, records, onClose }) {
                 <div className="stats-habit-name">
                   <span className="stats-dot" style={{ backgroundColor: habit.color }} />
                   <span>{habit.name}</span>
+                  {habit.archivedAt && <span className="stats-archived-badge">終了</span>}
                 </div>
                 <div className="stats-row">
                   <div className="stats-item">
