@@ -82,7 +82,11 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
           const dateStr = toDateStr(y, m, d)
           const isToday = dateStr === today
           const dayRecords = records[dateStr] || []
-          const activeHabits = habits.filter(h => !h.createdAt || dateStr >= h.createdAt)
+          const activeHabits = habits.filter(h => {
+            if (h.createdAt && dateStr < h.createdAt) return false
+            if (h.archivedAt && dateStr > h.archivedAt) return false
+            return true
+          })
           const completedHabits = activeHabits.filter(h => dayRecords.includes(h.id))
           const total = activeHabits.length
           const count = completedHabits.length
