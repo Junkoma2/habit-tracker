@@ -22,6 +22,7 @@ import HelpModal from './components/HelpModal'
 import ConfirmModal from './components/ConfirmModal'
 import StatsModal from './components/StatsModal'
 import SettingsModal, { THEMES, applyTheme } from './components/SettingsModal'
+import Toast from './components/Toast'
 import { getToday, getYesterday } from './utils/date'
 import { calcCurrentStreak } from './utils/stats'
 import { validateImportData } from './utils/validation'
@@ -29,6 +30,7 @@ import './App.css'
 
 const STORAGE_KEY = 'habit-tracker-v1'
 const THEME_STORAGE_KEY = 'habit-tracker-theme'
+const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
 
 function loadData() {
   try {
@@ -64,6 +66,10 @@ export default function App() {
   const [calendarDate, setCalendarDate] = useState(() => new Date())
   const [editMode, setEditMode] = useState(false)
   const [modal, setModal] = useState(null)
+  const [toast, setToast] = useState(null)
+  const [lastBackupDate, setLastBackupDate] = useState(() => {
+    try { return localStorage.getItem(LAST_BACKUP_KEY) || null } catch { return null }
+  })
   const [pullY, setPullY] = useState(0)
   const [refreshing, setRefreshing] = useState(false)
   const [scrolled, setScrolled] = useState(false)
@@ -177,6 +183,9 @@ export default function App() {
     a.download = `habit-tracker-${today}.json`
     a.click()
     URL.revokeObjectURL(url)
+    try { localStorage.setItem(LAST_BACKUP_KEY, today) } catch {}
+    setLastBackupDate(today)
+    setToast(`habit-tracker-${today}.json を保存しました`)
   }, [habits, records, today])
 
   const handleImportClick = () => fileInputRef.current?.click()
@@ -215,9 +224,12 @@ export default function App() {
   }, [])
 
   const handleImportConfirm = useCallback(() => {
+    const habitCount = modal.data.habits.length
+    const dayCount = Object.keys(modal.data.records).length
     setHabits(modal.data.habits)
     setRecords(modal.data.records)
     setModal(null)
+    setToast(`データを復元しました（習慣 ${habitCount}件・記録 ${dayCount}日分）`)
   }, [modal])
 
   const handleTouchStart = useCallback((e) => {
@@ -499,7 +511,7 @@ export default function App() {
       {modal?.type === 'importConfirm' && (
         <ConfirmModal
           title="バックアップから復元"
-          message={`バックアップファイルを選択して復元します。\n現在のデータは上書きされます。`}
+          message={`バックアップファイルを選択してください。\n\n⚠ 現在のデータはすべて上書きされます。\nこの操作は取り消せません。`}
           confirmLabel="ファイルを選択"
           danger={true}
           onConfirm={() => { closeModal(); handleImportClick() }}
@@ -515,9 +527,9 @@ export default function App() {
         return (
           <ConfirmModal
             title="インポートの確認"
-            message={`「${modal.filename}」をインポートします。\n\n習慣: ${modal.data.habits.length}件\n記録日数: ${recordDates.length}日\n期間: ${rangeText}\n\n現在のデータはすべて上書きされます。`}
+            message={`「${modal.filename}」をインポートします。\n\n習慣: ${modal.data.habits.length}件\n記録日数: ${recordDates.length}日\n期間: ${rangeText}\n\n⚠ 現在のデータはすべて上書きされます。\nこの操作は取り消せません。`}
             confirmLabel="インポート"
-            danger={false}
+            danger={true}
             onConfirm={handleImportConfirm}
             onClose={closeModal}
           />
@@ -542,6 +554,7 @@ export default function App() {
           onExport={() => { closeModal(); setTimeout(() => setModal({ type: 'exportConfirm' }), 50) }}
           onImport={() => { closeModal(); setTimeout(() => setModal({ type: 'importConfirm' }), 50) }}
           onClose={closeModal}
+          lastBackupDate={lastBackupDate}
         />
       )}
 
@@ -565,6 +578,8 @@ export default function App() {
           onClose={closeModal}
         />
       )}
+
+      {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
 
       <footer className="app-footer">
         <div className="app-footer-inner">
