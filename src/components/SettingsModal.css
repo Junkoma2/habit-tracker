@@ -105,3 +105,15 @@
   background: var(--color-primary-light);
   color: var(--color-primary);
 }
+
+.data-mgmt-btn-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.last-backup-date {
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}

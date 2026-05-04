@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import './Modal.css'
 
 const CLOSE_THRESHOLD = 80
@@ -8,12 +8,6 @@ export default function Modal({ onClose, children, title }) {
   const startYRef = useRef(0)
   const dragYRef = useRef(0)
   const draggingRef = useRef(false)
-
-  useEffect(() => {
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => { document.body.style.overflow = prev }
-  }, [])
 
   const handleTouchStart = (e) => {
     if (sheetRef.current.scrollTop > 0) return
