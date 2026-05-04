@@ -12,7 +12,9 @@ input, textarea, [contenteditable] {
 }
 
 :root {
+  --app-safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --app-viewport-height: 100svh;
+  --app-screen-height: calc(var(--app-viewport-height) + var(--app-safe-area-bottom));
   --color-bg: #F0F2F5;
   --color-surface: #FFFFFF;
   --color-primary: #6366F1;
@@ -41,7 +43,7 @@ html, body {
   width: 100%;
   overflow-x: hidden;
   overscroll-behavior: none;
-  background: var(--color-surface);
+  background: var(--color-bg);
 }
 
 body {
@@ -67,5 +69,5 @@ input {
 
 #root {
   min-height: 100%;
-  background: var(--color-surface);
+  background: var(--color-bg);
 }

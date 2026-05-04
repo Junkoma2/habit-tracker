@@ -103,8 +103,10 @@ export default function App() {
       document.documentElement.style.setProperty('--app-viewport-height', `${height}px`)
       if (viewportDebug) {
         const appHeight = document.querySelector('.app')?.getBoundingClientRect().height
+        const styles = getComputedStyle(document.documentElement)
+        const screenHeight = styles.getPropertyValue('--app-screen-height').trim()
         setViewportDebugInfo(
-          `vv:${Math.round(height)} ih:${window.innerHeight} app:${Math.round(appHeight || 0)}`
+          `vv:${Math.round(height)} ih:${window.innerHeight} app:${Math.round(appHeight || 0)} shell:${screenHeight}`
         )
       }
     }
@@ -671,6 +673,7 @@ export default function App() {
 
       {viewportDebug && (
         <>
+          <div className="viewport-debug-shell-bar" />
           <div className="viewport-debug-fixed-bar" />
           <div className="viewport-debug-panel">{viewportDebugInfo}</div>
         </>
