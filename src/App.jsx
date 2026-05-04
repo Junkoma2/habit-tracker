@@ -425,7 +425,7 @@ export default function App() {
 
       <div
         className={`pull-indicator${refreshing ? ' refreshing' : ''}${pullY >= PULL_THRESHOLD ? ' ready' : ''}${pullReturning ? ' returning' : ''}`}
-        style={!refreshing ? { height: pullY, opacity: pullY / PULL_THRESHOLD } : undefined}
+        style={!refreshing ? { height: pullY, ...(pullY > 0 && { opacity: pullY / PULL_THRESHOLD }) } : undefined}
       >
         {(refreshing || pullReturning) ? (
           refreshComplete ? (
