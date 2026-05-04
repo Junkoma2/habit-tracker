@@ -47,8 +47,8 @@
 
 .app {
   --footer-height: 52px;
-  --footer-safe-padding: 0px;
-  --footer-browser-shift: 14px;
+  --footer-safe-padding: 6px;
+  --footer-browser-shift: 10px;
   height: var(--app-screen-height);
   display: flex;
   flex-direction: column;
