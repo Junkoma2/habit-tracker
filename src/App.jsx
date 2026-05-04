@@ -61,6 +61,7 @@ function loadTheme() {
 }
 
 export default function App() {
+  const viewportDebug = new URLSearchParams(window.location.search).has('debugViewport')
   const [habits, setHabits] = useState(_initial.habits)
   const [records, setRecords] = useState(_initial.records)
   const [themeId, setThemeId] = useState(() => { const t = loadTheme(); applyTheme(t); return t.id })
@@ -75,6 +76,7 @@ export default function App() {
   const [refreshing, setRefreshing] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [viewportDebugInfo, setViewportDebugInfo] = useState('')
   const [undoAction, setUndoAction] = useState(null)
   const undoTimerRef = useRef(null)
   const pullStartY = useRef(null)
@@ -99,19 +101,27 @@ export default function App() {
     const setViewportHeight = () => {
       const height = window.visualViewport?.height || window.innerHeight
       document.documentElement.style.setProperty('--app-viewport-height', `${height}px`)
+      if (viewportDebug) {
+        const appHeight = document.querySelector('.app')?.getBoundingClientRect().height
+        setViewportDebugInfo(
+          `vv:${Math.round(height)} ih:${window.innerHeight} app:${Math.round(appHeight || 0)}`
+        )
+      }
     }
 
+    document.documentElement.classList.toggle('viewport-debug-enabled', viewportDebug)
     setViewportHeight()
     window.visualViewport?.addEventListener('resize', setViewportHeight)
     window.visualViewport?.addEventListener('scroll', setViewportHeight)
     window.addEventListener('resize', setViewportHeight)
 
     return () => {
+      document.documentElement.classList.remove('viewport-debug-enabled')
       window.visualViewport?.removeEventListener('resize', setViewportHeight)
       window.visualViewport?.removeEventListener('scroll', setViewportHeight)
       window.removeEventListener('resize', setViewportHeight)
     }
-  }, [])
+  }, [viewportDebug])
 
   useEffect(() => {
     const scrollEl = mainRef.current
@@ -679,6 +689,13 @@ export default function App() {
           </button>
         </div>
       </footer>
+
+      {viewportDebug && (
+        <>
+          <div className="viewport-debug-fixed-bar" />
+          <div className="viewport-debug-panel">{viewportDebugInfo}</div>
+        </>
+      )}
     </div>
   )
 }
