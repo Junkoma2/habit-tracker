@@ -52,6 +52,8 @@ export default function DayDetailModal({
                   style={{ '--color': habit.color }}
                   onClick={() => isEditable && onToggle(habit.id)}
                   disabled={!isEditable}
+                  aria-pressed={done}
+                  aria-label={`${habit.name}${done ? '（達成済み）' : '（未達成）'}`}
                 >
                   <span
                     className="day-habit-dot"

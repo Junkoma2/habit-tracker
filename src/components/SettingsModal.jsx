@@ -29,6 +29,7 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
             className={`theme-swatch${currentThemeId === theme.id ? ' selected' : ''}`}
             onClick={() => onSelectTheme(theme)}
             aria-label={`${theme.label}${currentThemeId === theme.id ? '（選択中）' : ''}`}
+            aria-pressed={currentThemeId === theme.id}
           >
             <div className="swatch-preview">
               <span className="swatch-preview-btn" style={{ background: theme.primary }}>習慣</span>

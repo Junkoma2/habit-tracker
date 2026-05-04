@@ -3,6 +3,17 @@ import Modal from './Modal'
 import { HABIT_COLORS } from '../utils/date'
 import './AddHabitModal.css'
 
+const COLOR_NAMES = {
+  '#FF6B6B': 'レッド',
+  '#FF9F43': 'オレンジ',
+  '#FECA57': 'イエロー',
+  '#48DBB4': 'グリーン',
+  '#54A0FF': 'ブルー',
+  '#A29BFE': 'ラベンダー',
+  '#FD79A8': 'ピンク',
+  '#6C5CE7': 'パープル',
+}
+
 export default function AddHabitModal({ onSave, onClose, initialHabit = null }) {
   const isEdit = !!initialHabit
   const [name, setName] = useState(initialHabit?.name ?? '')
@@ -41,7 +52,8 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null }) 
                 className={`color-swatch ${color === c ? 'selected' : ''}`}
                 style={{ backgroundColor: c }}
                 onClick={() => setColor(c)}
-                aria-label={c}
+                aria-label={`${COLOR_NAMES[c] || c}${color === c ? '（選択中）' : ''}`}
+                aria-pressed={color === c}
               />
             ))}
           </div>

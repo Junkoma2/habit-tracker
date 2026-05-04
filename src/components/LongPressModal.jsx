@@ -27,6 +27,8 @@ export default function LongPressModal({
               style={{ '--color': habit.color }}
               onClick={() => onSelect(dateStr)}
               disabled={unavailable}
+              aria-pressed={completed}
+              aria-label={`${label}${unavailable ? '（対象外）' : completed ? '（達成済み）' : '（未記録）'}`}
             >
               <div className="lp-day-info">
                 <span className="lp-day-label">{label}</span>
