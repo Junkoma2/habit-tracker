@@ -315,22 +315,21 @@ export default function App() {
       setHabits(fresh.habits)
       setRecords(fresh.records)
       setTimeout(() => {
-        // refreshing終了時: inline styleに切り替えてから0へ遷移させる
+        // .returning を先に付与してから refreshing を落とすことで
+        // CSS height: 44px → inline 0px のトランジションを確実に起動する
         setPullReturning(true)
-        setPullY(PULL_THRESHOLD)
-        setRefreshing(false)
-        if (swUpdated) window.location.reload()
         requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            setPullY(0)
-            setTimeout(() => setPullReturning(false), 350)
-          })
+          setRefreshing(false)
+          if (swUpdated) window.location.reload()
+          setTimeout(() => setPullReturning(false), 400)
         })
       }, 700)
     } else {
       setPullReturning(true)
-      setPullY(0)
-      setTimeout(() => setPullReturning(false), 350)
+      requestAnimationFrame(() => {
+        setPullY(0)
+        setTimeout(() => setPullReturning(false), 400)
+      })
     }
     pullStartY.current = null
   }, [pullY])

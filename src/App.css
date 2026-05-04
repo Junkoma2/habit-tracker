@@ -16,7 +16,11 @@
 }
 
 .pull-indicator.returning {
-  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  transition: height 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pull-indicator.returning > * {
+  opacity: 0;
 }
 
 .pull-arrow {
