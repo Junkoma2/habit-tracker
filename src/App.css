@@ -76,12 +76,6 @@
   top: 0;
   z-index: 10;
   box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
-  transition: padding 0.3s ease;
-}
-
-.app.scrolled .app-header {
-  padding-top: calc(4px + env(safe-area-inset-top));
-  padding-bottom: 4px;
 }
 
 .app-title {
