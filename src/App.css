@@ -58,6 +58,13 @@
   overflow: hidden;
 }
 
+@supports (-webkit-touch-callout: none) {
+  .app {
+    --footer-safe-padding: 12px;
+    --footer-browser-shift: 8px;
+  }
+}
+
 .app-header {
   display: flex;
   align-items: center;
@@ -118,7 +125,7 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding: 16px 16px;
-  padding-bottom: calc(var(--footer-height) + 16px);
+  padding-bottom: calc(var(--footer-height) + var(--footer-safe-padding) + 16px);
   display: flex;
   flex-direction: column;
   gap: 16px;
