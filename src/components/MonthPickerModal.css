@@ -1,0 +1,75 @@
+.month-picker {
+  padding: 8px 0 16px;
+}
+
+.month-picker-year-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+
+.month-picker-year-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  transition: opacity 0.15s;
+}
+
+.month-picker-year-btn:disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.month-picker-year-btn:active {
+  opacity: 0.6;
+}
+
+.month-picker-year-label {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text);
+  min-width: 80px;
+  text-align: center;
+}
+
+.month-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 0 4px;
+}
+
+.month-picker-cell {
+  padding: 14px 8px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text);
+  background: var(--color-primary-light);
+  transition: opacity 0.12s, background 0.12s;
+  text-align: center;
+}
+
+.month-picker-cell:active {
+  opacity: 0.7;
+}
+
+.month-picker-cell.selected {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.month-picker-cell.today {
+  border: 2px solid var(--color-primary);
+  color: var(--color-primary);
+  background: #fff;
+}

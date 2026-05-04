@@ -25,6 +25,7 @@ import SettingsModal, { THEMES, applyTheme } from './components/SettingsModal'
 import Toast from './components/Toast'
 import ArchivedHabitItem from './components/ArchivedHabitItem'
 import AddToHomePrompt from './components/AddToHomePrompt'
+import MonthPickerModal from './components/MonthPickerModal'
 import { getToday, getYesterday } from './utils/date'
 import { calcCurrentStreak } from './utils/stats'
 import { validateImportData } from './utils/validation'
@@ -549,9 +550,18 @@ export default function App() {
             records={records}
             today={today}
             onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
+            onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
           />
         </section>
       </main>
+
+      {modal?.type === 'monthPicker' && (
+        <MonthPickerModal
+          currentDate={calendarDate}
+          onSelect={(year, month) => setCalendarDate(new Date(year, month, 1))}
+          onClose={closeModal}
+        />
+      )}
 
       {modal?.type === 'add' && (
         <AddHabitModal onSave={addHabit} onClose={closeModal} />

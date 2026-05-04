@@ -38,6 +38,27 @@
   color: var(--color-text);
 }
 
+.cal-month-title-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text);
+  padding: 4px 6px;
+  border-radius: 8px;
+  transition: background 0.15s;
+}
+
+.cal-month-title-btn:active {
+  background: var(--color-primary-light);
+}
+
+.cal-month-title-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
 .today-jump-btn {
   font-size: 0.75rem;
   font-weight: 600;

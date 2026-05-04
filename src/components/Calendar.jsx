@@ -6,7 +6,7 @@ function toDateStr(y, m, d) {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
 }
 
-export default function Calendar({ date, onDateChange, habits, records, today, onDayClick }) {
+export default function Calendar({ date, onDateChange, habits, records, today, onDayClick, onMonthTitleClick }) {
   const year = date.getFullYear()
   const month = date.getMonth()
 
@@ -49,7 +49,16 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
       <div className="calendar-nav">
         <button className="cal-nav-btn" onClick={goToPrev} aria-label="前の月">‹</button>
         <div className="cal-month-label">
-          <span>{year}年{month + 1}月</span>
+          <button
+            className="cal-month-title-btn"
+            onClick={onMonthTitleClick}
+            aria-label={`${year}年${month + 1}月 年月を選ぶ`}
+          >
+            {year}年{month + 1}月
+            <svg className="cal-month-title-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
           {!isCurrentMonth && (
             <button className="today-jump-btn" onClick={goToToday} aria-label="今月へ戻る">
               今月へ
