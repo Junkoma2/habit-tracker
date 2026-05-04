@@ -8,10 +8,7 @@ export default function Modal({ onClose, children, title }) {
   const startYRef = useRef(0)
 
   useEffect(() => {
-    const firstFocusable = sheetRef.current?.querySelector(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    )
-    ;(firstFocusable ?? sheetRef.current)?.focus()
+    sheetRef.current?.focus()
   }, [])
   const dragYRef = useRef(0)
   const draggingRef = useRef(false)

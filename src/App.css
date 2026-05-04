@@ -215,6 +215,29 @@
   font-size: 0.95rem;
 }
 
+.welcome-card {
+  width: 100%;
+  background: var(--color-primary-light);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.welcome-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.welcome-body {
+  font-size: 0.85rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
 .add-first-btn {
   background: var(--color-primary);
   color: #fff;

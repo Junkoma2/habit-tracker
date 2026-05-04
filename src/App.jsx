@@ -33,6 +33,7 @@ import './App.css'
 const STORAGE_KEY = 'habit-tracker-v1'
 const THEME_STORAGE_KEY = 'habit-tracker-theme'
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
+const ONBOARDING_KEY = 'habit-tracker-onboarding-done'
 
 function loadData() {
   try {
@@ -66,6 +67,14 @@ export default function App() {
   const isStandalone =
     window.matchMedia('(display-mode: standalone)').matches ||
     window.navigator.standalone === true
+  const [showWelcome, setShowWelcome] = useState(() => {
+    try { return !localStorage.getItem(ONBOARDING_KEY) } catch { return false }
+  })
+  const dismissWelcome = useCallback(() => {
+    try { localStorage.setItem(ONBOARDING_KEY, '1') } catch {}
+    setShowWelcome(false)
+  }, [])
+
   const [habits, setHabits] = useState(_initial.habits)
   const [records, setRecords] = useState(_initial.records)
   const [themeId, setThemeId] = useState(() => { const t = loadTheme(); applyTheme(t); return t.id })
@@ -187,7 +196,8 @@ export default function App() {
     const id = `h_${Date.now()}`
     setHabits(prev => [...prev, { id, name, color, createdAt: today }])
     setModal(null)
-  }, [today])
+    dismissWelcome()
+  }, [today, dismissWelcome])
 
   const updateHabit = useCallback(({ name, color }) => {
     setHabits(prev =>
@@ -447,13 +457,24 @@ export default function App() {
 
           {habits.length === 0 ? (
             <div className="empty-state">
-              <p className="empty-text">習慣を追加してみよう</p>
+              {showWelcome ? (
+                <div className="welcome-card">
+                  <p className="welcome-title">ようこそ！</p>
+                  <p className="welcome-body">まず最初の習慣を1つ追加してみましょう。毎日の記録がここに並びます。</p>
+                </div>
+              ) : (
+                <p className="empty-text">習慣を追加してみよう</p>
+              )}
               <button className="add-first-btn" onClick={() => setModal({ type: 'add' })}>
                 + 最初の習慣を追加
               </button>
-              <button className="help-link-btn" onClick={() => setModal({ type: 'help' })}>
-                使い方を見る
-              </button>
+              {showWelcome ? (
+                <button className="help-link-btn" onClick={dismissWelcome}>スキップ</button>
+              ) : (
+                <button className="help-link-btn" onClick={() => setModal({ type: 'help' })}>
+                  使い方を見る
+                </button>
+              )}
             </div>
           ) : editMode ? (
             <>
