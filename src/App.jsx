@@ -24,6 +24,7 @@ import StatsModal from './components/StatsModal'
 import SettingsModal, { THEMES, applyTheme } from './components/SettingsModal'
 import Toast from './components/Toast'
 import ArchivedHabitItem from './components/ArchivedHabitItem'
+import AddToHomePrompt from './components/AddToHomePrompt'
 import { getToday, getYesterday } from './utils/date'
 import { calcCurrentStreak } from './utils/stats'
 import { validateImportData } from './utils/validation'
@@ -383,6 +384,7 @@ export default function App() {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      <AddToHomePrompt />
       <header className="app-header">
         <h1 className="app-title">習慣トラッカー</h1>
         <div className="header-actions">

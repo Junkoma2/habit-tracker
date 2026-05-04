@@ -1,0 +1,39 @@
+.add-to-home-prompt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px 8px 14px;
+  background: var(--color-primary-light);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-primary) 20%, transparent);
+  font-size: 0.78rem;
+  color: var(--color-primary);
+  flex-wrap: wrap;
+}
+
+.add-to-home-text {
+  flex: 1;
+  min-width: 0;
+  font-weight: 500;
+}
+
+.add-to-home-hint {
+  font-size: 0.72rem;
+  opacity: 0.75;
+  white-space: nowrap;
+}
+
+.add-to-home-dismiss {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: var(--color-primary);
+  opacity: 0.6;
+  line-height: 0;
+  margin-left: auto;
+}
+
+.add-to-home-dismiss:active {
+  opacity: 1;
+}
