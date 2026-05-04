@@ -12,6 +12,7 @@ input, textarea, [contenteditable] {
 }
 
 :root {
+  --app-viewport-height: 100svh;
   --color-bg: #F0F2F5;
   --color-surface: #FFFFFF;
   --color-primary: #6366F1;
@@ -27,6 +28,12 @@ input, textarea, [contenteditable] {
   --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
   font-size: 16px;
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --app-viewport-height: 100dvh;
+  }
 }
 
 html, body {
