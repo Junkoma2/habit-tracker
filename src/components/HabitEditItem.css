@@ -81,6 +81,19 @@
   opacity: 0.6;
 }
 
+.habit-edit-action.archive {
+  color: var(--color-text-secondary);
+}
+
+.habit-edit-action.archive:hover {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+.habit-edit-action.archive:active {
+  opacity: 0.6;
+}
+
 .habit-edit-action.delete {
   color: var(--color-danger);
 }
