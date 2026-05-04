@@ -24,6 +24,12 @@ export function validateImportData(data) {
     if (h.createdAt !== undefined && (typeof h.createdAt !== 'string' || !DATE_RE.test(h.createdAt) || !isValidDate(h.createdAt))) {
       return `habits[${i}] の createdAt「${h.createdAt}」が有効な日付ではありません。`
     }
+    if (h.archivedAt != null && (typeof h.archivedAt !== 'string' || !DATE_RE.test(h.archivedAt) || !isValidDate(h.archivedAt))) {
+      return `habits[${i}] の archivedAt「${h.archivedAt}」が有効な日付ではありません。`
+    }
+    if (h.createdAt && h.archivedAt && h.archivedAt < h.createdAt) {
+      return `habits[${i}] の archivedAt が createdAt より前の日付です。`
+    }
   }
   if (!data.records || typeof data.records !== 'object' || Array.isArray(data.records)) {
     return '「records」がオブジェクトではありません。'

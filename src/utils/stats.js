@@ -50,8 +50,10 @@ export function calcStats(habitId, records) {
   return { current, longest, total }
 }
 
-export function calcPeriodStats(habitId, records, today, createdAt) {
+export function calcPeriodStats(habitId, records, today, createdAt, archivedAt) {
   const todayDate = parseLocalDate(today)
+  // 終了済み習慣は archivedAt を集計の上限にする
+  const endDate = archivedAt ? new Date(Math.min(todayDate, parseLocalDate(archivedAt))) : todayDate
 
   function countRange(start, end) {
     let achieved = 0, total = 0
@@ -68,15 +70,15 @@ export function calcPeriodStats(habitId, records, today, createdAt) {
   const habitStart = createdAt ? parseLocalDate(createdAt) : null
 
   // 今月
-  const monthStart = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1)
+  const monthStart = new Date(endDate.getFullYear(), endDate.getMonth(), 1)
   const effectiveMonthStart = habitStart && habitStart > monthStart ? habitStart : monthStart
-  const { achieved: monthCount } = countRange(effectiveMonthStart, todayDate)
+  const { achieved: monthCount } = countRange(effectiveMonthStart, endDate)
 
   // 直近30日
-  const thirtyAgo = new Date(todayDate)
+  const thirtyAgo = new Date(endDate)
   thirtyAgo.setDate(thirtyAgo.getDate() - 29)
   const effective30Start = habitStart && habitStart > thirtyAgo ? habitStart : thirtyAgo
-  const { achieved: r30, total: t30 } = countRange(effective30Start, todayDate)
+  const { achieved: r30, total: t30 } = countRange(effective30Start, endDate)
   const rate30 = t30 > 0 ? Math.round((r30 / t30) * 100) : null
 
   return { monthCount, rate30 }

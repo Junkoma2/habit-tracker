@@ -13,7 +13,7 @@ export default function StatsModal({ habits, records, onClose }) {
         <div className="stats-list">
           {habits.map(habit => {
             const { current, longest, total } = calcStats(habit.id, records)
-            const { monthCount, rate30 } = calcPeriodStats(habit.id, records, today, habit.createdAt)
+            const { monthCount, rate30 } = calcPeriodStats(habit.id, records, today, habit.createdAt, habit.archivedAt)
             return (
               <div key={habit.id} className="stats-card">
                 <div className="stats-habit-name">
