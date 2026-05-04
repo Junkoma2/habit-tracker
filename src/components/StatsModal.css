@@ -38,6 +38,10 @@
   gap: 8px;
 }
 
+.stats-row-period {
+  margin-top: 8px;
+}
+
 .stats-item {
   flex: 1;
   display: flex;

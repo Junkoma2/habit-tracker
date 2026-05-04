@@ -49,3 +49,35 @@ export function calcStats(habitId, records) {
   const current = calcCurrentStreak(habitId, records)
   return { current, longest, total }
 }
+
+export function calcPeriodStats(habitId, records, today, createdAt) {
+  const todayDate = parseLocalDate(today)
+
+  function countRange(start, end) {
+    let achieved = 0, total = 0
+    const d = new Date(start)
+    while (d <= end) {
+      const dateStr = formatDate(d)
+      total++
+      if ((records[dateStr] || []).includes(habitId)) achieved++
+      d.setDate(d.getDate() + 1)
+    }
+    return { achieved, total }
+  }
+
+  const habitStart = createdAt ? parseLocalDate(createdAt) : null
+
+  // 今月
+  const monthStart = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1)
+  const effectiveMonthStart = habitStart && habitStart > monthStart ? habitStart : monthStart
+  const { achieved: monthCount } = countRange(effectiveMonthStart, todayDate)
+
+  // 直近30日
+  const thirtyAgo = new Date(todayDate)
+  thirtyAgo.setDate(thirtyAgo.getDate() - 29)
+  const effective30Start = habitStart && habitStart > thirtyAgo ? habitStart : thirtyAgo
+  const { achieved: r30, total: t30 } = countRange(effective30Start, todayDate)
+  const rate30 = t30 > 0 ? Math.round((r30 / t30) * 100) : null
+
+  return { monthCount, rate30 }
+}

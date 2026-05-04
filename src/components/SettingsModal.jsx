@@ -30,12 +30,11 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
             onClick={() => onSelectTheme(theme)}
             aria-label={`${theme.label}${currentThemeId === theme.id ? '（選択中）' : ''}`}
           >
-            <span className="swatch-circle" style={{ background: theme.primary }} />
-            <span className="swatch-label">{theme.label}</span>
-            <div className="swatch-chips">
-              <span className="swatch-chip" style={{ background: theme.primary }} />
-              <span className="swatch-chip" style={{ background: theme.today }} />
+            <div className="swatch-preview">
+              <span className="swatch-preview-btn" style={{ background: theme.primary }}>習慣</span>
+              <span className="swatch-preview-today" style={{ background: theme.today, color: theme.todayDark }}>今日</span>
             </div>
+            <span className="swatch-label">{theme.label}</span>
             {currentThemeId === theme.id && (
               <span className="swatch-check" style={{ background: theme.primary }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
