@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import './Modal.css'
 
 const CLOSE_THRESHOLD = 80
@@ -6,6 +6,13 @@ const CLOSE_THRESHOLD = 80
 export default function Modal({ onClose, children, title }) {
   const sheetRef = useRef(null)
   const startYRef = useRef(0)
+
+  useEffect(() => {
+    const firstFocusable = sheetRef.current?.querySelector(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    )
+    ;(firstFocusable ?? sheetRef.current)?.focus()
+  }, [])
   const dragYRef = useRef(0)
   const draggingRef = useRef(false)
 
@@ -55,6 +62,7 @@ export default function Modal({ onClose, children, title }) {
         role="dialog"
         aria-modal="true"
         aria-label={title}
+        tabIndex="-1"
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
