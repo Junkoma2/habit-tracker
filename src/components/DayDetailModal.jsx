@@ -19,7 +19,7 @@ export default function DayDetailModal({
 
   const activeHabits = habits.filter(h => {
     if (h.createdAt && dateStr < h.createdAt) return false
-    if (h.archivedAt && dateStr > h.archivedAt) return false
+    if (h.archivedAt && dateStr >= h.archivedAt) return false
     return true
   })
   const completedCount = activeHabits.filter(h => completedIds.includes(h.id)).length
