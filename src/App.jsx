@@ -316,7 +316,8 @@ export default function App() {
 
   // --- Export / Import ---
   const handleExport = useCallback(() => {
-    const json = JSON.stringify({ habits, records }, null, 2)
+    const sanitized = sanitizeImportData({ habits, records })
+    const json = JSON.stringify(sanitized.data, null, 2)
     const blob = new Blob([json], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -326,7 +327,10 @@ export default function App() {
     URL.revokeObjectURL(url)
     try { localStorage.setItem(LAST_BACKUP_KEY, today) } catch {}
     setLastBackupDate(today)
-    setToast(`habit-tracker-${today}.json を保存しました`)
+    const skippedText = sanitized.skippedUnknownRecords > 0
+      ? `（不明な記録 ${sanitized.skippedUnknownRecords}件を除外）`
+      : ''
+    setToast(`habit-tracker-${today}.json を保存しました${skippedText}`)
   }, [habits, records, today])
 
   const handleImportClick = () => fileInputRef.current?.click()
