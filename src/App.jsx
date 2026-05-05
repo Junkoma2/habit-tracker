@@ -322,7 +322,12 @@ export default function App() {
     if (pullStartY.current === null) return
     const dy = currentY - pullStartY.current
     if (dy > 0) {
-      setPullY(Math.min(dy * 0.4, PULL_THRESHOLD + 16))
+      const visual = dy * 0.4
+      // しきい値以降はゴムのように強い抵抗をかけて最大50px追加で引ける
+      const clamped = visual <= PULL_THRESHOLD
+        ? visual
+        : Math.min(PULL_THRESHOLD + (visual - PULL_THRESHOLD) * 0.3, PULL_THRESHOLD + 50)
+      setPullY(clamped)
     } else {
       pullStartY.current = null
       setPullY(0)
