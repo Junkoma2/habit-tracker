@@ -32,7 +32,7 @@ import { useTheme } from './hooks/useTheme'
 import { usePullToRefresh, PULL_THRESHOLD } from './hooks/usePullToRefresh'
 import { getToday, getYesterday } from './utils/date'
 import { calcCurrentStreak } from './utils/stats'
-import { validateImportData } from './utils/validation'
+import { sanitizeImportData, validateImportData } from './utils/validation'
 import './App.css'
 
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
@@ -100,6 +100,11 @@ export default function App() {
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
   )
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('pwa-standalone', isStandalone)
+    return () => document.documentElement.classList.remove('pwa-standalone')
+  }, [isStandalone])
 
   useEffect(() => {
     const preventChromeScroll = (e) => {
@@ -343,7 +348,13 @@ export default function App() {
         if (error) {
           setModal({ type: 'importError', message: error })
         } else {
-          setModal({ type: 'importFile', data, filename: file.name })
+          const sanitized = sanitizeImportData(data)
+          setModal({
+            type: 'importFile',
+            data: sanitized.data,
+            filename: file.name,
+            skippedUnknownRecords: sanitized.skippedUnknownRecords,
+          })
         }
       } catch {
         setModal({ type: 'importError', message: 'JSONの解析に失敗しました。\nファイルが壊れているか、形式が正しくありません。' })
@@ -654,13 +665,16 @@ export default function App() {
 
       {modal?.type === 'importFile' && (() => {
         const recordDates = Object.keys(modal.data.records).sort()
+        const skippedText = modal.skippedUnknownRecords > 0
+          ? `\n\n※ バックアップ内に存在しない習慣IDの記録 ${modal.skippedUnknownRecords}件は除外して復元します。`
+          : ''
         const rangeText = recordDates.length > 0
           ? `${recordDates[0]} 〜 ${recordDates[recordDates.length - 1]}`
           : 'なし'
         return (
           <ConfirmModal
             title="インポートの確認"
-            message={`「${modal.filename}」をインポートします。\n\n習慣: ${modal.data.habits.length}件\n記録日数: ${recordDates.length}日\n期間: ${rangeText}\n\n⚠ 現在のデータはすべて上書きされます。\nこの操作は取り消せません。`}
+            message={`「${modal.filename}」をインポートします。\n\n習慣: ${modal.data.habits.length}件\n記録日数: ${recordDates.length}日\n期間: ${rangeText}${skippedText}\n\n⚠ 現在のデータはすべて上書きされます。\nこの操作は取り消せません。`}
             confirmLabel="インポート"
             danger={true}
             onConfirm={handleImportConfirm}
