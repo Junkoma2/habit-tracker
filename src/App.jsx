@@ -512,6 +512,7 @@ export default function App() {
       {modal?.type === 'monthPicker' && (
         <MonthPickerModal
           currentDate={calendarDate}
+          records={records}
           onSelect={(year, month) => setCalendarDate(new Date(year, month, 1))}
           onClose={closeModal}
         />
