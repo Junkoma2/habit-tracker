@@ -98,7 +98,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  flex-shrink: 0;
+  flex: 0 0 auto;
+  min-height: calc(56px + env(safe-area-inset-top));
   width: 100%;
   background: var(--color-primary);
   padding: 8px 16px;

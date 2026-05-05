@@ -70,6 +70,7 @@ export default function App() {
   const headerRef = useRef(null)
   const footerRef = useRef(null)
   const fileInputRef = useRef(null)
+  const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
 
   const today = getToday()
   const yesterday = getYesterday()
@@ -113,14 +114,28 @@ export default function App() {
 
   useEffect(() => {
     const setViewportHeight = () => {
-      const height = window.visualViewport?.height || window.innerHeight
+      const visualViewport = window.visualViewport
+      const currentWidth = Math.round(visualViewport?.width || window.innerWidth)
+      const currentHeight = visualViewport?.height || window.innerHeight
+      const activeElement = document.activeElement
+      const inputFocused = activeElement?.matches?.('input, textarea, [contenteditable="true"]')
+
+      if (Math.abs(currentWidth - stableViewportRef.current.width) > 40) {
+        stableViewportRef.current = { width: currentWidth, height: 0 }
+      }
+
+      const height = inputFocused
+        ? currentHeight
+        : Math.max(stableViewportRef.current.height, currentHeight)
+
+      stableViewportRef.current = { width: currentWidth, height }
       document.documentElement.style.setProperty('--app-viewport-height', `${height}px`)
       if (viewportDebug) {
         const appHeight = document.querySelector('.app')?.getBoundingClientRect().height
         const styles = getComputedStyle(document.documentElement)
         const screenHeight = styles.getPropertyValue('--app-screen-height').trim()
         setViewportDebugInfo(
-          `vv:${Math.round(height)} ih:${window.innerHeight} app:${Math.round(appHeight || 0)} shell:${screenHeight}`
+          `vv:${Math.round(currentHeight)} stable:${Math.round(height)} ih:${window.innerHeight} app:${Math.round(appHeight || 0)} shell:${screenHeight}`
         )
       }
     }
