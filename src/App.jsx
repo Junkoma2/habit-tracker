@@ -73,6 +73,15 @@ export default function App() {
 
   const today = getToday()
   const yesterday = getYesterday()
+  const screenTitle = modal?.type === 'settings'
+    ? '設定'
+    : modal?.type === 'help'
+      ? 'ヘルプ'
+      : activeTab === 'record'
+        ? 'カレンダー'
+        : activeTab === 'stats'
+          ? '分析'
+          : '習慣'
 
   const onRefresh = useCallback(() => {
     const fresh = loadData()
@@ -295,7 +304,7 @@ export default function App() {
         onTouchStart={handleChromeTouchStart}
         onTouchMove={handleChromeTouchMove}
       >
-        <h1 className="app-title">習慣トラッカー</h1>
+        <h1 className="app-title">{screenTitle}</h1>
         <div className="header-actions">
           <button className="header-btn" onClick={() => setModal({ type: 'help' })}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">

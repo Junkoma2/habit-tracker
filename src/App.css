@@ -87,10 +87,14 @@
 }
 
 .app-title {
+  min-width: 0;
   color: #fff;
   font-size: 1.25rem;
   font-weight: 700;
   letter-spacing: 0.04em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .header-actions {
