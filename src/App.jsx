@@ -73,15 +73,11 @@ export default function App() {
 
   const today = getToday()
   const yesterday = getYesterday()
-  const screenTitle = modal?.type === 'settings'
-    ? '設定'
-    : modal?.type === 'help'
-      ? 'ヘルプ'
-      : activeTab === 'record'
-        ? 'カレンダー'
-        : activeTab === 'stats'
-          ? '分析'
-          : '習慣'
+  const screenTitle = activeTab === 'record'
+    ? 'カレンダー'
+    : activeTab === 'stats'
+      ? '分析'
+      : '習慣'
 
   const onRefresh = useCallback(() => {
     const fresh = loadData()
