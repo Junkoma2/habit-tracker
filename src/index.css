@@ -40,8 +40,9 @@ input, textarea, [contenteditable] {
 }
 
 html, body {
-  min-height: 100%;
+  height: 100%;
   width: 100%;
+  overflow: hidden;
   overflow-x: hidden;
   overscroll-behavior: none;
   background: var(--color-bg);
@@ -75,6 +76,7 @@ input {
 }
 
 #root {
-  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
   background: var(--color-bg);
 }
