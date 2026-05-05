@@ -71,7 +71,15 @@ export function usePullToRefresh({ mainRef, onRefresh }) {
           if (reg) {
             swUpdated = await new Promise(resolve => {
               let done = false
-              const finish = (val) => { if (!done) { done = true; resolve(val) } }
+              let fallbackTimer
+              const finish = (val) => {
+                if (!done) {
+                  done = true
+                  clearTimeout(fallbackTimer)
+                  resolve(val)
+                }
+              }
+              fallbackTimer = setTimeout(() => finish(false), 1500)
 
               // controllerchange: skipWaiting+clients.claim で即座にアクティベートされた場合も検知できる
               navigator.serviceWorker.addEventListener('controllerchange', () => finish(true), { once: true })

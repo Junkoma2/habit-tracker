@@ -93,7 +93,7 @@ export default function App() {
     pullY, pullReturning, refreshing, refreshComplete, scrolled,
     handleTouchStart, handleTouchMove, handleTouchEnd,
   } = usePullToRefresh({ mainRef, onRefresh })
-  const tabsLocked = refreshing || pullReturning
+  const tabsLocked = refreshing && !refreshComplete
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
