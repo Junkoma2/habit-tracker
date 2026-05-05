@@ -168,6 +168,12 @@
   border-radius: var(--radius);
   padding: 16px;
   box-shadow: var(--shadow);
+  animation: section-in 0.18s ease both;
+}
+
+@keyframes section-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .section-header {
@@ -192,7 +198,7 @@
   padding: 4px 12px;
   border-radius: 20px;
   border: 1.5px solid var(--color-primary);
-  transition: all 0.15s;
+  transition: transform 0.12s ease, background 0.15s, color 0.15s, opacity 0.15s;
 }
 
 .edit-toggle-btn.active {
@@ -220,10 +226,11 @@
   color: var(--color-text-secondary);
   font-size: 0.85rem;
   font-weight: 500;
-  transition: all 0.15s;
+  transition: transform 0.12s ease, border-color 0.15s, color 0.15s, opacity 0.15s;
 }
 
 .add-habit-btn:active {
+  transform: scale(0.98);
   opacity: 0.6;
 }
 
@@ -276,10 +283,11 @@
   border-radius: 100px;
   font-size: 0.95rem;
   font-weight: 600;
-  transition: opacity 0.15s;
+  transition: transform 0.12s ease, opacity 0.15s;
 }
 
 .add-first-btn:active {
+  transform: scale(0.98);
   opacity: 0.8;
 }
 
@@ -308,10 +316,11 @@
   color: var(--color-text-secondary);
   font-size: 0.88rem;
   font-weight: 600;
-  transition: opacity 0.15s;
+  transition: transform 0.12s ease, opacity 0.15s;
 }
 
 .add-in-edit-btn:active {
+  transform: scale(0.98);
   opacity: 0.6;
 }
 
@@ -400,16 +409,22 @@
   font-size: 0.56rem;
   font-weight: 600;
   letter-spacing: 0.03em;
-  transition: color 0.15s, background 0.15s;
+  transition: color 0.15s, background 0.15s, transform 0.15s ease;
 }
 
 .footer-btn svg {
   width: 24px;
   height: 24px;
+  transition: transform 0.15s ease;
 }
 
 .footer-btn.active {
+  background: var(--color-primary-light);
   color: var(--color-primary);
+}
+
+.footer-btn.active svg {
+  transform: translateY(-1px);
 }
 
 .footer-btn:disabled {
@@ -418,6 +433,7 @@
 }
 
 .footer-btn:active {
+  transform: scale(0.96);
   background: var(--color-primary-light);
   color: var(--color-primary);
 }
@@ -426,6 +442,29 @@
 .footer-btn.main svg {
   width: 26px;
   height: 26px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section {
+    animation: none;
+  }
+
+  .footer-btn,
+  .footer-btn svg,
+  .edit-toggle-btn,
+  .add-habit-btn,
+  .add-first-btn,
+  .add-in-edit-btn {
+    transition: none;
+  }
+
+  .footer-btn.active svg,
+  .footer-btn:active,
+  .add-habit-btn:active,
+  .add-first-btn:active,
+  .add-in-edit-btn:active {
+    transform: none;
+  }
 }
 
 .viewport-debug-enabled {
