@@ -24,6 +24,11 @@ export default function Modal({ onClose, children, title }) {
   }, [])
 
   useEffect(() => {
+    document.documentElement.classList.add('modal-open')
+    return () => document.documentElement.classList.remove('modal-open')
+  }, [])
+
+  useEffect(() => {
     return () => clearTimeout(closeTimerRef.current)
   }, [])
 
@@ -78,7 +83,10 @@ export default function Modal({ onClose, children, title }) {
     <div
       className={`modal-backdrop${closing ? ' closing' : ''}`}
       onClick={requestClose}
-      onTouchMove={(e) => e.stopPropagation()}
+      onTouchMove={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+      }}
     >
       <div
         ref={sheetRef}
