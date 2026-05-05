@@ -378,9 +378,23 @@
   height: 30px;
 }
 
+.footer-btn.active {
+  color: var(--color-primary);
+}
+
 .footer-btn:active {
   background: var(--color-primary-light);
   color: var(--color-primary);
+}
+
+/* 中央「習慣」ボタン — 控えめに主役感を出す */
+.footer-btn.main {
+  color: var(--color-primary);
+}
+
+.footer-btn.main svg {
+  width: 32px;
+  height: 32px;
 }
 
 .viewport-debug-enabled {
