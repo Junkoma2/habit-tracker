@@ -11,9 +11,18 @@
   animation: backdropIn 0.22s ease both;
 }
 
+.modal-backdrop.closing {
+  animation: backdropOut 0.2s ease both;
+}
+
 @keyframes backdropIn {
   from { background: rgba(0, 0, 0, 0); }
   to   { background: rgba(0, 0, 0, 0.45); }
+}
+
+@keyframes backdropOut {
+  from { background: rgba(0, 0, 0, 0.45); }
+  to   { background: rgba(0, 0, 0, 0); }
 }
 
 .modal-sheet {
@@ -29,9 +38,18 @@
   scroll-padding-bottom: calc(24px + env(safe-area-inset-bottom));
 }
 
+.modal-sheet[data-closing="true"] {
+  animation: slideDown 0.2s ease both;
+}
+
 @keyframes slideUp {
   from { transform: translateY(100%); }
   to   { transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(0); }
+  to   { transform: translateY(100%); }
 }
 
 .modal-handle {
@@ -48,4 +66,13 @@
   color: var(--color-text);
   margin-bottom: 18px;
   text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop,
+  .modal-backdrop.closing,
+  .modal-sheet,
+  .modal-sheet[data-closing="true"] {
+    animation: none;
+  }
 }

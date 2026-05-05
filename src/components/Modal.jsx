@@ -1,13 +1,21 @@
-import { useRef, useEffect } from 'react'
+import { createContext, useContext, useRef, useEffect, useState, useCallback } from 'react'
 import './Modal.css'
 
 const CLOSE_THRESHOLD = 80
+const CLOSE_DURATION = 200
+const ModalCloseContext = createContext(null)
+
+export function useModalClose() {
+  return useContext(ModalCloseContext)
+}
 
 export default function Modal({ onClose, children, title }) {
+  const [closing, setClosing] = useState(false)
   const sheetRef = useRef(null)
   const startYRef = useRef(0)
   const dragYRef = useRef(0)
   const draggingRef = useRef(false)
+  const closeTimerRef = useRef(null)
 
   // アニメーション完了後にフォーカスを移動（重複effectを解消）
   useEffect(() => {
@@ -15,7 +23,22 @@ export default function Modal({ onClose, children, title }) {
     return () => clearTimeout(timer)
   }, [])
 
+  useEffect(() => {
+    return () => clearTimeout(closeTimerRef.current)
+  }, [])
+
+  const requestClose = useCallback(() => {
+    if (closing) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      onClose()
+      return
+    }
+    setClosing(true)
+    closeTimerRef.current = setTimeout(onClose, CLOSE_DURATION)
+  }, [closing, onClose])
+
   const handleTouchStart = (e) => {
+    if (closing) return
     if (sheetRef.current.scrollTop > 0) return
     startYRef.current = e.touches[0].clientY
     dragYRef.current = 0
@@ -24,6 +47,7 @@ export default function Modal({ onClose, children, title }) {
 
   const handleTouchMove = (e) => {
     e.stopPropagation()
+    if (closing) return
     if (!draggingRef.current) return
     if (sheetRef.current.scrollTop > 0) {
       draggingRef.current = false
@@ -37,12 +61,13 @@ export default function Modal({ onClose, children, title }) {
   }
 
   const handleTouchEnd = () => {
+    if (closing) return
     if (!draggingRef.current) return
     draggingRef.current = false
     if (dragYRef.current > CLOSE_THRESHOLD) {
-      sheetRef.current.style.transition = 'transform 0.2s ease'
-      sheetRef.current.style.transform = 'translateY(100%)'
-      setTimeout(onClose, 200)
+      sheetRef.current.style.transition = ''
+      sheetRef.current.style.transform = ''
+      requestClose()
     } else {
       sheetRef.current.style.transition = 'transform 0.2s ease'
       sheetRef.current.style.transform = 'translateY(0)'
@@ -51,8 +76,8 @@ export default function Modal({ onClose, children, title }) {
 
   return (
     <div
-      className="modal-backdrop"
-      onClick={onClose}
+      className={`modal-backdrop${closing ? ' closing' : ''}`}
+      onClick={requestClose}
       onTouchMove={(e) => e.stopPropagation()}
     >
       <div
@@ -62,14 +87,17 @@ export default function Modal({ onClose, children, title }) {
         aria-modal="true"
         aria-label={title}
         tabIndex="-1"
+        data-closing={closing ? 'true' : undefined}
         onClick={(e) => e.stopPropagation()}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="modal-handle" />
-        {title && <h2 className="modal-title">{title}</h2>}
-        {children}
+        <ModalCloseContext.Provider value={requestClose}>
+          <div className="modal-handle" />
+          {title && <h2 className="modal-title">{title}</h2>}
+          {children}
+        </ModalCloseContext.Provider>
       </div>
     </div>
   )

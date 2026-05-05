@@ -1,5 +1,10 @@
-import Modal from './Modal'
+import Modal, { useModalClose } from './Modal'
 import './HelpModal.css'
+
+function HelpCloseButton() {
+  const close = useModalClose()
+  return <button className="help-close-btn" onClick={close}>閉じる</button>
+}
 
 export default function HelpModal({ onClose }) {
   return (
@@ -60,7 +65,7 @@ export default function HelpModal({ onClose }) {
       </div>
 
       <p className="help-version">バージョン {__APP_VERSION__}</p>
-      <button className="help-close-btn" onClick={onClose}>閉じる</button>
+      <HelpCloseButton />
     </Modal>
   )
 }
