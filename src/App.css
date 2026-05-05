@@ -53,6 +53,20 @@
   animation: pull-check-in 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .pull-indicator.refreshing,
+  .pull-indicator.returning,
+  .pull-indicator.returning > *,
+  .pull-arrow {
+    transition: none;
+  }
+
+  .pull-spin,
+  .pull-check {
+    animation: none;
+  }
+}
+
 .app {
   --footer-height: 60px;
   --footer-safe-padding: 10px;
@@ -381,6 +395,11 @@
 
 .footer-btn.active {
   color: var(--color-primary);
+}
+
+.footer-btn:disabled {
+  cursor: default;
+  opacity: 0.55;
 }
 
 .footer-btn:active {
