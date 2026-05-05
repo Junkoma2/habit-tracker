@@ -164,6 +164,10 @@
   gap: 16px;
 }
 
+.modal-open .app-main {
+  overflow: hidden;
+}
+
 /* Section */
 .section {
   background: var(--color-surface);
