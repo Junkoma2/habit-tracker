@@ -9,41 +9,91 @@
 .help-content {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   margin-bottom: 16px;
 }
 
 .help-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
 }
 
 .help-heading {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--color-primary);
 }
 
-.help-list {
-  list-style: none;
+.help-card-list {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 8px;
 }
 
-.help-list li {
+.help-card {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+}
+
+.help-step {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.help-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.help-card-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.35;
+}
+
+.help-card-body,
+.help-note {
   font-size: 0.85rem;
   color: var(--color-text);
   line-height: 1.5;
-  padding-left: 12px;
-  position: relative;
 }
 
-.help-list li::before {
-  content: '·';
-  position: absolute;
-  left: 2px;
+.help-card-body {
+  margin-top: 3px;
+}
+
+.help-feature {
+  flex: 0 0 auto;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-size: 0.68rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.help-note {
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-light);
   color: var(--color-text-secondary);
 }
 
