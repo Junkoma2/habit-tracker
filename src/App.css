@@ -2,11 +2,11 @@
 .pull-indicator {
   overflow: hidden;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
-  position: relative;
-  background: var(--color-primary);
-  color: rgba(255, 255, 255, 0.9);
+  padding-bottom: 10px;
+  background: var(--color-bg);
+  color: var(--color-primary);
   height: 0;
 }
 
@@ -16,21 +16,10 @@
   transition: height 0.2s ease, opacity 0.2s ease;
 }
 
-/* ヘッダーとの境目を柔らかくする底面グラデーション */
-.pull-indicator.refreshing::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 12px;
-  background: linear-gradient(to bottom, transparent, rgba(67, 56, 202, 0.25));
-  pointer-events: none;
-}
-
+/* returning: 引き出しと対称に height + opacity を同時に縮める */
 .pull-indicator.returning {
   opacity: 0;
-  transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+  transition: height 0.7s cubic-bezier(0.4, 0, 0.6, 1), opacity 0.7s cubic-bezier(0.4, 0, 0.6, 1);
 }
 
 .pull-arrow {
@@ -53,6 +42,15 @@
   font-size: 0.8rem;
   margin-left: 6px;
   letter-spacing: 0.02em;
+}
+
+@keyframes pull-check-in {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.pull-check {
+  animation: pull-check-in 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .app {
