@@ -311,6 +311,8 @@ export default function App() {
   }, [modal])
 
   const handleTouchStart = useCallback((e) => {
+    // ヘッダー上のタッチはpull-to-refreshを起動しない
+    if (e.target.closest('.app-header')) return
     // スクロール戻り直後はpull-to-refreshを許可しない
     if ((mainRef.current?.scrollTop ?? 0) === 0 && !justScrolledToTop.current) {
       pullStartY.current = e.touches[0].clientY
