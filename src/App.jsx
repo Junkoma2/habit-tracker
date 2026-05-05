@@ -99,6 +99,8 @@ export default function App() {
   const justScrolledToTop = useRef(false)
   const scrollStopTimer = useRef(null)
   const mainRef = useRef(null)
+  const headerRef = useRef(null)
+  const footerRef = useRef(null)
   const [activeTab, setActiveTab] = useState('habit')
   const PULL_THRESHOLD = 80
 
@@ -113,6 +115,21 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ habits, records }))
   }, [habits, records])
+
+  useEffect(() => {
+    const preventChromeScroll = (e) => {
+      e.preventDefault()
+    }
+    const chromeEls = [headerRef.current, footerRef.current].filter(Boolean)
+    chromeEls.forEach(el => {
+      el.addEventListener('touchmove', preventChromeScroll, { passive: false })
+    })
+    return () => {
+      chromeEls.forEach(el => {
+        el.removeEventListener('touchmove', preventChromeScroll)
+      })
+    }
+  }, [])
 
   useEffect(() => {
     const setViewportHeight = () => {
@@ -319,6 +336,17 @@ export default function App() {
     }
   }, [])
 
+  const handleChromeTouchStart = useCallback((e) => {
+    pullStartY.current = null
+    setPullY(0)
+    e.stopPropagation()
+  }, [])
+
+  const handleChromeTouchMove = useCallback((e) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
   const handleTouchMove = useCallback((e) => {
     const currentY = e.touches[0].clientY
 
@@ -412,7 +440,12 @@ export default function App() {
       onTouchEnd={handleTouchEnd}
     >
       <AddToHomePrompt />
-      <header className="app-header">
+      <header
+        ref={headerRef}
+        className="app-header"
+        onTouchStart={handleChromeTouchStart}
+        onTouchMove={handleChromeTouchMove}
+      >
         <h1 className="app-title">習慣トラッカー</h1>
         <div className="header-actions">
           <button className="header-btn" onClick={() => setModal({ type: 'help' })}>
@@ -734,7 +767,12 @@ export default function App() {
       )}
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
 
-      <footer className="app-footer">
+      <footer
+        ref={footerRef}
+        className="app-footer"
+        onTouchStart={handleChromeTouchStart}
+        onTouchMove={handleChromeTouchMove}
+      >
         <div className="app-footer-inner">
           {/* 記録: カレンダーへスクロール */}
           <button className={`footer-btn${activeTab === 'record' ? ' active' : ''}`} onClick={() => setActiveTab('record')}>
