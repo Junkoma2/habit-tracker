@@ -96,6 +96,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 12px;
   flex-shrink: 0;
   background: var(--color-primary);
   padding: 8px 16px;
@@ -106,6 +107,7 @@
 }
 
 .app-title {
+  flex: 1 1 auto;
   min-width: 0;
   color: #fff;
   font-size: 1.25rem;
@@ -118,21 +120,25 @@
 
 .header-actions {
   display: flex;
-  gap: 6px;
+  flex: 0 0 auto;
+  gap: 4px;
 }
 
 .header-btn {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
   color: rgba(255, 255, 255, 0.85);
-  padding: 4px 8px;
+  padding: 0;
   border-radius: 8px;
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
   transition: background 0.15s, color 0.15s;
+}
+
+.header-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
 .header-btn:hover {
