@@ -21,54 +21,29 @@ import DayDetailModal from './components/DayDetailModal'
 import HelpModal from './components/HelpModal'
 import ConfirmModal from './components/ConfirmModal'
 import StatsModal from './components/StatsModal'
-import SettingsModal, { THEMES, applyTheme } from './components/SettingsModal'
+import SettingsModal from './components/SettingsModal'
 import Toast from './components/Toast'
 import ArchivedHabitItem from './components/ArchivedHabitItem'
 import AddToHomePrompt from './components/AddToHomePrompt'
 import MonthPickerModal from './components/MonthPickerModal'
 import StatsView from './components/StatsView'
+import { useHabitsStorage, loadData } from './hooks/useHabitsStorage'
+import { useTheme } from './hooks/useTheme'
+import { usePullToRefresh, PULL_THRESHOLD } from './hooks/usePullToRefresh'
 import { getToday, getYesterday } from './utils/date'
 import { calcCurrentStreak } from './utils/stats'
 import { validateImportData } from './utils/validation'
 import './App.css'
 
-const STORAGE_KEY = 'habit-tracker-v1'
-const THEME_STORAGE_KEY = 'habit-tracker-theme'
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
 const ONBOARDING_KEY = 'habit-tracker-onboarding-done'
-
-function loadData() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) {
-      const data = JSON.parse(raw)
-      if (
-        data && typeof data === 'object' && !Array.isArray(data) &&
-        Array.isArray(data.habits) &&
-        data.records && typeof data.records === 'object' && !Array.isArray(data.records)
-      ) {
-        return data
-      }
-    }
-  } catch {}
-  return { habits: [], records: {} }
-}
-
-const _initial = loadData()
-
-function loadTheme() {
-  try {
-    const saved = localStorage.getItem(THEME_STORAGE_KEY)
-    if (saved) return THEMES.find(t => t.id === saved) ?? THEMES[0]
-  } catch {}
-  return THEMES[0]
-}
 
 export default function App() {
   const viewportDebug = new URLSearchParams(window.location.search).has('debugViewport')
   const isStandalone =
     window.matchMedia('(display-mode: standalone)').matches ||
     window.navigator.standalone === true
+
   const [showWelcome, setShowWelcome] = useState(() => {
     try { return !localStorage.getItem(ONBOARDING_KEY) } catch { return false }
   })
@@ -77,9 +52,9 @@ export default function App() {
     setShowWelcome(false)
   }, [])
 
-  const [habits, setHabits] = useState(_initial.habits)
-  const [records, setRecords] = useState(_initial.records)
-  const [themeId, setThemeId] = useState(() => { const t = loadTheme(); applyTheme(t); return t.id })
+  const { habits, records, setHabits, setRecords } = useHabitsStorage()
+  const { themeId, handleThemeSelect } = useTheme()
+
   const [calendarDate, setCalendarDate] = useState(() => new Date())
   const [editMode, setEditMode] = useState(false)
   const [modal, setModal] = useState(null)
@@ -87,34 +62,33 @@ export default function App() {
   const [lastBackupDate, setLastBackupDate] = useState(() => {
     try { return localStorage.getItem(LAST_BACKUP_KEY) || null } catch { return null }
   })
-  const [pullY, setPullY] = useState(0)
-  const [pullReturning, setPullReturning] = useState(false)
-  const [refreshing, setRefreshing] = useState(false)
-  const [refreshComplete, setRefreshComplete] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
+  const [activeTab, setActiveTab] = useState('habit')
   const [viewportDebugInfo, setViewportDebugInfo] = useState('')
   const [undoAction, setUndoAction] = useState(null)
   const undoTimerRef = useRef(null)
-  const pullStartY = useRef(null)
-  const justScrolledToTop = useRef(false)
-  const scrollStopTimer = useRef(null)
   const mainRef = useRef(null)
   const headerRef = useRef(null)
   const footerRef = useRef(null)
-  const [activeTab, setActiveTab] = useState('habit')
-  const PULL_THRESHOLD = 80
+  const fileInputRef = useRef(null)
 
   const today = getToday()
   const yesterday = getYesterday()
+
+  const onRefresh = useCallback(() => {
+    const fresh = loadData()
+    setHabits(fresh.habits)
+    setRecords(fresh.records)
+  }, [setHabits, setRecords])
+
+  const {
+    pullY, pullReturning, refreshing, refreshComplete, scrolled,
+    handleTouchStart, handleTouchMove, handleTouchEnd,
+  } = usePullToRefresh({ mainRef, onRefresh })
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
   )
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ habits, records }))
-  }, [habits, records])
 
   useEffect(() => {
     const preventChromeScroll = (e) => {
@@ -158,27 +132,6 @@ export default function App() {
       window.removeEventListener('resize', setViewportHeight)
     }
   }, [viewportDebug])
-
-  useEffect(() => {
-    const scrollEl = mainRef.current
-    if (!scrollEl) return
-
-    const onScroll = () => {
-      if (scrollEl.scrollTop > 0) {
-        setScrolled(true)
-        justScrolledToTop.current = true
-        clearTimeout(scrollStopTimer.current)
-      } else {
-        setScrolled(false)
-        scrollStopTimer.current = setTimeout(() => {
-          justScrolledToTop.current = false
-        }, 300)
-      }
-    }
-    scrollEl.addEventListener('scroll', onScroll, { passive: true })
-    onScroll()
-    return () => scrollEl.removeEventListener('scroll', onScroll)
-  }, [])
 
   const closeModal = useCallback(() => setModal(null), [])
 
@@ -267,8 +220,6 @@ export default function App() {
   const todayRecords = records[today] || []
 
   // --- Export / Import ---
-  const fileInputRef = useRef(null)
-
   const handleExport = useCallback(() => {
     const json = JSON.stringify({ habits, records }, null, 2)
     const blob = new Blob([json], { type: 'application/json' })
@@ -312,12 +263,6 @@ export default function App() {
     reader.readAsText(file)
   }, [])
 
-  const handleThemeSelect = useCallback((theme) => {
-    applyTheme(theme)
-    setThemeId(theme.id)
-    localStorage.setItem(THEME_STORAGE_KEY, theme.id)
-  }, [])
-
   const handleImportConfirm = useCallback(() => {
     const habitCount = modal.data.habits.length
     const dayCount = Object.keys(modal.data.records).length
@@ -327,18 +272,7 @@ export default function App() {
     setToast(`データを復元しました（習慣 ${habitCount}件・記録 ${dayCount}日分）`)
   }, [modal])
 
-  const handleTouchStart = useCallback((e) => {
-    // ヘッダー上のタッチはpull-to-refreshを起動しない
-    if (e.target.closest('.app-header')) return
-    // スクロール戻り直後はpull-to-refreshを許可しない
-    if ((mainRef.current?.scrollTop ?? 0) === 0 && !justScrolledToTop.current) {
-      pullStartY.current = e.touches[0].clientY
-    }
-  }, [])
-
   const handleChromeTouchStart = useCallback((e) => {
-    pullStartY.current = null
-    setPullY(0)
     e.stopPropagation()
   }, [])
 
@@ -346,91 +280,6 @@ export default function App() {
     e.preventDefault()
     e.stopPropagation()
   }, [])
-
-  const handleTouchMove = useCallback((e) => {
-    const currentY = e.touches[0].clientY
-
-    // pull-to-refresh
-    if (pullStartY.current === null) return
-    const dy = currentY - pullStartY.current
-    if (dy > 0) {
-      const visual = dy * 0.4
-      // しきい値以降はゴムのように強い抵抗をかけて最大50px追加で引ける
-      const clamped = visual <= PULL_THRESHOLD
-        ? visual
-        : Math.min(PULL_THRESHOLD + (visual - PULL_THRESHOLD) * 0.3, PULL_THRESHOLD + 50)
-      setPullY(clamped)
-    } else {
-      pullStartY.current = null
-      setPullY(0)
-    }
-  }, [])
-
-  const handleTouchEnd = useCallback(async () => {
-    if (pullY >= PULL_THRESHOLD) {
-      setRefreshing(true)
-      setPullY(0)
-
-      let swUpdated = false
-      if ('serviceWorker' in navigator) {
-        try {
-          const reg = await navigator.serviceWorker.getRegistration()
-          if (reg) {
-            swUpdated = await new Promise(resolve => {
-              let done = false
-              const finish = (val) => { if (!done) { done = true; resolve(val) } }
-
-              // controllerchange: skipWaiting+clients.claim で即座にアクティベートされた場合も検知できる
-              navigator.serviceWorker.addEventListener('controllerchange', () => finish(true), { once: true })
-
-              reg.update()
-                .then(() => {
-                  const sw = reg.installing || reg.waiting
-                  if (sw) {
-                    sw.addEventListener('statechange', function handler() {
-                      if (this.state === 'activated') {
-                        sw.removeEventListener('statechange', handler)
-                        finish(true)
-                      }
-                    })
-                  }
-                  // update()完了から1秒待ってもchangeがなければ更新なし
-                  setTimeout(() => finish(false), 1000)
-                })
-                .catch(() => finish(false))
-            })
-          }
-        } catch {}
-      }
-
-      const fresh = loadData()
-      setHabits(fresh.habits)
-      setRecords(fresh.records)
-      setTimeout(() => {
-        setRefreshComplete(true)
-        setTimeout(() => {
-          // .returning を先に付与してから refreshing を落とすことで
-          // CSS height: 60px → inline 0px のトランジションを確実に起動する
-          setPullReturning(true)
-          requestAnimationFrame(() => {
-            setRefreshing(false)
-            if (swUpdated) window.location.reload()
-            setTimeout(() => {
-              setPullReturning(false)
-              setRefreshComplete(false)
-            }, 700)
-          })
-        }, 380)
-      }, 700)
-    } else {
-      setPullReturning(true)
-      requestAnimationFrame(() => {
-        setPullY(0)
-        setTimeout(() => setPullReturning(false), 400)
-      })
-    }
-    pullStartY.current = null
-  }, [pullY])
 
   return (
     <div
@@ -774,7 +623,6 @@ export default function App() {
         onTouchMove={handleChromeTouchMove}
       >
         <div className="app-footer-inner">
-          {/* 記録: カレンダーへスクロール */}
           <button className={`footer-btn${activeTab === 'record' ? ' active' : ''}`} onClick={() => setActiveTab('record')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
@@ -782,14 +630,12 @@ export default function App() {
             </svg>
             <span>記録</span>
           </button>
-          {/* 習慣: 今日の習慣へスクロール（中央・主役） */}
           <button className={`footer-btn main${activeTab === 'habit' ? ' active' : ''}`} onClick={() => setActiveTab('habit')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
             </svg>
             <span>習慣</span>
           </button>
-          {/* 分析: 統計モーダルを開く */}
           <button className={`footer-btn${activeTab === 'stats' ? ' active' : ''}`} onClick={() => setActiveTab('stats')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
