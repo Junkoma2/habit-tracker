@@ -39,8 +39,29 @@ export function validateImportData(data) {
     if (!isValidDate(date)) return `records のキー「${date}」は存在しない日付です。`
     if (!Array.isArray(ids)) return `records[${date}] が配列ではありません。`
     if (ids.some(id => typeof id !== 'string')) return `records[${date}] に文字列以外の値が含まれています。`
-    const unknown = ids.find(id => !habitIds.has(id))
-    if (unknown !== undefined) return `records[${date}] に未知の習慣 ID「${unknown}」が含まれています。`
   }
   return null
+}
+
+export function sanitizeImportData(data) {
+  const habitIds = new Set(data.habits.map(h => h.id))
+  const records = {}
+  let skippedUnknownRecords = 0
+
+  for (const [date, ids] of Object.entries(data.records)) {
+    const knownIds = ids.filter(id => {
+      const known = habitIds.has(id)
+      if (!known) skippedUnknownRecords += 1
+      return known
+    })
+    if (knownIds.length > 0) records[date] = knownIds
+  }
+
+  return {
+    data: {
+      habits: data.habits,
+      records,
+    },
+    skippedUnknownRecords,
+  }
 }

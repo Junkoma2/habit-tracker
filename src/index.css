@@ -47,6 +47,12 @@ html, body {
   background: var(--color-bg);
 }
 
+html.pwa-standalone,
+html.pwa-standalone body,
+html.pwa-standalone #root {
+  background: var(--color-primary);
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI',
     'Segoe UI', sans-serif;

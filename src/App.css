@@ -73,6 +73,7 @@
 }
 
 .app {
+  --app-header-height: calc(56px + var(--app-safe-area-top));
   --footer-height: 60px;
   --footer-safe-padding: 10px;
   --footer-browser-shift: 10px;
@@ -82,6 +83,7 @@
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
+  padding-top: var(--app-header-height);
   background: var(--color-bg);
   overflow: hidden;
 }
@@ -94,17 +96,23 @@
 }
 
 .app-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  flex: 0 0 auto;
-  min-height: calc(56px + var(--app-safe-area-top));
+  height: var(--app-header-height);
   width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
   background: var(--color-primary);
   padding: 8px 16px;
   padding-top: calc(8px + var(--app-safe-area-top));
   box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+  z-index: 30;
   /* iOSでヘッダー上のタッチからスクロールが発火しないようにする */
   touch-action: none;
 }
