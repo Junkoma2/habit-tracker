@@ -79,6 +79,10 @@
   margin-top: 3px;
 }
 
+.help-tip-design {
+  color: var(--color-text-secondary);
+}
+
 .help-feature {
   flex: 0 0 auto;
   padding: 2px 7px;
