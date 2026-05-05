@@ -2,8 +2,12 @@
 .pull-indicator {
   overflow: hidden;
   display: flex;
+  flex: 0 0 auto;
   align-items: flex-end;
+  align-self: stretch;
   justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
   padding-bottom: 10px;
   background: var(--color-bg);
   color: var(--color-primary);
@@ -42,6 +46,7 @@
   font-size: 0.8rem;
   margin-left: 6px;
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 @keyframes pull-check-in {
