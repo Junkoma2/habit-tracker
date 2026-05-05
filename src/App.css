@@ -4,9 +4,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  background: var(--color-primary);
-  color: rgba(255, 255, 255, 0.9);
+  background: var(--color-bg);
+  color: var(--color-primary);
   height: 0;
 }
 
@@ -14,18 +13,6 @@
   height: 60px;
   opacity: 1;
   transition: height 0.2s ease, opacity 0.2s ease;
-}
-
-/* ヘッダーとの境目を柔らかくする底面グラデーション */
-.pull-indicator.refreshing::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 12px;
-  background: linear-gradient(to bottom, transparent, rgba(67, 56, 202, 0.25));
-  pointer-events: none;
 }
 
 /* returning: フェードせず高さだけ縮めてヘッダへ吸い込まれる演出 */
