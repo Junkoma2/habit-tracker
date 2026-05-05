@@ -24,11 +24,12 @@ export default function HelpModal({ onClose }) {
         </section>
 
         <section className="help-section">
-          <h3 className="help-heading">統計を見る</h3>
+          <h3 className="help-heading">画面を切り替える</h3>
           <ul className="help-list">
-            <li>画面下の「統計」ボタンから習慣ごとの記録を確認できます。</li>
-            <li>「現在の連続日数」「最長連続日数」「累計達成回数」が表示されます。</li>
-            <li>今日がまだ未達でも、昨日まで連続していれば連続日数は維持されます。</li>
+            <li>画面下のタブで「習慣」「記録」「分析」を切り替えられます。</li>
+            <li>「習慣」: 今日の習慣が表示されます。</li>
+            <li>「記録」: カレンダーで過去の達成状況を確認できます。</li>
+            <li>「分析」: 習慣ごとの連続日数・累計・達成率が確認できます。今日がまだ未達でも、昨日まで連続していれば連続日数は維持されます。</li>
           </ul>
         </section>
 
