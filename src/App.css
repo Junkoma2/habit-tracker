@@ -77,12 +77,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-shrink: 0;
   background: var(--color-primary);
   padding: 8px 16px;
   padding-top: calc(8px + env(safe-area-inset-top));
-  position: sticky;
-  top: 0;
-  z-index: 10;
   box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
 }
 
