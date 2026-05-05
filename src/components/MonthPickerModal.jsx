@@ -40,6 +40,13 @@ export default function MonthPickerModal({ currentDate, onSelect, onClose }) {
           </button>
         </div>
 
+        <button
+          className="month-picker-today-btn"
+          onClick={() => { onSelect(todayYear, todayMonth); onClose() }}
+        >
+          今月へ
+        </button>
+
         <div className="month-picker-grid">
           {MONTH_LABELS.map((label, m) => {
             const isSelected = pickerYear === currentYear && m === currentMonth
