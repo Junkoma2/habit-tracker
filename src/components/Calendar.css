@@ -59,20 +59,6 @@
   flex-shrink: 0;
 }
 
-.today-jump-btn {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  background: var(--color-primary-light);
-  padding: 2px 8px;
-  border-radius: 20px;
-  transition: opacity 0.15s;
-}
-
-.today-jump-btn:active {
-  opacity: 0.6;
-}
-
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);

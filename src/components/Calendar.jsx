@@ -39,10 +39,6 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
 
   const goToPrev = () => onDateChange(new Date(year, month - 1, 1))
   const goToNext = () => onDateChange(new Date(year, month + 1, 1))
-  const goToToday = () => onDateChange(new Date())
-
-  const pad = (n) => String(n).padStart(2, '0')
-  const isCurrentMonth = today.startsWith(`${year}-${pad(month + 1)}`)
 
   return (
     <div className="calendar">
@@ -59,11 +55,6 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
               <polyline points="6 9 12 15 18 9" />
             </svg>
           </button>
-          {!isCurrentMonth && (
-            <button className="today-jump-btn" onClick={goToToday} aria-label="今月へ戻る">
-              今月へ
-            </button>
-          )}
         </div>
         <button className="cal-nav-btn" onClick={goToNext} aria-label="次の月">›</button>
       </div>
