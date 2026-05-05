@@ -2,8 +2,9 @@
 .pull-indicator {
   overflow: hidden;
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: center;
+  padding-bottom: 10px;
   background: var(--color-bg);
   color: var(--color-primary);
   height: 0;
