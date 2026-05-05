@@ -374,8 +374,8 @@
 }
 
 .footer-btn svg {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
 }
 
 .footer-btn.active {
@@ -389,8 +389,8 @@
 
 /* 中央「習慣」ボタン — アイコンをわずかに大きくして主役感を出す */
 .footer-btn.main svg {
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
 }
 
 .viewport-debug-enabled {

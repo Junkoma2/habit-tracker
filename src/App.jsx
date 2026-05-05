@@ -26,6 +26,7 @@ import Toast from './components/Toast'
 import ArchivedHabitItem from './components/ArchivedHabitItem'
 import AddToHomePrompt from './components/AddToHomePrompt'
 import MonthPickerModal from './components/MonthPickerModal'
+import StatsView from './components/StatsView'
 import { getToday, getYesterday } from './utils/date'
 import { calcCurrentStreak } from './utils/stats'
 import { validateImportData } from './utils/validation'
@@ -98,8 +99,6 @@ export default function App() {
   const justScrolledToTop = useRef(false)
   const scrollStopTimer = useRef(null)
   const mainRef = useRef(null)
-  const habitsSectionRef = useRef(null)
-  const calendarSectionRef = useRef(null)
   const [activeTab, setActiveTab] = useState('habit')
   const PULL_THRESHOLD = 80
 
@@ -162,22 +161,6 @@ export default function App() {
     scrollEl.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
     return () => scrollEl.removeEventListener('scroll', onScroll)
-  }, [])
-
-  const scrollToHabits = useCallback(() => {
-    mainRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
-    setActiveTab('habit')
-  }, [])
-
-  const scrollToCalendar = useCallback(() => {
-    const main = mainRef.current
-    const section = calendarSectionRef.current
-    if (main && section) {
-      const containerTop = main.getBoundingClientRect().top
-      const sectionTop = section.getBoundingClientRect().top
-      main.scrollBy({ top: sectionTop - containerTop - 16, behavior: 'smooth' })
-    }
-    setActiveTab('record')
   }, [])
 
   const closeModal = useCallback(() => setModal(null), [])
@@ -483,116 +466,129 @@ export default function App() {
       </div>
 
       <main ref={mainRef} className="app-main">
-        <section ref={habitsSectionRef} className="section">
-          <div className="section-header">
-            <h2 className="section-title">今日の習慣</h2>
-            {habits.length > 0 && (
-              <button
-                className={`edit-toggle-btn ${editMode ? 'active' : ''}`}
-                onClick={() => setEditMode(v => !v)}
-              >
-                {editMode ? '完了' : '編集'}
-              </button>
-            )}
-          </div>
-
-          {habits.length === 0 ? (
-            <div className="empty-state">
-              {showWelcome ? (
-                <div className="welcome-card">
-                  <p className="welcome-title">ようこそ！</p>
-                  <p className="welcome-body">まず最初の習慣を1つ追加してみましょう。毎日の記録がここに並びます。</p>
-                </div>
-              ) : (
-                <p className="empty-text">習慣を追加してみよう</p>
-              )}
-              <button className="add-first-btn" onClick={() => setModal({ type: 'add' })}>
-                + 最初の習慣を追加
-              </button>
-              {showWelcome ? (
-                <button className="help-link-btn" onClick={dismissWelcome}>スキップ</button>
-              ) : (
-                <button className="help-link-btn" onClick={() => setModal({ type: 'help' })}>
-                  使い方を見る
+        {activeTab === 'habit' && (
+          <section className="section">
+            <div className="section-header">
+              <h2 className="section-title">今日の習慣</h2>
+              {habits.length > 0 && (
+                <button
+                  className={`edit-toggle-btn ${editMode ? 'active' : ''}`}
+                  onClick={() => setEditMode(v => !v)}
+                >
+                  {editMode ? '完了' : '編集'}
                 </button>
               )}
             </div>
-          ) : editMode ? (
-            <>
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext
-                  items={activeHabits.map(h => h.id)}
-                  strategy={verticalListSortingStrategy}
+
+            {habits.length === 0 ? (
+              <div className="empty-state">
+                {showWelcome ? (
+                  <div className="welcome-card">
+                    <p className="welcome-title">ようこそ！</p>
+                    <p className="welcome-body">まず最初の習慣を1つ追加してみましょう。毎日の記録がここに並びます。</p>
+                  </div>
+                ) : (
+                  <p className="empty-text">習慣を追加してみよう</p>
+                )}
+                <button className="add-first-btn" onClick={() => setModal({ type: 'add' })}>
+                  + 最初の習慣を追加
+                </button>
+                {showWelcome ? (
+                  <button className="help-link-btn" onClick={dismissWelcome}>スキップ</button>
+                ) : (
+                  <button className="help-link-btn" onClick={() => setModal({ type: 'help' })}>
+                    使い方を見る
+                  </button>
+                )}
+              </div>
+            ) : editMode ? (
+              <>
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
                 >
-                  <div className="habits-edit-list">
-                    {activeHabits.map(habit => (
-                      <HabitEditItem
+                  <SortableContext
+                    items={activeHabits.map(h => h.id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="habits-edit-list">
+                      {activeHabits.map(habit => (
+                        <HabitEditItem
+                          key={habit.id}
+                          habit={habit}
+                          onEdit={(h) => setModal({ type: 'edit', habit: h })}
+                          onArchive={(h) => setModal({ type: 'archiveConfirm', habitId: h.id, habitName: h.name })}
+                          onDelete={(h) => setModal({ type: 'deleteConfirm', habitId: h.id, habitName: h.name })}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+                <p className="edit-mode-hint">⠿ をドラッグして並び替え</p>
+                <button
+                  className="add-in-edit-btn"
+                  onClick={() => { setEditMode(false); setModal({ type: 'add' }) }}
+                >
+                  ＋ 習慣を追加
+                </button>
+                {archivedHabits.length > 0 && (
+                  <div className="archived-section">
+                    <p className="archived-section-title">終了した習慣</p>
+                    {archivedHabits.map(habit => (
+                      <ArchivedHabitItem
                         key={habit.id}
                         habit={habit}
-                        onEdit={(h) => setModal({ type: 'edit', habit: h })}
-                        onArchive={(h) => setModal({ type: 'archiveConfirm', habitId: h.id, habitName: h.name })}
+                        onRestore={(h) => restoreHabit(h.id)}
                         onDelete={(h) => setModal({ type: 'deleteConfirm', habitId: h.id, habitName: h.name })}
                       />
                     ))}
                   </div>
-                </SortableContext>
-              </DndContext>
-              <p className="edit-mode-hint">⠿ をドラッグして並び替え</p>
-              <button
-                className="add-in-edit-btn"
-                onClick={() => { setEditMode(false); setModal({ type: 'add' }) }}
-              >
-                ＋ 習慣を追加
-              </button>
-              {archivedHabits.length > 0 && (
-                <div className="archived-section">
-                  <p className="archived-section-title">終了した習慣</p>
-                  {archivedHabits.map(habit => (
-                    <ArchivedHabitItem
-                      key={habit.id}
-                      habit={habit}
-                      onRestore={(h) => restoreHabit(h.id)}
-                      onDelete={(h) => setModal({ type: 'deleteConfirm', habitId: h.id, habitName: h.name })}
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="habits-grid">
-              {activeHabits.map(habit => (
-                <HabitButton
-                  key={habit.id}
-                  habit={habit}
-                  completed={todayRecords.includes(habit.id)}
-                  streak={calcCurrentStreak(habit.id, records)}
-                  onPress={(h) => toggleHabit(h.id, today)}
-                  onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
-                />
-              ))}
-              <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>
-                <span className="add-icon">＋</span>
-                <span>追加</span>
-              </button>
-            </div>
-          )}
-        </section>
+                )}
+              </>
+            ) : (
+              <div className="habits-grid">
+                {activeHabits.map(habit => (
+                  <HabitButton
+                    key={habit.id}
+                    habit={habit}
+                    completed={todayRecords.includes(habit.id)}
+                    streak={calcCurrentStreak(habit.id, records)}
+                    onPress={(h) => toggleHabit(h.id, today)}
+                    onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
+                  />
+                ))}
+                <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>
+                  <span className="add-icon">＋</span>
+                  <span>追加</span>
+                </button>
+              </div>
+            )}
+          </section>
+        )}
 
-        <section ref={calendarSectionRef} className="section">
-          <Calendar
-            date={calendarDate}
-            onDateChange={setCalendarDate}
-            habits={habits}
-            records={records}
-            today={today}
-            onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
-            onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
-          />
-        </section>
+        {activeTab === 'record' && (
+          <section className="section">
+            <Calendar
+              date={calendarDate}
+              onDateChange={setCalendarDate}
+              habits={habits}
+              records={records}
+              today={today}
+              onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
+              onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
+            />
+          </section>
+        )}
+
+        {activeTab === 'stats' && (
+          <section className="section">
+            <div className="section-header">
+              <h2 className="section-title">分析</h2>
+            </div>
+            <StatsView habits={habits} records={records} />
+          </section>
+        )}
       </main>
 
       {modal?.type === 'monthPicker' && (
@@ -739,7 +735,7 @@ export default function App() {
       <footer className="app-footer">
         <div className="app-footer-inner">
           {/* 記録: カレンダーへスクロール */}
-          <button className={`footer-btn${activeTab === 'record' ? ' active' : ''}`} onClick={scrollToCalendar}>
+          <button className={`footer-btn${activeTab === 'record' ? ' active' : ''}`} onClick={() => setActiveTab('record')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
               <line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
@@ -747,14 +743,14 @@ export default function App() {
             <span>記録</span>
           </button>
           {/* 習慣: 今日の習慣へスクロール（中央・主役） */}
-          <button className={`footer-btn main${activeTab === 'habit' ? ' active' : ''}`} onClick={scrollToHabits}>
+          <button className={`footer-btn main${activeTab === 'habit' ? ' active' : ''}`} onClick={() => setActiveTab('habit')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
             </svg>
             <span>習慣</span>
           </button>
           {/* 分析: 統計モーダルを開く */}
-          <button className={`footer-btn${activeTab === 'stats' ? ' active' : ''}`} onClick={() => { setModal({ type: 'stats' }); setActiveTab('stats') }}>
+          <button className={`footer-btn${activeTab === 'stats' ? ' active' : ''}`} onClick={() => setActiveTab('stats')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
             </svg>
