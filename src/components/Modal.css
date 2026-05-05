@@ -32,7 +32,7 @@
   width: 100%;
   max-width: 480px;
   animation: slideUp 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  max-height: calc(var(--app-screen-height) - env(safe-area-inset-top));
+  max-height: calc(var(--app-screen-height) - var(--app-safe-area-top));
   overflow-y: auto;
   overscroll-behavior: contain;
   scroll-padding-bottom: calc(24px + env(safe-area-inset-bottom));
