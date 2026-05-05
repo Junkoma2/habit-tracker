@@ -15,10 +15,10 @@
   transition: height 0.2s ease, opacity 0.2s ease;
 }
 
-/* returning: フェードせず高さだけ縮めてヘッダへ吸い込まれる演出 */
+/* returning: 引き出しと対称に height + opacity を同時に縮める */
 .pull-indicator.returning {
   opacity: 0;
-  transition: height 0.7s cubic-bezier(0.4, 0, 0.6, 1);
+  transition: height 0.7s cubic-bezier(0.4, 0, 0.6, 1), opacity 0.7s cubic-bezier(0.4, 0, 0.6, 1);
 }
 
 .pull-arrow {

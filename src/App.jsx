@@ -370,7 +370,6 @@ export default function App() {
       setHabits(fresh.habits)
       setRecords(fresh.records)
       setTimeout(() => {
-        // 完了アイコンを表示してユーザーに更新完了を伝える
         setRefreshComplete(true)
         setTimeout(() => {
           // .returning を先に付与してから refreshing を落とすことで
@@ -429,7 +428,6 @@ export default function App() {
       >
         {(refreshing || pullReturning) ? (
           refreshComplete ? (
-            // 更新完了アイコン（ヘッダへ吸い込まれる間も表示）
             <>
               <svg className="pull-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
