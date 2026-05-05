@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Modal from './Modal'
 import './MonthPickerModal.css'
 
 const MONTH_LABELS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
 
-export default function MonthPickerModal({ currentDate, onSelect, onClose }) {
+export default function MonthPickerModal({ currentDate, records, onSelect, onClose }) {
   const [pickerYear, setPickerYear] = useState(currentDate.getFullYear())
   const currentYear = currentDate.getFullYear()
   const currentMonth = currentDate.getMonth()
@@ -16,6 +16,13 @@ export default function MonthPickerModal({ currentDate, onSelect, onClose }) {
   // 選択可能な年の範囲: 今年を基準に±5年
   const MIN_YEAR = todayYear - 5
   const MAX_YEAR = todayYear + 1
+  const recordMonths = useMemo(() => {
+    const months = new Set()
+    for (const [date, ids] of Object.entries(records)) {
+      if (ids.length > 0) months.add(date.slice(0, 7))
+    }
+    return months
+  }, [records])
 
   return (
     <Modal onClose={onClose} title="年月を選ぶ">
@@ -51,6 +58,8 @@ export default function MonthPickerModal({ currentDate, onSelect, onClose }) {
           {MONTH_LABELS.map((label, m) => {
             const isSelected = pickerYear === currentYear && m === currentMonth
             const isToday = pickerYear === todayYear && m === todayMonth
+            const monthKey = `${pickerYear}-${String(m + 1).padStart(2, '0')}`
+            const hasRecords = recordMonths.has(monthKey)
             return (
               <button
                 key={m}
@@ -60,10 +69,11 @@ export default function MonthPickerModal({ currentDate, onSelect, onClose }) {
                   isToday && !isSelected ? 'today' : '',
                 ].filter(Boolean).join(' ')}
                 onClick={() => { onSelect(pickerYear, m); onClose() }}
-                aria-label={`${pickerYear}年${m + 1}月`}
+                aria-label={`${pickerYear}年${m + 1}月${hasRecords ? '、記録あり' : ''}`}
                 aria-pressed={isSelected}
               >
-                {label}
+                <span>{label}</span>
+                {hasRecords && <span className="month-record-dot" aria-hidden="true" />}
               </button>
             )
           })}

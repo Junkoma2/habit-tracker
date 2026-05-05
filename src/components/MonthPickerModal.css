@@ -65,6 +65,10 @@
 }
 
 .month-picker-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 14px 8px;
   border-radius: 12px;
   font-size: 0.95rem;
@@ -87,5 +91,19 @@
 .month-picker-cell.today {
   border: 2px solid var(--color-primary);
   color: var(--color-primary);
+  background: #fff;
+}
+
+.month-record-dot {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--color-primary);
+}
+
+.month-picker-cell.selected .month-record-dot {
   background: #fff;
 }
