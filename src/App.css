@@ -82,6 +82,8 @@
   padding: 8px 16px;
   padding-top: calc(8px + env(safe-area-inset-top));
   box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+  /* iOSでヘッダー上のタッチからスクロールが発火しないようにする */
+  touch-action: none;
 }
 
 .app-title {
@@ -298,6 +300,7 @@
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
   padding-bottom: var(--footer-safe-padding);
   z-index: 20;
+  touch-action: none;
 }
 
 .app.browser .app-footer {

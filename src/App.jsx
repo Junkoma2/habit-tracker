@@ -67,6 +67,8 @@ export default function App() {
   const [undoAction, setUndoAction] = useState(null)
   const undoTimerRef = useRef(null)
   const mainRef = useRef(null)
+  const headerRef = useRef(null)
+  const footerRef = useRef(null)
   const fileInputRef = useRef(null)
 
   const today = getToday()
@@ -87,6 +89,21 @@ export default function App() {
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
   )
+
+  useEffect(() => {
+    const preventChromeScroll = (e) => {
+      e.preventDefault()
+    }
+    const chromeEls = [headerRef.current, footerRef.current].filter(Boolean)
+    chromeEls.forEach(el => {
+      el.addEventListener('touchmove', preventChromeScroll, { passive: false })
+    })
+    return () => {
+      chromeEls.forEach(el => {
+        el.removeEventListener('touchmove', preventChromeScroll)
+      })
+    }
+  }, [])
 
   useEffect(() => {
     const setViewportHeight = () => {
@@ -255,6 +272,15 @@ export default function App() {
     setToast(`データを復元しました（習慣 ${habitCount}件・記録 ${dayCount}日分）`)
   }, [modal])
 
+  const handleChromeTouchStart = useCallback((e) => {
+    e.stopPropagation()
+  }, [])
+
+  const handleChromeTouchMove = useCallback((e) => {
+    e.preventDefault()
+    e.stopPropagation()
+  }, [])
+
   return (
     <div
       className={`app ${isStandalone ? 'standalone' : 'browser'}${scrolled ? ' scrolled' : ''}`}
@@ -263,7 +289,12 @@ export default function App() {
       onTouchEnd={handleTouchEnd}
     >
       <AddToHomePrompt />
-      <header className="app-header">
+      <header
+        ref={headerRef}
+        className="app-header"
+        onTouchStart={handleChromeTouchStart}
+        onTouchMove={handleChromeTouchMove}
+      >
         <h1 className="app-title">習慣トラッカー</h1>
         <div className="header-actions">
           <button className="header-btn" onClick={() => setModal({ type: 'help' })}>
@@ -585,7 +616,12 @@ export default function App() {
       )}
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
 
-      <footer className="app-footer">
+      <footer
+        ref={footerRef}
+        className="app-footer"
+        onTouchStart={handleChromeTouchStart}
+        onTouchMove={handleChromeTouchMove}
+      >
         <div className="app-footer-inner">
           <button className={`footer-btn${activeTab === 'record' ? ' active' : ''}`} onClick={() => setActiveTab('record')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
