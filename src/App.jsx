@@ -37,6 +37,9 @@ import './App.css'
 
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
 const ONBOARDING_KEY = 'habit-tracker-onboarding-done'
+const TAB_ORDER = ['record', 'habit', 'stats']
+const SWIPE_THRESHOLD_X = 72
+const SWIPE_MAX_Y = 60
 
 export default function App() {
   const viewportDebug = new URLSearchParams(window.location.search).has('debugViewport')
@@ -71,6 +74,7 @@ export default function App() {
   const footerRef = useRef(null)
   const fileInputRef = useRef(null)
   const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
+  const tabSwipeRef = useRef(null)
 
   const today = getToday()
   const yesterday = getYesterday()
@@ -160,6 +164,66 @@ export default function App() {
     if (tabsLocked) return
     setActiveTab(tab)
   }, [tabsLocked])
+
+  const handleTabSwipeStart = useCallback((e) => {
+    if (
+      modal ||
+      editMode ||
+      tabsLocked ||
+      e.touches.length !== 1 ||
+      e.target.closest('button, a, input, textarea, select, [contenteditable], [role="button"], .app-header, .app-footer, .modal-backdrop')
+    ) {
+      tabSwipeRef.current = null
+      return
+    }
+
+    const touch = e.touches[0]
+    tabSwipeRef.current = {
+      x: touch.clientX,
+      y: touch.clientY,
+      horizontal: false,
+    }
+  }, [editMode, modal, tabsLocked])
+
+  const handleTabSwipeMove = useCallback((e) => {
+    const swipe = tabSwipeRef.current
+    if (!swipe || e.touches.length !== 1) return false
+
+    const touch = e.touches[0]
+    const dx = touch.clientX - swipe.x
+    const dy = touch.clientY - swipe.y
+
+    if (!swipe.horizontal && Math.abs(dx) > 18 && Math.abs(dx) > Math.abs(dy) * 1.4) {
+      swipe.horizontal = true
+    }
+
+    if (swipe.horizontal) {
+      e.preventDefault()
+      return true
+    }
+
+    if (Math.abs(dy) > 18 && Math.abs(dy) > Math.abs(dx)) {
+      tabSwipeRef.current = null
+    }
+
+    return false
+  }, [])
+
+  const handleTabSwipeEnd = useCallback((e) => {
+    const swipe = tabSwipeRef.current
+    tabSwipeRef.current = null
+    if (!swipe?.horizontal || tabsLocked) return
+
+    const touch = e.changedTouches[0]
+    const dx = touch.clientX - swipe.x
+    const dy = touch.clientY - swipe.y
+    if (Math.abs(dx) < SWIPE_THRESHOLD_X || Math.abs(dy) > SWIPE_MAX_Y) return
+
+    const currentIndex = TAB_ORDER.indexOf(activeTab)
+    const nextIndex = dx < 0 ? currentIndex + 1 : currentIndex - 1
+    const nextTab = TAB_ORDER[nextIndex]
+    if (nextTab) setActiveTab(nextTab)
+  }, [activeTab, tabsLocked])
 
   const toggleHabit = useCallback((habitId, dateStr) => {
     const wasOn = (records[dateStr] || []).includes(habitId)
@@ -307,12 +371,28 @@ export default function App() {
     e.stopPropagation()
   }, [])
 
+  const handleAppTouchStart = useCallback((e) => {
+    handleTabSwipeStart(e)
+    handleTouchStart(e)
+  }, [handleTabSwipeStart, handleTouchStart])
+
+  const handleAppTouchMove = useCallback((e) => {
+    const swipingTabs = handleTabSwipeMove(e)
+    if (!swipingTabs) handleTouchMove(e)
+  }, [handleTabSwipeMove, handleTouchMove])
+
+  const handleAppTouchEnd = useCallback((e) => {
+    handleTabSwipeEnd(e)
+    handleTouchEnd(e)
+  }, [handleTabSwipeEnd, handleTouchEnd])
+
   return (
     <div
       className={`app ${isStandalone ? 'standalone' : 'browser'}${scrolled ? ' scrolled' : ''}`}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
+      onTouchStart={handleAppTouchStart}
+      onTouchMove={handleAppTouchMove}
+      onTouchEnd={handleAppTouchEnd}
+      onTouchCancel={handleAppTouchEnd}
     >
       <AddToHomePrompt />
       <header
