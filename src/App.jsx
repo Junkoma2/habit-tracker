@@ -122,6 +122,39 @@ export default function App() {
   }, [])
 
   useEffect(() => {
+    const scrollEl = mainRef.current
+    if (!scrollEl) return undefined
+
+    let touchStartY = 0
+
+    const handleMainTouchStart = (e) => {
+      if (e.touches.length !== 1) return
+      touchStartY = e.touches[0].clientY
+    }
+
+    const handleMainTouchMove = (e) => {
+      if (e.touches.length !== 1) return
+
+      const deltaY = e.touches[0].clientY - touchStartY
+      const atTop = scrollEl.scrollTop <= 0
+      const atBottom =
+        scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 1
+
+      if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
+        e.preventDefault()
+      }
+    }
+
+    scrollEl.addEventListener('touchstart', handleMainTouchStart, { passive: true })
+    scrollEl.addEventListener('touchmove', handleMainTouchMove, { passive: false })
+
+    return () => {
+      scrollEl.removeEventListener('touchstart', handleMainTouchStart)
+      scrollEl.removeEventListener('touchmove', handleMainTouchMove)
+    }
+  }, [])
+
+  useEffect(() => {
     const setViewportHeight = () => {
       const visualViewport = window.visualViewport
       const currentWidth = Math.round(visualViewport?.width || window.innerWidth)
