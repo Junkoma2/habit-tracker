@@ -1,0 +1,88 @@
+.record-calendar-section {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.record-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.record-summary-card {
+  display: flex;
+  min-height: 86px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-light);
+}
+
+.record-summary-card.wide {
+  grid-column: 1 / -1;
+}
+
+.record-summary-value {
+  color: var(--color-primary);
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.record-summary-label {
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.record-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.record-history-item {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.record-history-date {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.record-history-dots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.record-history-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.record-history-count {
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.record-empty {
+  color: var(--color-text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
