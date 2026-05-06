@@ -2,7 +2,7 @@ import { createContext, useContext, useRef, useEffect, useState, useCallback } f
 import './Modal.css'
 
 const CLOSE_THRESHOLD = 80
-const CLOSE_DURATION = 200
+const CLOSE_DURATION = 280
 const ModalCloseContext = createContext(null)
 
 export function useModalClose() {
@@ -74,7 +74,7 @@ export default function Modal({ onClose, children, title }) {
       sheetRef.current.style.transform = ''
       requestClose()
     } else {
-      sheetRef.current.style.transition = 'transform 0.2s ease'
+      sheetRef.current.style.transition = 'transform 0.28s ease'
       sheetRef.current.style.transform = 'translateY(0)'
     }
   }

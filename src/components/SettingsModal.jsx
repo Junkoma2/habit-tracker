@@ -16,6 +16,7 @@ export function applyTheme(theme) {
   root.setProperty('--color-primary-light', theme.primaryLight)
   root.setProperty('--color-today', theme.today)
   root.setProperty('--color-today-dark', theme.todayDark)
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme.primary)
 }
 
 export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onClose, lastBackupDate }) {

@@ -88,6 +88,20 @@
   overflow: hidden;
 }
 
+.app::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--app-safe-area-top);
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--color-primary);
+  pointer-events: none;
+  z-index: 29;
+}
+
 @supports (-webkit-touch-callout: none) {
   .app {
     --footer-safe-padding: 20px;
@@ -174,6 +188,37 @@
   gap: 16px;
 }
 
+.tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 100%;
+  animation: tab-fade-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.tab-panel-forward {
+  animation-name: tab-slide-in-forward;
+}
+
+.tab-panel-back {
+  animation-name: tab-slide-in-back;
+}
+
+@keyframes tab-fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tab-slide-in-forward {
+  from { opacity: 0; transform: translateX(18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes tab-slide-in-back {
+  from { opacity: 0; transform: translateX(-18px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
 .modal-open .app-main {
   overflow: hidden;
 }
@@ -184,7 +229,7 @@
   border-radius: var(--radius);
   padding: 16px;
   box-shadow: var(--shadow);
-  animation: section-in 0.18s ease both;
+  animation: section-in 0.28s ease both;
 }
 
 @keyframes section-in {
@@ -425,22 +470,19 @@
   font-size: 0.56rem;
   font-weight: 600;
   letter-spacing: 0.03em;
-  transition: color 0.15s, background 0.15s, transform 0.15s ease;
+  transform: translateZ(0);
+  transition: color 0.18s ease, background 0.18s ease, opacity 0.18s ease;
 }
 
 .footer-btn svg {
   width: 24px;
   height: 24px;
-  transition: transform 0.15s ease;
+  flex: 0 0 auto;
 }
 
 .footer-btn.active {
   background: var(--color-primary-light);
   color: var(--color-primary);
-}
-
-.footer-btn.active svg {
-  transform: translateY(-1px);
 }
 
 .footer-btn:disabled {
@@ -449,7 +491,6 @@
 }
 
 .footer-btn:active {
-  transform: scale(0.96);
   background: var(--color-primary-light);
   color: var(--color-primary);
 }
@@ -461,7 +502,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .section {
+  .section,
+  .tab-panel,
+  .tab-panel-forward,
+  .tab-panel-back {
     animation: none;
   }
 
@@ -474,7 +518,6 @@
     transition: none;
   }
 
-  .footer-btn.active svg,
   .footer-btn:active,
   .add-habit-btn:active,
   .add-first-btn:active,
