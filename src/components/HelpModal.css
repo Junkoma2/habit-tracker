@@ -25,19 +25,22 @@
   color: var(--color-primary);
 }
 
-.help-card-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
 .help-card {
   display: flex;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 12px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   background: var(--color-bg);
+}
+
+.help-intro {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-light);
+  color: var(--color-text);
+  font-size: 0.88rem;
+  line-height: 1.65;
 }
 
 .help-step {
@@ -61,6 +64,13 @@
   gap: 8px;
 }
 
+.help-card-main {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 5px;
+}
+
 .help-card-title {
   font-size: 0.88rem;
   font-weight: 700;
@@ -75,15 +85,21 @@
   line-height: 1.5;
 }
 
-.help-card-body {
-  margin-top: 3px;
+.help-example-list {
+  margin: 4px 0 0 1.1em;
+  color: var(--color-text);
+  font-size: 0.85rem;
+  line-height: 1.55;
 }
 
-.help-tip-design {
-  color: var(--color-text-secondary);
+.help-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
 }
 
-.help-feature {
+.help-tag {
   flex: 0 0 auto;
   padding: 2px 7px;
   border-radius: 999px;

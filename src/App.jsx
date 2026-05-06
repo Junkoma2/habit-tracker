@@ -40,6 +40,7 @@ const ONBOARDING_KEY = 'habit-tracker-onboarding-done'
 const TAB_ORDER = ['record', 'habit', 'stats']
 const SWIPE_THRESHOLD_X = 72
 const SWIPE_MAX_Y = 60
+const BACKUP_DIR_NAME = 'habit-tracker-backups'
 
 export default function App() {
   const viewportDebug = new URLSearchParams(window.location.search).has('debugViewport')
@@ -66,6 +67,7 @@ export default function App() {
     try { return localStorage.getItem(LAST_BACKUP_KEY) || null } catch { return null }
   })
   const [activeTab, setActiveTab] = useState('habit')
+  const [tabMotion, setTabMotion] = useState('none')
   const [viewportDebugInfo, setViewportDebugInfo] = useState('')
   const [undoAction, setUndoAction] = useState(null)
   const undoTimerRef = useRef(null)
@@ -199,9 +201,12 @@ export default function App() {
   const closeModal = useCallback(() => setModal(null), [])
 
   const handleTabSelect = useCallback((tab) => {
-    if (tabsLocked) return
+    if (tabsLocked || tab === activeTab) return
+    const currentIndex = TAB_ORDER.indexOf(activeTab)
+    const nextIndex = TAB_ORDER.indexOf(tab)
+    setTabMotion(nextIndex > currentIndex ? 'forward' : 'back')
     setActiveTab(tab)
-  }, [tabsLocked])
+  }, [activeTab, tabsLocked])
 
   const handleTabSwipeStart = useCallback((e) => {
     if (
@@ -260,8 +265,8 @@ export default function App() {
     const currentIndex = TAB_ORDER.indexOf(activeTab)
     const nextIndex = dx < 0 ? currentIndex + 1 : currentIndex - 1
     const nextTab = TAB_ORDER[nextIndex]
-    if (nextTab) setActiveTab(nextTab)
-  }, [activeTab, tabsLocked])
+    if (nextTab) handleTabSelect(nextTab)
+  }, [activeTab, handleTabSelect, tabsLocked])
 
   const toggleHabit = useCallback((habitId, dateStr) => {
     const wasOn = (records[dateStr] || []).includes(habitId)
@@ -348,22 +353,47 @@ export default function App() {
   const todayRecords = records[today] || []
 
   // --- Export / Import ---
-  const handleExport = useCallback(() => {
+  const handleExport = useCallback(async () => {
     const sanitized = sanitizeImportData({ habits, records })
     const json = JSON.stringify(sanitized.data, null, 2)
     const blob = new Blob([json], { type: 'application/json' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `habit-tracker-${today}.json`
-    a.click()
-    URL.revokeObjectURL(url)
-    try { localStorage.setItem(LAST_BACKUP_KEY, today) } catch {}
-    setLastBackupDate(today)
+    const filename = `habit-tracker-${today}.json`
     const skippedText = sanitized.skippedUnknownRecords > 0
       ? `（不明な記録 ${sanitized.skippedUnknownRecords}件を除外）`
       : ''
-    setToast(`habit-tracker-${today}.json を保存しました${skippedText}`)
+
+    const markSaved = () => {
+      try { localStorage.setItem(LAST_BACKUP_KEY, today) } catch {}
+      setLastBackupDate(today)
+    }
+
+    if ('showDirectoryPicker' in window) {
+      try {
+        const rootDir = await window.showDirectoryPicker({ mode: 'readwrite' })
+        const backupDir = await rootDir.getDirectoryHandle(BACKUP_DIR_NAME, { create: true })
+        const fileHandle = await backupDir.getFileHandle(filename, { create: true })
+        const writable = await fileHandle.createWritable()
+        await writable.write(blob)
+        await writable.close()
+        markSaved()
+        setToast(`${BACKUP_DIR_NAME}/${filename} に保存しました${skippedText}`)
+        return
+      } catch (error) {
+        if (error?.name === 'AbortError') {
+          setToast('バックアップ保存をキャンセルしました')
+          return
+        }
+        console.warn('Directory backup failed, falling back to download', error)
+      }
+    }
+
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
+    setToast(`${filename} のダウンロードを開始しました。保存先や完了はブラウザで確認してください${skippedText}`)
   }, [habits, records, today])
 
   const handleImportClick = () => fileInputRef.current?.click()
@@ -512,7 +542,12 @@ export default function App() {
       </div>
 
       <main ref={mainRef} className="app-main">
-        {activeTab === 'habit' && (
+        <div
+          key={activeTab}
+          className={`tab-panel tab-panel-${tabMotion}`}
+          onAnimationEnd={() => setTabMotion('none')}
+        >
+          {activeTab === 'habit' && (
           <section className="section">
             <div className="section-header">
               <h2 className="section-title">今日の習慣</h2>
@@ -611,9 +646,9 @@ export default function App() {
               </div>
             )}
           </section>
-        )}
+          )}
 
-        {activeTab === 'record' && (
+          {activeTab === 'record' && (
           <section className="section">
             <Calendar
               date={calendarDate}
@@ -625,16 +660,17 @@ export default function App() {
               onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
             />
           </section>
-        )}
+          )}
 
-        {activeTab === 'stats' && (
+          {activeTab === 'stats' && (
           <section className="section">
             <div className="section-header">
               <h2 className="section-title">分析</h2>
             </div>
             <StatsView habits={habits} records={records} />
           </section>
-        )}
+          )}
+        </div>
       </main>
 
       {modal?.type === 'monthPicker' && (
@@ -681,7 +717,7 @@ export default function App() {
       {modal?.type === 'exportConfirm' && (
         <ConfirmModal
           title="バックアップ保存"
-          message="バックアップファイルをダウンロードします。"
+          message={`バックアップファイルを保存します。\n\n対応しているブラウザでは、選んだ場所に「${BACKUP_DIR_NAME}」フォルダを作って保存します。`}
           confirmLabel="ダウンロード"
           danger={false}
           onConfirm={() => { handleExport(); closeModal() }}

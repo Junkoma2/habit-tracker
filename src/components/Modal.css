@@ -8,11 +8,11 @@
   align-items: flex-end;
   justify-content: center;
   overflow: hidden;
-  animation: backdropIn 0.22s ease both;
+  animation: backdropIn 0.28s ease both;
 }
 
 .modal-backdrop.closing {
-  animation: backdropOut 0.2s ease both;
+  animation: backdropOut 0.28s ease both;
 }
 
 @keyframes backdropIn {
@@ -31,7 +31,7 @@
   padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
   width: 100%;
   max-width: 480px;
-  animation: slideUp 0.24s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation: slideUp 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
   max-height: calc(var(--app-screen-height) - var(--app-safe-area-top));
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -39,7 +39,7 @@
 }
 
 .modal-sheet[data-closing="true"] {
-  animation: slideDown 0.2s ease both;
+  animation: slideDown 0.28s ease both;
 }
 
 @keyframes slideUp {

@@ -54,6 +54,18 @@ html.pwa-standalone #root {
   background: var(--color-primary);
 }
 
+html.pwa-standalone.modal-open body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--app-safe-area-top);
+  background: rgba(0, 0, 0, 0.45);
+  pointer-events: none;
+  z-index: 101;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', 'Yu Gothic UI',
     'Segoe UI', sans-serif;
