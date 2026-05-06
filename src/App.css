@@ -8,7 +8,7 @@
   justify-content: center;
   box-sizing: border-box;
   width: 100%;
-  padding-bottom: 10px;
+  padding-bottom: 0;
   background: var(--color-bg);
   color: var(--color-primary);
   height: 0;
@@ -16,6 +16,7 @@
 
 .pull-indicator.refreshing {
   height: 60px;
+  padding-bottom: 10px;
   opacity: 1;
   transition: height 0.2s ease, opacity 0.2s ease;
 }
@@ -179,44 +180,38 @@
   flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
-  padding: 16px 16px;
+  padding: 0 0 calc(var(--footer-height) + var(--footer-safe-padding) + 16px);
   padding-bottom: calc(var(--footer-height) + var(--footer-safe-padding) + 16px);
+  background: var(--color-surface);
+}
+
+.tab-viewport {
+  overflow: hidden;
+  min-height: 100%;
+  background: var(--color-bg);
+}
+
+.tab-track {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
+  align-items: flex-start;
+  will-change: transform;
+  touch-action: pan-y;
+}
+
+.tab-track.settling {
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .tab-panel {
   display: flex;
+  flex: 0 0 calc(100% / 3);
+  min-width: 0;
   flex-direction: column;
   gap: 16px;
-  min-height: 100%;
-  animation: tab-fade-in 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-.tab-panel-forward {
-  animation-name: tab-slide-in-forward;
-}
-
-.tab-panel-back {
-  animation-name: tab-slide-in-back;
-}
-
-@keyframes tab-fade-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes tab-slide-in-forward {
-  from { opacity: 0; transform: translateX(18px); }
-  to   { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes tab-slide-in-back {
-  from { opacity: 0; transform: translateX(-18px); }
-  to   { opacity: 1; transform: translateX(0); }
+  padding: 0 16px 0;
 }
 
 .modal-open .app-main {
@@ -229,12 +224,11 @@
   border-radius: var(--radius);
   padding: 16px;
   box-shadow: var(--shadow);
-  animation: section-in 0.28s ease both;
 }
 
-@keyframes section-in {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+.tab-panel > .section:first-child {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .section-header {
@@ -502,11 +496,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .section,
-  .tab-panel,
-  .tab-panel-forward,
-  .tab-panel-back {
-    animation: none;
+  .tab-track.settling {
+    transition: none;
   }
 
   .footer-btn,

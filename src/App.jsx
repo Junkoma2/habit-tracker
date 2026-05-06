@@ -12,7 +12,6 @@ import {
   verticalListSortingStrategy,
   arrayMove,
 } from '@dnd-kit/sortable'
-import Calendar from './components/Calendar'
 import HabitButton from './components/HabitButton'
 import HabitEditItem from './components/HabitEditItem'
 import AddHabitModal from './components/AddHabitModal'
@@ -26,6 +25,7 @@ import Toast from './components/Toast'
 import ArchivedHabitItem from './components/ArchivedHabitItem'
 import AddToHomePrompt from './components/AddToHomePrompt'
 import MonthPickerModal from './components/MonthPickerModal'
+import RecordView from './components/RecordView'
 import StatsView from './components/StatsView'
 import { useHabitsStorage, loadData } from './hooks/useHabitsStorage'
 import { useTheme } from './hooks/useTheme'
@@ -67,7 +67,8 @@ export default function App() {
     try { return localStorage.getItem(LAST_BACKUP_KEY) || null } catch { return null }
   })
   const [activeTab, setActiveTab] = useState('habit')
-  const [tabMotion, setTabMotion] = useState('none')
+  const [tabDragX, setTabDragX] = useState(0)
+  const [tabSettling, setTabSettling] = useState(false)
   const [viewportDebugInfo, setViewportDebugInfo] = useState('')
   const [undoAction, setUndoAction] = useState(null)
   const undoTimerRef = useRef(null)
@@ -202,9 +203,8 @@ export default function App() {
 
   const handleTabSelect = useCallback((tab) => {
     if (tabsLocked || tab === activeTab) return
-    const currentIndex = TAB_ORDER.indexOf(activeTab)
-    const nextIndex = TAB_ORDER.indexOf(tab)
-    setTabMotion(nextIndex > currentIndex ? 'forward' : 'back')
+    setTabSettling(true)
+    setTabDragX(0)
     setActiveTab(tab)
   }, [activeTab, tabsLocked])
 
@@ -221,12 +221,14 @@ export default function App() {
     }
 
     const touch = e.touches[0]
+    const activeIndex = TAB_ORDER.indexOf(activeTab)
     tabSwipeRef.current = {
       x: touch.clientX,
       y: touch.clientY,
       horizontal: false,
+      activeIndex,
     }
-  }, [editMode, modal, tabsLocked])
+  }, [activeTab, editMode, modal, tabsLocked])
 
   const handleTabSwipeMove = useCallback((e) => {
     const swipe = tabSwipeRef.current
@@ -242,6 +244,10 @@ export default function App() {
 
     if (swipe.horizontal) {
       e.preventDefault()
+      const atFirst = swipe.activeIndex === 0 && dx > 0
+      const atLast = swipe.activeIndex === TAB_ORDER.length - 1 && dx < 0
+      setTabSettling(false)
+      setTabDragX((atFirst || atLast) ? dx * 0.28 : dx)
       return true
     }
 
@@ -255,18 +261,22 @@ export default function App() {
   const handleTabSwipeEnd = useCallback((e) => {
     const swipe = tabSwipeRef.current
     tabSwipeRef.current = null
-    if (!swipe?.horizontal || tabsLocked) return
+    if (!swipe?.horizontal || tabsLocked) {
+      setTabDragX(0)
+      return
+    }
 
     const touch = e.changedTouches[0]
     const dx = touch.clientX - swipe.x
     const dy = touch.clientY - swipe.y
+    setTabSettling(true)
+    setTabDragX(0)
     if (Math.abs(dx) < SWIPE_THRESHOLD_X || Math.abs(dy) > SWIPE_MAX_Y) return
 
-    const currentIndex = TAB_ORDER.indexOf(activeTab)
-    const nextIndex = dx < 0 ? currentIndex + 1 : currentIndex - 1
+    const nextIndex = dx < 0 ? swipe.activeIndex + 1 : swipe.activeIndex - 1
     const nextTab = TAB_ORDER[nextIndex]
-    if (nextTab) handleTabSelect(nextTab)
-  }, [activeTab, handleTabSelect, tabsLocked])
+    if (nextTab) setActiveTab(nextTab)
+  }, [tabsLocked])
 
   const toggleHabit = useCallback((habitId, dateStr) => {
     const wasOn = (records[dateStr] || []).includes(habitId)
@@ -464,6 +474,12 @@ export default function App() {
     handleTouchEnd(e)
   }, [handleTabSwipeEnd, handleTouchEnd])
 
+  const activeTabIndex = TAB_ORDER.indexOf(activeTab)
+  const tabTrackStyle = {
+    width: `${TAB_ORDER.length * 100}%`,
+    transform: `translateX(calc(${-activeTabIndex * (100 / TAB_ORDER.length)}% + ${tabDragX}px))`,
+  }
+
   return (
     <div
       className={`app ${isStandalone ? 'standalone' : 'browser'}${scrolled ? ' scrolled' : ''}`}
@@ -542,13 +558,26 @@ export default function App() {
       </div>
 
       <main ref={mainRef} className="app-main">
-        <div
-          key={activeTab}
-          className={`tab-panel tab-panel-${tabMotion}`}
-          onAnimationEnd={() => setTabMotion('none')}
-        >
-          {activeTab === 'habit' && (
-          <section className="section">
+        <div className="tab-viewport">
+          <div
+            className={`tab-track${tabSettling ? ' settling' : ''}`}
+            style={tabTrackStyle}
+            onTransitionEnd={() => setTabSettling(false)}
+          >
+            <div className="tab-panel" aria-hidden={activeTab !== 'record'}>
+              <RecordView
+                calendarDate={calendarDate}
+                onCalendarDateChange={setCalendarDate}
+                habits={habits}
+                records={records}
+                today={today}
+                onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
+                onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
+              />
+            </div>
+
+            <div className="tab-panel" aria-hidden={activeTab !== 'habit'}>
+              <section className="section">
             <div className="section-header">
               <h2 className="section-title">今日の習慣</h2>
               {habits.length > 0 && (
@@ -646,30 +675,17 @@ export default function App() {
               </div>
             )}
           </section>
-          )}
-
-          {activeTab === 'record' && (
-          <section className="section">
-            <Calendar
-              date={calendarDate}
-              onDateChange={setCalendarDate}
-              habits={habits}
-              records={records}
-              today={today}
-              onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
-              onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
-            />
-          </section>
-          )}
-
-          {activeTab === 'stats' && (
-          <section className="section">
-            <div className="section-header">
-              <h2 className="section-title">分析</h2>
             </div>
-            <StatsView habits={habits} records={records} />
-          </section>
-          )}
+
+            <div className="tab-panel" aria-hidden={activeTab !== 'stats'}>
+              <section className="section">
+                <div className="section-header">
+                  <h2 className="section-title">これからの続け方</h2>
+                </div>
+                <StatsView habits={habits} records={records} today={today} />
+              </section>
+            </div>
+          </div>
         </div>
       </main>
 

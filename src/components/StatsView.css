@@ -1,0 +1,138 @@
+.analysis-empty {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  padding: 12px 0;
+  text-align: center;
+}
+
+.analysis-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.analysis-advice {
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary-light);
+}
+
+.analysis-advice-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-primary);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.analysis-advice p {
+  color: var(--color-text);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.55;
+}
+
+.analysis-rate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.analysis-rate-card {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: baseline;
+  min-height: 92px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+}
+
+.analysis-rate-value {
+  color: var(--color-primary);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.analysis-rate-unit {
+  color: var(--color-primary);
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.analysis-rate-label {
+  grid-column: 1 / -1;
+  align-self: end;
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.analysis-weekday {
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+}
+
+.analysis-subhead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: var(--color-text);
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.analysis-subhead small {
+  color: var(--color-text-secondary);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.analysis-weekday-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.analysis-weekday-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 40px;
+  align-items: center;
+  gap: 8px;
+}
+
+.analysis-weekday-label,
+.analysis-weekday-rate {
+  color: var(--color-text-secondary);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.analysis-weekday-rate {
+  text-align: right;
+}
+
+.analysis-weekday-bar {
+  overflow: hidden;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--color-surface);
+}
+
+.analysis-weekday-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-primary);
+}
+
+.analysis-note {
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
