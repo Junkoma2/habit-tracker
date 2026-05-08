@@ -131,6 +131,54 @@
   background: var(--color-primary);
 }
 
+.analysis-color {
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+}
+
+.analysis-color-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.analysis-color-row {
+  display: grid;
+  grid-template-columns: 12px auto auto 1fr 40px;
+  align-items: center;
+  gap: 8px;
+}
+
+.analysis-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.analysis-color-name {
+  color: var(--color-text);
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.analysis-color-count {
+  color: var(--color-text-secondary);
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.analysis-color-rate {
+  text-align: right;
+  color: var(--color-text-secondary);
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
 .analysis-note {
   color: var(--color-text-secondary);
   font-size: 0.78rem;

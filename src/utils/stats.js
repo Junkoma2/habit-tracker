@@ -50,6 +50,13 @@ export function calcStats(habitId, records) {
   return { current, longest, total }
 }
 
+export function getHabitPhase(currentStreak) {
+  if (currentStreak >= 90) return { label: '生活の一部', next: null, daysToNext: null }
+  if (currentStreak >= 30) return { label: '日常に馴染んできた', next: '生活の一部', daysToNext: 90 - currentStreak }
+  if (currentStreak >= 14) return { label: 'リズムができてきた', next: '日常に馴染んできた', daysToNext: 30 - currentStreak }
+  return { label: 'まず2週間続けてみよう', next: 'リズムができてきた', daysToNext: 14 - currentStreak }
+}
+
 export function calcPeriodStats(habitId, records, today, createdAt, archivedAt) {
   const todayDate = parseLocalDate(today)
   // 終了済み習慣は archivedAt を集計の上限にする
