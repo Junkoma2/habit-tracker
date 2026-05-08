@@ -17,6 +17,10 @@ export function applyTheme(theme) {
   root.setProperty('--color-today', theme.today)
   root.setProperty('--color-today-dark', theme.todayDark)
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme.primary)
+  // PWAモードではbody背景をインラインで直接更新しSafe Areaに即反映
+  if (document.documentElement.classList.contains('pwa-standalone')) {
+    document.body.style.background = theme.primary
+  }
 }
 
 export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onClose, lastBackupDate }) {

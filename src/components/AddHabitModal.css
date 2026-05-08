@@ -105,3 +105,9 @@
 .submit-btn:not(:disabled):active {
   opacity: 0.8;
 }
+
+.color-hint {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}

@@ -403,7 +403,7 @@ export default function App() {
     a.download = filename
     a.click()
     URL.revokeObjectURL(url)
-    setToast(`${filename} のダウンロードを開始しました。保存先や完了はブラウザで確認してください${skippedText}`)
+    setToast(`${filename} のダウンロードを開始しました。保存されたかどうかはブラウザで確認してください${skippedText}`)
   }, [habits, records, today])
 
   const handleImportClick = () => fileInputRef.current?.click()
@@ -666,6 +666,7 @@ export default function App() {
                     streak={calcCurrentStreak(habit.id, records)}
                     onPress={(h) => toggleHabit(h.id, today)}
                     onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
+                    onEdit={(h) => setModal({ type: 'edit', habit: h })}
                   />
                 ))}
                 <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>

@@ -3,6 +3,17 @@ import './StatsView.css'
 
 const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土']
 
+const COLOR_CATEGORY_NAMES = {
+  '#FF6B6B': '生活・日課',
+  '#FF9F43': '社交',
+  '#FECA57': '創作',
+  '#48DBB4': '健康',
+  '#54A0FF': '学習',
+  '#A29BFE': 'ケア',
+  '#FD79A8': 'セルフケア',
+  '#6C5CE7': '集中',
+}
+
 function isHabitActiveOn(habit, dateStr) {
   if (habit.createdAt && dateStr < habit.createdAt) return false
   if (habit.archivedAt && dateStr >= habit.archivedAt) return false
@@ -50,6 +61,25 @@ function calcWeekdayRates(habits, records, today, days = 30) {
   }))
 }
 
+function calcColorStats(habits, records, today) {
+  const activeHabits = habits.filter(h => !h.archivedAt)
+  const colorGroups = {}
+
+  for (const habit of activeHabits) {
+    if (!colorGroups[habit.color]) colorGroups[habit.color] = []
+    colorGroups[habit.color].push(habit)
+  }
+
+  return Object.entries(colorGroups)
+    .map(([color, groupHabits]) => ({
+      color,
+      name: COLOR_CATEGORY_NAMES[color] || color,
+      count: groupHabits.length,
+      rate: calcRateForRange(groupHabits, records, today, 30),
+    }))
+    .sort((a, b) => (b.rate ?? -1) - (a.rate ?? -1))
+}
+
 function getAdvice(rate30) {
   if (rate30 === null) {
     return '記録が増えると、続け方のヒントがここに表示されます。'
@@ -69,6 +99,7 @@ export default function StatsView({ habits, records, today }) {
   const rate30 = calcRateForRange(habits, records, today, 30)
   const weekdayRates = calcWeekdayRates(habits, records, today)
   const advice = getAdvice(rate30)
+  const colorStats = calcColorStats(habits, records, today)
 
   if (habits.length === 0) {
     return <p className="analysis-empty">習慣を追加すると、続け方のヒントが表示されます。</p>
@@ -93,6 +124,28 @@ export default function StatsView({ habits, records, today }) {
           <span className="analysis-rate-label">直近30日</span>
         </div>
       </div>
+
+      {colorStats.length > 1 && (
+        <div className="analysis-color">
+          <div className="analysis-subhead">
+            <span>カテゴリ別達成率</span>
+            <small>直近30日</small>
+          </div>
+          <div className="analysis-color-list">
+            {colorStats.map(({ color, name, count, rate }) => (
+              <div className="analysis-color-row" key={color}>
+                <span className="analysis-color-dot" style={{ backgroundColor: color }} />
+                <span className="analysis-color-name">{name}</span>
+                <span className="analysis-color-count">{count}件</span>
+                <div className="analysis-weekday-bar">
+                  <span style={{ width: `${rate ?? 0}%`, backgroundColor: color }} />
+                </div>
+                <span className="analysis-color-rate">{rate !== null ? `${rate}%` : '-'}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="analysis-weekday">
         <div className="analysis-subhead">
