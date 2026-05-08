@@ -185,7 +185,7 @@
   -webkit-overflow-scrolling: touch;
   padding: 0 0 calc(var(--footer-height) + var(--footer-safe-padding) + 16px);
   padding-bottom: calc(var(--footer-height) + var(--footer-safe-padding) + 16px);
-  background: var(--color-surface);
+  background: var(--color-bg);
 }
 
 .tab-viewport {
