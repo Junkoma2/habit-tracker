@@ -9,7 +9,7 @@
   box-sizing: border-box;
   width: 100%;
   padding-bottom: 0;
-  background: var(--color-bg);
+  background: var(--color-surface);
   color: var(--color-primary);
   height: 0;
 }
@@ -191,7 +191,7 @@
 .tab-viewport {
   overflow: hidden;
   min-height: 100%;
-  background: var(--color-bg);
+  background: var(--color-surface);
 }
 
 .tab-track {
@@ -229,8 +229,6 @@
 .tab-panel > .section:first-child {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  margin-left: -16px;
-  margin-right: -16px;
 }
 
 .section-header {
