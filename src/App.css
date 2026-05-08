@@ -229,6 +229,8 @@
 .tab-panel > .section:first-child {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+  margin-left: -16px;
+  margin-right: -16px;
 }
 
 .section-header {
