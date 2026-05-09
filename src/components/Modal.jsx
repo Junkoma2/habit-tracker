@@ -9,6 +9,23 @@ export function useModalClose() {
   return useContext(ModalCloseContext)
 }
 
+/**
+ * 共通モーダルベースコンポーネント。
+ *
+ * 全モーダル（AddHabitModal / HelpModal / SettingsModal / ConfirmModal 等）はこのコンポーネントを使う。
+ *
+ * 共通で処理していること:
+ * - safe-area: .modal-sheet の padding-bottom に env(safe-area-inset-bottom) を適用
+ * - scroll: overscroll-behavior: contain でスクロール連鎖を防止
+ * - animation: slideUp / slideDown + backdrop fade
+ * - drag-to-close: 下スワイプで閉じる（scrollTop === 0 のときのみ）
+ * - focus: アニメーション完了後に sheetRef へ focus（キーボード対応）
+ * - iOS PWA: modal-open クラスで背後のスクロールをロック、テーマカラーを暗くする
+ * - reduced-motion: prefers-reduced-motion 時はアニメーションをスキップ
+ *
+ * 新モーダルを追加するときはこのコンポーネントをラップするだけでよい。
+ * safe-area / scroll / keyboard 対応は自動的に適用される。
+ */
 export default function Modal({ onClose, children, title }) {
   const [closing, setClosing] = useState(false)
   const sheetRef = useRef(null)
@@ -24,6 +41,7 @@ export default function Modal({ onClose, children, title }) {
   }, [])
 
   useEffect(() => {
+    // iOS PWA: .modal-open でバックグラウンドのスクロールを防ぐ
     document.documentElement.classList.add('modal-open')
     const meta = document.querySelector('meta[name="theme-color"]')
     const prevColor = meta?.getAttribute('content') ?? null
@@ -54,6 +72,7 @@ export default function Modal({ onClose, children, title }) {
     closeTimerRef.current = setTimeout(onClose, CLOSE_DURATION)
   }, [closing, onClose])
 
+  // drag-to-close: scrollTop が 0 のときのみ下スワイプで閉じる
   const handleTouchStart = (e) => {
     if (closing) return
     if (sheetRef.current.scrollTop > 0) return
@@ -63,6 +82,7 @@ export default function Modal({ onClose, children, title }) {
   }
 
   const handleTouchMove = (e) => {
+    // モーダル内の touchmove が外側（タブスワイプ等）に伝播しないよう stopPropagation
     e.stopPropagation()
     if (closing) return
     if (!draggingRef.current) return
@@ -96,6 +116,7 @@ export default function Modal({ onClose, children, title }) {
       className={`modal-backdrop${closing ? ' closing' : ''}`}
       onClick={requestClose}
       onTouchMove={(e) => {
+        // backdrop の touchmove はデフォルト動作（iOS overscroll）を防ぐ
         e.preventDefault()
         e.stopPropagation()
       }}
