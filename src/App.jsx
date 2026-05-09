@@ -424,7 +424,7 @@ export default function App() {
     a.download = filename
     a.click()
     URL.revokeObjectURL(url)
-    setToast(`${filename} をダウンロードしました。「ファイルに保存」を選択して保存してください${skippedText}`)
+    setToast(`ダウンロードを開始しました。保存ダイアログが表示されたら保存先を選んでください${skippedText}`)
   }, [habits, records, today])
 
   const handleImportClick = () => fileInputRef.current?.click()
