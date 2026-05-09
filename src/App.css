@@ -205,7 +205,9 @@
 .tab-panel {
   display: flex;
   flex: 0 0 calc(100% / 3);
+  height: 100%;
   min-width: 0;
+  min-height: 0;
   flex-direction: column;
   gap: 16px;
   /* padding-top: 20px でoverflow-x: hiddenによるbox-shadow上端クリップを防ぐ */
