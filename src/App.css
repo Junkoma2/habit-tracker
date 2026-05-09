@@ -214,13 +214,22 @@
   flex-direction: column;
   gap: 16px;
   /* padding-top: 20px でoverflow-x: hiddenによるbox-shadow上端クリップを防ぐ */
-  padding: 20px 16px calc(var(--footer-total-height) + var(--content-bottom-breathing));
+  /* padding-bottom は iOS Safari の flex コンテナ scroll 高さバグを避けるため
+     ::after flex item に移動（padding-bottom は scrollHeight に含まれないケースがある） */
+  padding: 20px 16px 0;
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: auto;
   touch-action: pan-y;
+}
+
+/* iOS Safari では flex コンテナの padding-bottom が scrollHeight に反映されないバグがある。
+   flex item として末尾に挿入することで確実にスクロール余地を確保する */
+.tab-panel::after {
+  content: "";
+  flex: 0 0 calc(var(--footer-total-height) + var(--content-bottom-breathing));
 }
 
 
