@@ -26,7 +26,7 @@ export function applyTheme(theme) {
 export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onManageCategories, onClose, lastBackupDate }) {
   return (
     <Modal title="設定" onClose={onClose}>
-      <p className="settings-section-title">テーマカラー</p>
+      <p className="settings-section-title">見た目</p>
       <div className="theme-grid">
         {THEMES.map(theme => (
           <button
@@ -52,7 +52,9 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
         ))}
       </div>
 
-      <p className="settings-section-title">カテゴリ</p>
+      <hr className="settings-divider" />
+
+      <p className="settings-section-title">習慣</p>
       <div className="data-mgmt-list">
         <button className="data-mgmt-btn" onClick={onManageCategories}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -62,7 +64,9 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
         </button>
       </div>
 
-      <p className="settings-section-title">データ管理</p>
+      <hr className="settings-divider" />
+
+      <p className="settings-section-title">データ</p>
       <div className="data-mgmt-list">
         <button className="data-mgmt-btn" onClick={onExport}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
