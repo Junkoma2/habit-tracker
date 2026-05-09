@@ -61,6 +61,9 @@ export function sanitizeImportData(data) {
     data: {
       habits: data.habits,
       records,
+      ...(data.colorCategories && typeof data.colorCategories === 'object' && !Array.isArray(data.colorCategories)
+        ? { colorCategories: data.colorCategories }
+        : {}),
     },
     skippedUnknownRecords,
   }
