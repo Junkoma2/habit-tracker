@@ -205,22 +205,19 @@
   flex-direction: column;
   gap: 16px;
   /* padding-top: 20px でoverflow-x: hiddenによるbox-shadow上端クリップを防ぐ */
-  padding: 20px 16px calc(var(--footer-height) + var(--footer-safe-padding) + 16px);
+  /* --app-screen-height が viewport+env(safe-area-inset-bottom) 分高いため、
+     tab-panelもその分余分にスクロールできる。padding-bottomにenv分を2回加算して補正する */
+  padding: 20px 16px calc(
+    var(--footer-height) +
+    max(var(--footer-safe-padding), var(--app-safe-area-bottom)) +
+    var(--app-safe-area-bottom) +
+    16px
+  );
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
   scroll-behavior: auto;
-}
-
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .tab-panel {
-    padding-bottom: calc(var(--footer-height) + max(var(--footer-safe-padding), env(safe-area-inset-bottom)) + 16px);
-  }
-
-  .app-footer {
-    padding-bottom: max(var(--footer-safe-padding), env(safe-area-inset-bottom));
-  }
 }
 
 .modal-open .app-main {
@@ -397,7 +394,7 @@
   background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
-  padding-bottom: var(--footer-safe-padding);
+  padding-bottom: max(var(--footer-safe-padding), var(--app-safe-area-bottom));
   z-index: 20;
   touch-action: none;
 }
