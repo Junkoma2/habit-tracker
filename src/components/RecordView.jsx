@@ -80,18 +80,18 @@ export default function RecordView({
     <>
       {featured && (
         <section className="section record-phase-highlight-section">
-          <div className="phase-highlight-label">{featured.phase.label}</div>
+          <div className="phase-highlight-heading">いま一番続いている習慣</div>
+          <div className="phase-highlight-habit-row">
+            {featured.streak > 0 && (
+              <span className="phase-highlight-dot" style={{ backgroundColor: featured.habit.color }} />
+            )}
+            <div className="phase-highlight-habit-name">{featured.habit.name}</div>
+          </div>
           <div className="phase-highlight-streak">{featured.streak > 0 ? `${featured.streak}日継続中` : '今日から始めよう'}</div>
+          <div className="phase-highlight-label">{featured.phase.label}</div>
           {featured.phase.daysToNext !== null && (
             <div className="phase-highlight-next">
               あと{featured.phase.daysToNext}日続けると「{featured.phase.next}」へ
-            </div>
-          )}
-          <div className="phase-highlight-tip">{featured.phase.tip}</div>
-          {featured.streak > 0 && (
-            <div className="phase-highlight-habit">
-              <span className="phase-highlight-dot" style={{ backgroundColor: featured.habit.color }} />
-              <span>{featured.habit.name}</span>
             </div>
           )}
         </section>

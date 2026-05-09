@@ -1,8 +1,21 @@
-.habit-tip {
-  margin: 12px 16px 4px;
-  padding: 10px 12px;
+﻿.habit-tip-card {
+  margin: 8px 16px 4px;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm, 8px);
+  background: var(--color-surface, #f5f5f5);
   border-left: 3px solid var(--color-primary, #6366f1);
-  background: transparent;
+}
+
+.habit-tip-title {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--color-primary, #6366f1);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.habit-tip-body {
   color: var(--color-text-muted, #888);
   font-size: 0.78rem;
   line-height: 1.5;
