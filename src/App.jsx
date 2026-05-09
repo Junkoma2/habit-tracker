@@ -407,11 +407,11 @@ export default function App() {
         await writable.write(blob)
         await writable.close()
         markSaved()
-        setToast(`${BACKUP_DIR_NAME}/${filename} に保存しました${skippedText}`)
+        setToast(`バックアップを保存しました${skippedText}`)
         return
       } catch (error) {
         if (error?.name === 'AbortError') {
-          setToast('バックアップ保存をキャンセルしました')
+          setToast('保存をキャンセルしました')
           return
         }
         console.warn('Directory backup failed, falling back to download', error)
@@ -424,7 +424,7 @@ export default function App() {
     a.download = filename
     a.click()
     URL.revokeObjectURL(url)
-    setToast(`ダウンロードを開始しました。保存ダイアログが表示されたら保存先を選んでください${skippedText}`)
+    setToast(`バックアップを保存しました${skippedText}`)
   }, [habits, records, today])
 
   const handleImportClick = () => fileInputRef.current?.click()
@@ -468,7 +468,7 @@ export default function App() {
     setHabits(modal.data.habits)
     setRecords(modal.data.records)
     setModal(null)
-    setToast(`データを復元しました（習慣 ${habitCount}件・記録 ${dayCount}日分）`)
+    setToast(`復元しました（${habitCount}件・${dayCount}日分）`)
   }, [modal])
 
   // handlers の最新版を常に参照できるよう ref で保持
