@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
 import {
   DndContext,
   closestCenter,
@@ -27,6 +27,7 @@ import AddToHomePrompt from './components/AddToHomePrompt'
 import MonthPickerModal from './components/MonthPickerModal'
 import RecordView from './components/RecordView'
 import StatsView from './components/StatsView'
+import CategoryManageModal from './components/CategoryManageModal'
 import { useHabitsStorage, loadData } from './hooks/useHabitsStorage'
 import { useTheme } from './hooks/useTheme'
 import { usePullToRefresh, PULL_THRESHOLD } from './hooks/usePullToRefresh'
@@ -56,7 +57,7 @@ export default function App() {
     setShowWelcome(false)
   }, [])
 
-  const { habits, records, setHabits, setRecords } = useHabitsStorage()
+  const { habits, records, categories, setHabits, setRecords, setCategories } = useHabitsStorage()
   const { themeId, handleThemeSelect } = useTheme()
 
   const [calendarDate, setCalendarDate] = useState(() => new Date())
@@ -73,6 +74,10 @@ export default function App() {
   const [undoAction, setUndoAction] = useState(null)
   const undoTimerRef = useRef(null)
   const mainRef = useRef(null)
+  const recordPanelRef = useRef(null)
+  const habitPanelRef = useRef(null)
+  const statsPanelRef = useRef(null)
+  const scrollRef = useRef(null)
   const headerRef = useRef(null)
   const footerRef = useRef(null)
   const fileInputRef = useRef(null)
@@ -96,7 +101,7 @@ export default function App() {
   const {
     pullY, pullReturning, refreshing, refreshComplete, scrolled,
     handleTouchStart, handleTouchMove, handleTouchEnd,
-  } = usePullToRefresh({ mainRef, onRefresh })
+  } = usePullToRefresh({ mainRef: scrollRef, scrollKey: activeTab, onRefresh })
   const tabsLocked = refreshing && !refreshComplete
 
   const sensors = useSensors(
@@ -124,8 +129,15 @@ export default function App() {
     }
   }, [])
 
+  const panelRefMap = { record: recordPanelRef, habit: habitPanelRef, stats: statsPanelRef }
+
+  useLayoutEffect(() => {
+    scrollRef.current = panelRefMap[activeTab]?.current ?? null
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab])
+
   useEffect(() => {
-    const scrollEl = mainRef.current
+    const scrollEl = scrollRef.current
     if (!scrollEl) return undefined
 
     let touchStartY = 0
@@ -155,7 +167,7 @@ export default function App() {
       scrollEl.removeEventListener('touchstart', handleMainTouchStart)
       scrollEl.removeEventListener('touchmove', handleMainTouchMove)
     }
-  }, [])
+  }, [activeTab])
 
   useEffect(() => {
     const setViewportHeight = () => {
@@ -309,19 +321,32 @@ export default function App() {
     setUndoAction(null)
   }, [undoAction])
 
-  const addHabit = useCallback(({ name, color }) => {
+  const addHabit = useCallback(({ name, color, categoryId }) => {
     const id = `h_${Date.now()}`
-    setHabits(prev => [...prev, { id, name, color, createdAt: today }])
+    setHabits(prev => [...prev, { id, name, color, categoryId: categoryId ?? null, createdAt: today }])
     setModal(null)
     dismissWelcome()
   }, [today, dismissWelcome])
 
-  const updateHabit = useCallback(({ name, color }) => {
+  const updateHabit = useCallback(({ name, color, categoryId }) => {
     setHabits(prev =>
-      prev.map(h => h.id === modal.habit.id ? { ...h, name, color } : h)
+      prev.map(h => h.id === modal.habit.id ? { ...h, name, color, categoryId: categoryId ?? null } : h)
     )
     setModal(null)
   }, [modal])
+
+  const addCategory = useCallback((cat) => {
+    setCategories(prev => [...prev, cat])
+  }, [])
+
+  const updateCategory = useCallback((id, name) => {
+    setCategories(prev => prev.map(c => c.id === id ? { ...c, name } : c))
+  }, [])
+
+  const deleteCategory = useCallback((id) => {
+    setCategories(prev => prev.filter(c => c.id !== id))
+    setHabits(prev => prev.map(h => h.categoryId === id ? { ...h, categoryId: null } : h))
+  }, [])
 
   const deleteHabit = useCallback((habitId) => {
     setHabits(prev => prev.filter(h => h.id !== habitId))
@@ -564,7 +589,7 @@ export default function App() {
             style={tabTrackStyle}
             onTransitionEnd={() => setTabSettling(false)}
           >
-            <div className="tab-panel" aria-hidden={activeTab !== 'record'}>
+            <div className="tab-panel" ref={recordPanelRef} aria-hidden={activeTab !== 'record'}>
               <RecordView
                 calendarDate={calendarDate}
                 onCalendarDateChange={setCalendarDate}
@@ -576,7 +601,7 @@ export default function App() {
               />
             </div>
 
-            <div className="tab-panel" aria-hidden={activeTab !== 'habit'}>
+            <div className="tab-panel" ref={habitPanelRef} aria-hidden={activeTab !== 'habit'}>
               <section className="section">
             <div className="section-header">
               <h2 className="section-title">今日の習慣</h2>
@@ -666,7 +691,6 @@ export default function App() {
                     streak={calcCurrentStreak(habit.id, records)}
                     onPress={(h) => toggleHabit(h.id, today)}
                     onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
-                    onEdit={(h) => setModal({ type: 'edit', habit: h })}
                   />
                 ))}
                 <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>
@@ -678,12 +702,12 @@ export default function App() {
           </section>
             </div>
 
-            <div className="tab-panel" aria-hidden={activeTab !== 'stats'}>
+            <div className="tab-panel" ref={statsPanelRef} aria-hidden={activeTab !== 'stats'}>
               <section className="section">
                 <div className="section-header">
                   <h2 className="section-title">これからの続け方</h2>
                 </div>
-                <StatsView habits={habits} records={records} today={today} />
+                <StatsView habits={habits} records={records} today={today} categories={categories} />
               </section>
             </div>
           </div>
@@ -700,7 +724,7 @@ export default function App() {
       )}
 
       {modal?.type === 'add' && (
-        <AddHabitModal onSave={addHabit} onClose={closeModal} />
+        <AddHabitModal onSave={addHabit} onClose={closeModal} categories={categories} />
       )}
 
       {modal?.type === 'edit' && (
@@ -708,6 +732,7 @@ export default function App() {
           initialHabit={modal.habit}
           onSave={updateHabit}
           onClose={closeModal}
+          categories={categories}
         />
       )}
 
@@ -719,6 +744,7 @@ export default function App() {
           isCompletedToday={todayRecords.includes(modal.habit.id)}
           isCompletedYesterday={(records[yesterday] || []).includes(modal.habit.id)}
           onSelect={(dateStr) => { toggleHabit(modal.habit.id, dateStr); closeModal() }}
+          onEdit={(h) => setModal({ type: 'edit', habit: h })}
           onClose={closeModal}
         />
       )}
@@ -790,8 +816,19 @@ export default function App() {
           onSelectTheme={(theme) => { handleThemeSelect(theme) }}
           onExport={() => { closeModal(); setTimeout(() => setModal({ type: 'exportConfirm' }), 50) }}
           onImport={() => { closeModal(); setTimeout(() => setModal({ type: 'importConfirm' }), 50) }}
+          onManageCategories={() => { closeModal(); setTimeout(() => setModal({ type: 'categoryManage' }), 50) }}
           onClose={closeModal}
           lastBackupDate={lastBackupDate}
+        />
+      )}
+
+      {modal?.type === 'categoryManage' && (
+        <CategoryManageModal
+          categories={categories}
+          onAdd={addCategory}
+          onUpdate={updateCategory}
+          onDelete={deleteCategory}
+          onClose={closeModal}
         />
       )}
 

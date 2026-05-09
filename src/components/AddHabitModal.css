@@ -111,3 +111,30 @@
   color: var(--color-text-secondary);
   margin-top: 4px;
 }
+
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-chip {
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1.5px solid var(--color-border);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  transition: all 0.15s;
+}
+
+.category-chip.selected {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+}
+
+.category-chip:active {
+  opacity: 0.7;
+}

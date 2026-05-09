@@ -2,7 +2,7 @@ import { useState, useRef, useCallback, useEffect } from 'react'
 
 export const PULL_THRESHOLD = 80
 
-export function usePullToRefresh({ mainRef, onRefresh }) {
+export function usePullToRefresh({ mainRef, scrollKey, onRefresh }) {
   const [pullY, setPullY] = useState(0)
   const [pullReturning, setPullReturning] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
@@ -32,7 +32,8 @@ export function usePullToRefresh({ mainRef, onRefresh }) {
     scrollEl.addEventListener('scroll', onScroll, { passive: true })
     onScroll()
     return () => scrollEl.removeEventListener('scroll', onScroll)
-  }, [mainRef])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mainRef, scrollKey])
 
   const handleTouchStart = useCallback((e) => {
     // ヘッダー上のタッチはpull-to-refreshを起動しない
