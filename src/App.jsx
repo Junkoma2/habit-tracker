@@ -25,6 +25,7 @@ import Toast from './components/Toast'
 import ArchivedHabitItem from './components/ArchivedHabitItem'
 import AddToHomePrompt from './components/AddToHomePrompt'
 import MonthPickerModal from './components/MonthPickerModal'
+import HabitTip from './components/HabitTip'
 import RecordView from './components/RecordView'
 import StatsView from './components/StatsView'
 import CategoryManageModal from './components/CategoryManageModal'
@@ -682,23 +683,26 @@ export default function App() {
                 )}
               </>
             ) : (
-              <div className="habits-grid">
-                {activeHabits.map(habit => (
-                  <HabitButton
-                    key={habit.id}
-                    habit={habit}
-                    completed={todayRecords.includes(habit.id)}
-                    streak={calcCurrentStreak(habit.id, records)}
-                    onPress={(h) => toggleHabit(h.id, today)}
-                    onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
-                    onEdit={(h) => setModal({ type: 'edit', habit: h })}
-                  />
-                ))}
-                <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>
-                  <span className="add-icon">＋</span>
-                  <span>追加</span>
-                </button>
-              </div>
+              <>
+                <div className="habits-grid">
+                  {activeHabits.map(habit => (
+                    <HabitButton
+                      key={habit.id}
+                      habit={habit}
+                      completed={todayRecords.includes(habit.id)}
+                      streak={calcCurrentStreak(habit.id, records)}
+                      onPress={(h) => toggleHabit(h.id, today)}
+                      onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
+                      onEdit={(h) => setModal({ type: 'edit', habit: h })}
+                    />
+                  ))}
+                  <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>
+                    <span className="add-icon">＋</span>
+                    <span>追加</span>
+                  </button>
+                </div>
+                <HabitTip today={today} />
+              </>
             )}
           </section>
             </div>
