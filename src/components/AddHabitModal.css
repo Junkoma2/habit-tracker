@@ -106,12 +106,6 @@
   opacity: 0.8;
 }
 
-.color-hint {
-  font-size: 0.78rem;
-  color: var(--color-text-secondary);
-  margin-top: 4px;
-}
-
 .category-chips {
   display: flex;
   flex-wrap: wrap;
