@@ -693,7 +693,6 @@ export default function App() {
                       streak={calcCurrentStreak(habit.id, records)}
                       onPress={(h) => toggleHabit(h.id, today)}
                       onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
-                      onEdit={(h) => setModal({ type: 'edit', habit: h })}
                     />
                   ))}
                   <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>
