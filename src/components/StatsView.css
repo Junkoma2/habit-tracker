@@ -6,12 +6,6 @@
   text-align: center;
 }
 
-.analysis-content {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
 .analysis-advice {
   padding: 14px;
   border-radius: var(--radius-sm);
@@ -37,6 +31,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+  margin-top: 14px;
 }
 
 .analysis-rate-card {
@@ -68,12 +63,6 @@
   color: var(--color-text-secondary);
   font-size: 0.78rem;
   font-weight: 700;
-}
-
-.analysis-weekday {
-  padding: 14px;
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
 }
 
 .analysis-subhead {
@@ -121,7 +110,7 @@
   overflow: hidden;
   height: 8px;
   border-radius: 999px;
-  background: var(--color-surface);
+  background: var(--color-bg);
 }
 
 .analysis-weekday-bar span {
@@ -131,17 +120,10 @@
   background: var(--color-primary);
 }
 
-.analysis-color {
-  padding: 14px;
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-}
-
 .analysis-color-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 12px;
 }
 
 .analysis-color-row {
