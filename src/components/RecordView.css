@@ -4,8 +4,13 @@
   color: #fff;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 0;
   padding: 16px 20px;
+}
+
+.progress-line-list {
+  display: flex;
+  flex-direction: column;
 }
 
 .phase-highlight-heading {

@@ -1,4 +1,5 @@
 import Calendar from './Calendar'
+import HabitProgressLine from './HabitProgressLine'
 import { calcCurrentStreak, getHabitPhase } from '../utils/stats'
 import './RecordView.css'
 
@@ -53,31 +54,18 @@ export default function RecordView({
     }
   }
 
-  // 継続中習慣（streak > 0）を降順で最大5件
-  const streakingHabits = [...habitPhaseList]
-    .filter(item => item.streak > 0)
-    .sort((a, b) => b.streak - a.streak)
-    .slice(0, 5)
+  const sortedHabits = [...habitPhaseList].sort((a, b) => b.streak - a.streak)
 
   return (
     <>
-      {streakingHabits.length > 0 && (
+      {activeHabits.length > 0 && (
         <section className="section record-phase-highlight-section">
-          <div className="phase-highlight-heading">続いている習慣</div>
-          <div className="streak-habit-list">
-            {streakingHabits.map(({ habit, streak, phase }, i) => (
-              <div key={habit.id} className={`streak-habit-row${i === 0 ? ' streak-habit-row--top' : ''}`}>
-                <span className="streak-habit-dot" style={{ backgroundColor: habit.color }} />
-                <span className="streak-habit-name">{habit.name}</span>
-                <span className="streak-habit-count">{streak}日</span>
-              </div>
+          <div className="phase-highlight-heading">習慣の進捗</div>
+          <div className="progress-line-list">
+            {sortedHabits.map(({ habit, streak }) => (
+              <HabitProgressLine key={habit.id} habit={habit} streak={streak} />
             ))}
           </div>
-          {streakingHabits[0]?.phase.daysToNext !== null && (
-            <div className="phase-highlight-next">
-              次の目標：「{streakingHabits[0].phase.next}」まであと{streakingHabits[0].phase.daysToNext}日
-            </div>
-          )}
         </section>
       )}
 
