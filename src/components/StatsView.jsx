@@ -96,17 +96,17 @@ export default function StatsView({ habits, records, today, colorCategories = {}
     .sort((a, b) => b.streak - a.streak)
 
   if (habits.length === 0) {
-    return <p className="analysis-empty">習慣を追加すると、続け方のヒントが表示されます。</p>
+    return <p className="analysis-empty">習慣を追加すると、達成率が表示されます。</p>
   }
 
   return (
     <>
       <section className="section">
         <div className="section-header">
-          <h2 className="section-title">これからの続け方</h2>
+          <h2 className="section-title">達成率</h2>
         </div>
         <div className="analysis-advice">
-          <span className="analysis-advice-label">次の続け方</span>
+          <span className="analysis-advice-label">直近7日の傾向</span>
           <p>{advice}</p>
         </div>
         <div className="analysis-rate-grid">
@@ -189,12 +189,6 @@ export default function StatsView({ habits, records, today, colorCategories = {}
               </div>
             ))}
           </div>
-          <p className="analysis-note phase-note">
-            {(() => {
-              const best = habitPhases[0]
-              return best ? best.phase.desc : ''
-            })()}
-          </p>
         </section>
       )}
 

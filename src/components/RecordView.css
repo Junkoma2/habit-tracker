@@ -175,3 +175,25 @@
   font-size: 0.85rem;
   line-height: 1.5;
 }
+
+/* フェーズハイライト - 追加クラス（Issue #198） */
+.phase-highlight-heading {
+  font-size: 0.72rem;
+  font-weight: 700;
+  opacity: 0.75;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.phase-highlight-habit-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 2px;
+}
+
+.phase-highlight-habit-name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
