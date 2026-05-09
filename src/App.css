@@ -388,7 +388,11 @@
   background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
+<<<<<<< HEAD
   padding-bottom: var(--footer-safe-bottom);
+=======
+  padding-bottom: max(var(--footer-safe-padding), var(--app-safe-area-bottom));
+>>>>>>> origin/main
   z-index: 20;
   touch-action: none;
 }
