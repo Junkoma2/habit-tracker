@@ -1,4 +1,6 @@
 import { formatDate, parseLocalDate, HABIT_COLORS } from '../utils/date'
+import { calcCurrentStreak } from '../utils/stats'
+import { PHASES, getPhase } from '../utils/habitPhase'
 import './StatsView.css'
 
 const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土']
@@ -89,6 +91,10 @@ export default function StatsView({ habits, records, today, colorCategories = {}
   const colorStats = calcColorStats(habits, records, today, colorCategories)
   const hasNamedColors = Object.values(colorCategories).some(v => v?.trim())
 
+  const habitPhases = activeHabits
+    .map(h => ({ habit: h, streak: calcCurrentStreak(h.id, records), ...getPhase(calcCurrentStreak(h.id, records)) }))
+    .sort((a, b) => b.streak - a.streak)
+
   if (habits.length === 0) {
     return <p className="analysis-empty">習慣を追加すると、続け方のヒントが表示されます。</p>
   }
@@ -160,6 +166,37 @@ export default function StatsView({ habits, records, today, colorCategories = {}
           ))}
         </div>
       </section>
+
+      {habitPhases.length > 0 && (
+        <section className="section">
+          <div className="analysis-subhead">
+            <span>習慣化フェーズ</span>
+          </div>
+          <div className="phase-scale">
+            {PHASES.slice(0, -1).map((p, i) => (
+              <span key={i} className="phase-scale-label">{p.days}日</span>
+            ))}
+          </div>
+          <div className="phase-list">
+            {habitPhases.map(({ habit, streak, phase, index }) => (
+              <div key={habit.id} className="phase-row">
+                <span className="phase-dot" style={{ backgroundColor: habit.color }} />
+                <span className="phase-name">{habit.name}</span>
+                <span className="phase-tag" style={{ color: habit.color, borderColor: habit.color }}>
+                  {phase.label}
+                </span>
+                <span className="phase-streak">{streak}日</span>
+              </div>
+            ))}
+          </div>
+          <p className="analysis-note phase-note">
+            {(() => {
+              const best = habitPhases[0]
+              return best ? best.phase.desc : ''
+            })()}
+          </p>
+        </section>
+      )}
 
       <p className="analysis-note">
         今の対象習慣は {activeHabits.length} 件です。達成率は、その日に対象だった習慣だけで計算しています。

@@ -166,3 +166,64 @@
   font-size: 0.78rem;
   line-height: 1.5;
 }
+
+.phase-scale {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 2px;
+  margin-bottom: 10px;
+}
+
+.phase-scale-label {
+  color: var(--color-text-secondary);
+  font-size: 0.66rem;
+}
+
+.phase-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.phase-row {
+  display: grid;
+  grid-template-columns: 10px 1fr auto 32px;
+  align-items: center;
+  gap: 8px;
+}
+
+.phase-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.phase-name {
+  font-size: 0.82rem;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phase-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  border: 1.5px solid;
+  border-radius: 20px;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+
+.phase-streak {
+  text-align: right;
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.phase-note {
+  margin-top: 12px;
+  font-style: italic;
+}
