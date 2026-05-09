@@ -3,7 +3,7 @@ import './HabitButton.css'
 
 const LONG_PRESS_DELAY = 500
 
-export default function HabitButton({ habit, completed, streak, onPress, onLongPress, onEdit }) {
+export default function HabitButton({ habit, completed, streak, onPress, onLongPress }) {
   const timerRef = useRef(null)
   const isLongPressRef = useRef(false)
   const startPosRef = useRef(null)
@@ -64,20 +64,6 @@ export default function HabitButton({ habit, completed, streak, onPress, onLongP
       onPointerCancel={handlePointerCancel}
       onContextMenu={(e) => e.preventDefault()}
     >
-      {onEdit && (
-        <span
-          className="habit-edit-icon"
-          role="button"
-          aria-label={`${habit.name}を編集`}
-          onClick={(e) => { e.stopPropagation(); onEdit(habit) }}
-          onPointerDown={(e) => e.stopPropagation()}
-          onPointerUp={(e) => e.stopPropagation()}
-        >
-          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-          </svg>
-        </span>
-      )}
       <span
         className="habit-dot"
         style={{ backgroundColor: completed ? '#fff' : habit.color }}
