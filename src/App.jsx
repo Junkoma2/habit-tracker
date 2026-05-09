@@ -83,7 +83,8 @@ export default function App() {
   const fileInputRef = useRef(null)
   const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
   const tabSwipeRef = useRef(null)
-  const verticalGestureRef = useRef(false)
+  const tabViewportRef = useRef(null)
+  const stableHandlersRef = useRef(null)
 
   const today = getToday()
   const yesterday = getYesterday()
@@ -143,29 +144,37 @@ export default function App() {
 
     let touchStartY = 0
 
-    const handleMainTouchStart = (e) => {
+    const handlePanelTouchStart = (e) => {
       if (e.touches.length !== 1) return
       touchStartY = e.touches[0].clientY
+      stableHandlersRef.current?.pullStart(e)
     }
 
-    const handleMainTouchMove = (e) => {
+    const handlePanelTouchMove = (e) => {
       if (e.touches.length !== 1) return
-
-      // 上端で引き下げ（pull-to-refresh）のみ防ぐ。
-      // 下端は overscroll-behavior-y: contain に任せる（atBottom 判定は浮動小数点ズレで誤検知しやすい）
+      // 上端で下スワイプ → pull-to-refresh のためネイティブオーバースクロールを防ぐ
       const deltaY = e.touches[0].clientY - touchStartY
       const atTop = scrollEl.scrollTop <= 0
       if (atTop && deltaY > 0) {
         e.preventDefault()
       }
+      stableHandlersRef.current?.pullMove(e)
     }
 
-    scrollEl.addEventListener('touchstart', handleMainTouchStart, { passive: true })
-    scrollEl.addEventListener('touchmove', handleMainTouchMove, { passive: false })
+    const handlePanelTouchEnd = (e) => {
+      stableHandlersRef.current?.pullEnd(e)
+    }
+
+    scrollEl.addEventListener('touchstart', handlePanelTouchStart, { passive: true })
+    scrollEl.addEventListener('touchmove', handlePanelTouchMove, { passive: false })
+    scrollEl.addEventListener('touchend', handlePanelTouchEnd, { passive: true })
+    scrollEl.addEventListener('touchcancel', handlePanelTouchEnd, { passive: true })
 
     return () => {
-      scrollEl.removeEventListener('touchstart', handleMainTouchStart)
-      scrollEl.removeEventListener('touchmove', handleMainTouchMove)
+      scrollEl.removeEventListener('touchstart', handlePanelTouchStart)
+      scrollEl.removeEventListener('touchmove', handlePanelTouchMove)
+      scrollEl.removeEventListener('touchend', handlePanelTouchEnd)
+      scrollEl.removeEventListener('touchcancel', handlePanelTouchEnd)
     }
   }, [activeTab])
 
@@ -261,7 +270,6 @@ export default function App() {
 
     if (Math.abs(dy) > 18 && Math.abs(dy) > Math.abs(dx)) {
       tabSwipeRef.current = null
-      verticalGestureRef.current = true
     }
 
     return false
@@ -463,36 +471,40 @@ export default function App() {
     setToast(`データを復元しました（習慣 ${habitCount}件・記録 ${dayCount}日分）`)
   }, [modal])
 
-  const handleChromeTouchStart = useCallback((e) => {
-    e.stopPropagation()
-  }, [])
-
-  const handleChromeTouchMove = useCallback((e) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }, [])
-
-  const handleAppTouchStart = useCallback((e) => {
-    verticalGestureRef.current = false
-    handleTabSwipeStart(e)
-    handleTouchStart(e)
-  }, [handleTabSwipeStart, handleTouchStart])
-
-  const handleAppTouchMove = useCallback((e) => {
-    if (verticalGestureRef.current) {
-      // 縦スクロール確定後も、上端での下スワイプは pull-to-refresh へ渡す
-      const atTop = !scrollRef.current || scrollRef.current.scrollTop <= 0
-      if (atTop) handleTouchMove(e)
-      return
+  // handlers の最新版を常に参照できるよう ref で保持
+  useLayoutEffect(() => {
+    stableHandlersRef.current = {
+      tabSwipeStart: handleTabSwipeStart,
+      tabSwipeMove: handleTabSwipeMove,
+      tabSwipeEnd: handleTabSwipeEnd,
+      pullStart: handleTouchStart,
+      pullMove: handleTouchMove,
+      pullEnd: handleTouchEnd,
     }
-    const swipingTabs = handleTabSwipeMove(e)
-    if (!swipingTabs) handleTouchMove(e)
-  }, [handleTabSwipeMove, handleTouchMove])
+  })
 
-  const handleAppTouchEnd = useCallback((e) => {
-    handleTabSwipeEnd(e)
-    handleTouchEnd(e)
-  }, [handleTabSwipeEnd, handleTouchEnd])
+  // 横スワイプ検知を .tab-viewport のネイティブリスナーに移動
+  // → React の非 passive onTouchMove を .app から外し iOS Safari の縦スクロール干渉を解消
+  useEffect(() => {
+    const el = tabViewportRef.current
+    if (!el) return undefined
+
+    const start = (e) => stableHandlersRef.current.tabSwipeStart(e)
+    const move = (e) => stableHandlersRef.current.tabSwipeMove(e)
+    const end = (e) => stableHandlersRef.current.tabSwipeEnd(e)
+
+    el.addEventListener('touchstart', start, { passive: true })
+    el.addEventListener('touchmove', move, { passive: false })
+    el.addEventListener('touchend', end, { passive: true })
+    el.addEventListener('touchcancel', end, { passive: true })
+
+    return () => {
+      el.removeEventListener('touchstart', start)
+      el.removeEventListener('touchmove', move)
+      el.removeEventListener('touchend', end)
+      el.removeEventListener('touchcancel', end)
+    }
+  }, [])
 
   const activeTabIndex = TAB_ORDER.indexOf(activeTab)
   const tabTrackStyle = {
@@ -503,17 +515,11 @@ export default function App() {
   return (
     <div
       className={`app ${isStandalone ? 'standalone' : 'browser'}${scrolled ? ' scrolled' : ''}`}
-      onTouchStart={handleAppTouchStart}
-      onTouchMove={handleAppTouchMove}
-      onTouchEnd={handleAppTouchEnd}
-      onTouchCancel={handleAppTouchEnd}
     >
       <AddToHomePrompt />
       <header
         ref={headerRef}
         className="app-header"
-        onTouchStart={handleChromeTouchStart}
-        onTouchMove={handleChromeTouchMove}
       >
         <h1 className="app-title">{screenTitle}</h1>
         <div className="header-actions">
@@ -578,7 +584,7 @@ export default function App() {
       </div>
 
       <main ref={mainRef} className="app-main">
-        <div className="tab-viewport">
+        <div className="tab-viewport" ref={tabViewportRef}>
           <div
             className={`tab-track${tabSettling ? ' settling' : ''}`}
             style={tabTrackStyle}
@@ -867,8 +873,6 @@ export default function App() {
       <footer
         ref={footerRef}
         className="app-footer"
-        onTouchStart={handleChromeTouchStart}
-        onTouchMove={handleChromeTouchMove}
       >
         <div className="app-footer-inner">
           <button
