@@ -87,6 +87,7 @@ export default function RecordView({
               あと{featured.phase.daysToNext}日続けると「{featured.phase.next}」へ
             </div>
           )}
+          <div className="phase-highlight-tip">{featured.phase.tip}</div>
           {featured.streak > 0 && (
             <div className="phase-highlight-habit">
               <span className="phase-highlight-dot" style={{ backgroundColor: featured.habit.color }} />

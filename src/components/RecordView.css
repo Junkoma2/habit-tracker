@@ -29,6 +29,13 @@
   margin-top: 2px;
 }
 
+.phase-highlight-tip {
+  font-size: 0.8rem;
+  opacity: 0.75;
+  margin-top: 4px;
+  font-style: italic;
+}
+
 .phase-highlight-habit {
   display: flex;
   align-items: center;
