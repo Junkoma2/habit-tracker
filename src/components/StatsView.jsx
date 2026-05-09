@@ -1,10 +1,8 @@
-import { formatDate, parseLocalDate, HABIT_COLORS } from '../utils/date'
-import { calcCurrentStreak } from '../utils/stats'
-import { getPhase } from '../utils/habitPhase'
+﻿import { formatDate, parseLocalDate, HABIT_COLORS } from '../utils/date'
+import { calcCurrentStreak, PHASES, getPhase, getHabitPhase } from '../utils/stats'
 import StatsAdviceCard from './StatsAdviceCard'
 import StatsWeekdayCard from './StatsWeekdayCard'
 import StatsCategoryCard from './StatsCategoryCard'
-import StatsPhaseCard from './StatsPhaseCard'
 import './StatsView.css'
 
 const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土']
@@ -82,7 +80,10 @@ export default function StatsView({ habits, records, today, colorCategories = {}
   const hasNamedColors = Object.values(colorCategories).some(v => v?.trim())
 
   const habitPhases = activeHabits
-    .map(h => ({ habit: h, streak: calcCurrentStreak(h.id, records), ...getPhase(calcCurrentStreak(h.id, records)) }))
+    .map(h => {
+      const streak = calcCurrentStreak(h.id, records)
+      return { habit: h, streak, phaseInfo: getHabitPhase(streak), ...getPhase(streak) }
+    })
     .sort((a, b) => b.streak - a.streak)
 
   if (habits.length === 0) {
@@ -100,7 +101,39 @@ export default function StatsView({ habits, records, today, colorCategories = {}
       <StatsWeekdayCard weekdayRates={weekdayRates} />
 
       {habitPhases.length > 0 && (
-        <StatsPhaseCard habitPhases={habitPhases} />
+        <section className="section">
+          <div className="analysis-subhead">
+            <span>習慣化フェーズ</span>
+          </div>
+          <div className="phase-list">
+            {habitPhases.map(({ habit, streak, phaseInfo, index }) => (
+              <div key={habit.id} className="phase-row">
+                <span className="phase-dot" style={{ backgroundColor: habit.color }} />
+                <div className="phase-row-info">
+                  <span className="phase-name">{habit.name}</span>
+                  <div className="phase-milestones">
+                    {PHASES.map((p, i) => {
+                      const achieved = i < index
+                      const current = i === index
+                      return (
+                        <span
+                          key={i}
+                          className={`phase-milestone${achieved ? ' achieved' : current ? ' current' : ' upcoming'}`}
+                        >
+                          {p.label}
+                        </span>
+                      )
+                    })}
+                  </div>
+                  {phaseInfo.daysToNext !== null && (
+                    <span className="phase-next-hint">あと{phaseInfo.daysToNext}日で「{phaseInfo.next}」へ</span>
+                  )}
+                </div>
+                <span className="phase-streak">{streak > 0 ? `${streak}日` : '未開始'}</span>
+              </div>
+            ))}
+          </div>
+        </section>
       )}
 
       <p className="analysis-note section">

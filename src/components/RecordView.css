@@ -197,3 +197,20 @@
   font-weight: 800;
   line-height: 1.2;
 }
+
+.phase-highlight-current {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.phase-highlight-current-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  opacity: 0.65;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 1px 6px;
+  border-radius: 20px;
+  white-space: nowrap;
+}

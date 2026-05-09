@@ -88,10 +88,13 @@ export default function RecordView({
             <div className="phase-highlight-habit-name">{featured.habit.name}</div>
           </div>
           <div className="phase-highlight-streak">{featured.streak > 0 ? `${featured.streak}日継続中` : '今日から始めよう'}</div>
-          <div className="phase-highlight-label">{featured.phase.label}</div>
+          <div className="phase-highlight-current">
+            <span className="phase-highlight-current-label">現在地</span>
+            <span className="phase-highlight-label">{featured.phase.label}</span>
+          </div>
           {featured.phase.daysToNext !== null && (
             <div className="phase-highlight-next">
-              あと{featured.phase.daysToNext}日続けると「{featured.phase.next}」へ
+              次の目標：「{featured.phase.next}」まであと{featured.phase.daysToNext}日
             </div>
           )}
         </section>

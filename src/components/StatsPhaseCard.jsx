@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { PHASES } from '../utils/habitPhase'
+import { PHASES } from '../utils/stats'
 import './StatsPhaseCard.css'
 
 // フェーズのマイルストーン日数（最終の Infinity は除く）
