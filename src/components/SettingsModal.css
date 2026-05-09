@@ -4,11 +4,13 @@
   color: var(--color-text-secondary);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin: 16px 0 10px;
+  margin: 0 0 10px;
 }
 
-.settings-section-title:first-child {
-  margin-top: 0;
+.settings-divider {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 20px 0;
 }
 
 .theme-grid {
