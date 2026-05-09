@@ -1,83 +1,56 @@
 import { useState } from 'react'
 import Modal from './Modal'
+import { HABIT_COLORS } from '../utils/date'
 import './CategoryManageModal.css'
 
-export default function CategoryManageModal({ categories, onAdd, onUpdate, onDelete, onClose }) {
-  const [newName, setNewName] = useState('')
-  const [editingId, setEditingId] = useState(null)
-  const [editingName, setEditingName] = useState('')
+const COLOR_NAMES = {
+  '#FF6B6B': 'レッド',
+  '#FF9F43': 'オレンジ',
+  '#FECA57': 'イエロー',
+  '#48DBB4': 'グリーン',
+  '#54A0FF': 'ブルー',
+  '#A29BFE': 'ラベンダー',
+  '#FD79A8': 'ピンク',
+  '#6C5CE7': 'パープル',
+}
 
-  const handleAdd = () => {
-    const name = newName.trim()
-    if (!name) return
-    onAdd({ id: `cat_${Date.now()}`, name })
-    setNewName('')
+export default function CategoryManageModal({ colorCategories, onUpdate, onClose }) {
+  const [draft, setDraft] = useState({ ...colorCategories })
+
+  const handleChange = (color, value) => {
+    setDraft(prev => ({ ...prev, [color]: value }))
   }
 
-  const handleUpdate = (id) => {
-    const name = editingName.trim()
-    if (!name) return
-    onUpdate(id, name)
-    setEditingId(null)
-  }
-
-  const startEdit = (cat) => {
-    setEditingId(cat.id)
-    setEditingName(cat.name)
+  const handleSave = () => {
+    const cleaned = Object.fromEntries(
+      Object.entries(draft).filter(([, v]) => v.trim() !== '')
+    )
+    onUpdate(cleaned)
+    onClose()
   }
 
   return (
     <Modal title="カテゴリ管理" onClose={onClose}>
-      {categories.length === 0 ? (
-        <p className="cat-empty">まだカテゴリがありません。下から追加してください。</p>
-      ) : (
-        <ul className="cat-list">
-          {categories.map(cat => (
-            <li key={cat.id} className="cat-item">
-              {editingId === cat.id ? (
-                <div className="cat-edit-row">
-                  <input
-                    className="cat-input"
-                    value={editingName}
-                    onChange={e => setEditingName(e.target.value)}
-                    onKeyDown={e => { if (e.key === 'Enter') handleUpdate(cat.id) }}
-                    autoFocus
-                    maxLength={20}
-                  />
-                  <button className="cat-save-btn" onClick={() => handleUpdate(cat.id)} disabled={!editingName.trim()}>
-                    保存
-                  </button>
-                  <button className="cat-cancel-btn" onClick={() => setEditingId(null)}>
-                    キャンセル
-                  </button>
-                </div>
-              ) : (
-                <div className="cat-row">
-                  <span className="cat-name">{cat.name}</span>
-                  <div className="cat-actions">
-                    <button className="cat-edit-btn" onClick={() => startEdit(cat)}>編集</button>
-                    <button className="cat-delete-btn" onClick={() => onDelete(cat.id)}>削除</button>
-                  </div>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      <div className="cat-add-row">
-        <input
-          className="cat-input"
-          value={newName}
-          onChange={e => setNewName(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') handleAdd() }}
-          placeholder="新しいカテゴリ名"
-          maxLength={20}
-        />
-        <button className="cat-add-btn" onClick={handleAdd} disabled={!newName.trim()}>
-          追加
-        </button>
+      <p className="cat-description">色ごとにカテゴリ名を設定できます。名前をつけた色は分析画面でグループ表示されます。</p>
+      <div className="cat-color-list">
+        {HABIT_COLORS.map(color => (
+          <div key={color} className="cat-color-row">
+            <span className="cat-color-swatch" style={{ backgroundColor: color }} />
+            <span className="cat-color-label">{COLOR_NAMES[color]}</span>
+            <input
+              className="cat-input"
+              type="text"
+              value={draft[color] ?? ''}
+              onChange={e => handleChange(color, e.target.value)}
+              placeholder="カテゴリ名（任意）"
+              maxLength={20}
+            />
+          </div>
+        ))}
       </div>
+      <button className="cat-save-all-btn" onClick={handleSave}>
+        保存する
+      </button>
     </Modal>
   )
 }

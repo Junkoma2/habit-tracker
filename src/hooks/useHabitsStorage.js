@@ -15,12 +15,16 @@ export function loadData() {
         return {
           habits: data.habits,
           records: data.records,
-          categories: Array.isArray(data.categories) ? data.categories : [],
+          colorCategories: (
+            data.colorCategories &&
+            typeof data.colorCategories === 'object' &&
+            !Array.isArray(data.colorCategories)
+          ) ? data.colorCategories : {},
         }
       }
     }
   } catch {}
-  return { habits: [], records: {}, categories: [] }
+  return { habits: [], records: {}, colorCategories: {} }
 }
 
 const _initial = loadData()
@@ -28,11 +32,11 @@ const _initial = loadData()
 export function useHabitsStorage() {
   const [habits, setHabits] = useState(_initial.habits)
   const [records, setRecords] = useState(_initial.records)
-  const [categories, setCategories] = useState(_initial.categories)
+  const [colorCategories, setColorCategories] = useState(_initial.colorCategories)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ habits, records, categories }))
-  }, [habits, records, categories])
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ habits, records, colorCategories }))
+  }, [habits, records, colorCategories])
 
-  return { habits, records, categories, setHabits, setRecords, setCategories }
+  return { habits, records, colorCategories, setHabits, setRecords, setColorCategories }
 }
