@@ -73,9 +73,10 @@
 
 .app {
   --app-header-height: calc(56px + var(--app-safe-area-top));
-  --footer-height: 60px;
+  --footer-content-height: 60px;
   --footer-safe-padding: 10px;
-  --footer-browser-shift: 10px;
+  --footer-safe-bottom: max(var(--footer-safe-padding), var(--app-safe-area-bottom));
+  --footer-total-height: calc(var(--footer-content-height) + var(--footer-safe-bottom));
   height: var(--app-screen-height);
   display: flex;
   flex-direction: column;
@@ -104,7 +105,6 @@
 @supports (-webkit-touch-callout: none) {
   .app {
     --footer-safe-padding: 20px;
-    --footer-browser-shift: 8px;
   }
 }
 
@@ -205,7 +205,7 @@
   flex-direction: column;
   gap: 16px;
   /* padding-top: 20px でoverflow-x: hiddenによるbox-shadow上端クリップを防ぐ */
-  padding: 20px 16px calc(var(--footer-height) + var(--footer-safe-padding) + 16px);
+  padding: 20px 16px calc(var(--footer-total-height) + 16px);
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
@@ -213,15 +213,6 @@
   scroll-behavior: auto;
 }
 
-@supports (padding-bottom: env(safe-area-inset-bottom)) {
-  .tab-panel {
-    padding-bottom: calc(var(--footer-height) + max(var(--footer-safe-padding), env(safe-area-inset-bottom)) + 16px);
-  }
-
-  .app-footer {
-    padding-bottom: max(var(--footer-safe-padding), env(safe-area-inset-bottom));
-  }
-}
 
 .modal-open .app-main {
   overflow: hidden;
@@ -397,29 +388,21 @@
   background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
-  padding-bottom: var(--footer-safe-padding);
+  padding-bottom: var(--footer-safe-bottom);
   z-index: 20;
   touch-action: none;
-}
-
-.app.browser .app-footer {
-  transform: translateY(var(--footer-browser-shift));
-}
-
-.app.standalone .app-footer {
-  transform: none;
 }
 
 .app-footer-inner {
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: var(--footer-height);
+  height: var(--footer-content-height);
 }
 
 .undo-toast {
   position: fixed;
-  bottom: calc(var(--footer-height) + var(--footer-safe-padding) + 12px);
+  bottom: calc(var(--footer-total-height) + 12px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
