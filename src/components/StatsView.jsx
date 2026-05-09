@@ -94,27 +94,31 @@ export default function StatsView({ habits, records, today, colorCategories = {}
   }
 
   return (
-    <div className="analysis-content">
-      <div className="analysis-advice">
-        <span className="analysis-advice-label">次の続け方</span>
-        <p>{advice}</p>
-      </div>
-
-      <div className="analysis-rate-grid">
-        <div className="analysis-rate-card">
-          <span className="analysis-rate-value">{rate7 ?? '-'}</span>
-          {rate7 !== null && <span className="analysis-rate-unit">%</span>}
-          <span className="analysis-rate-label">直近7日</span>
+    <>
+      <section className="section">
+        <div className="section-header">
+          <h2 className="section-title">これからの続け方</h2>
         </div>
-        <div className="analysis-rate-card">
-          <span className="analysis-rate-value">{rate30 ?? '-'}</span>
-          {rate30 !== null && <span className="analysis-rate-unit">%</span>}
-          <span className="analysis-rate-label">直近30日</span>
+        <div className="analysis-advice">
+          <span className="analysis-advice-label">次の続け方</span>
+          <p>{advice}</p>
         </div>
-      </div>
+        <div className="analysis-rate-grid">
+          <div className="analysis-rate-card">
+            <span className="analysis-rate-value">{rate7 ?? '-'}</span>
+            {rate7 !== null && <span className="analysis-rate-unit">%</span>}
+            <span className="analysis-rate-label">直近7日</span>
+          </div>
+          <div className="analysis-rate-card">
+            <span className="analysis-rate-value">{rate30 ?? '-'}</span>
+            {rate30 !== null && <span className="analysis-rate-unit">%</span>}
+            <span className="analysis-rate-label">直近30日</span>
+          </div>
+        </div>
+      </section>
 
       {hasNamedColors && (
-        <div className="analysis-color">
+        <section className="section">
           <div className="analysis-subhead">
             <span>カテゴリ別達成率</span>
             <small>直近30日</small>
@@ -136,10 +140,10 @@ export default function StatsView({ habits, records, today, colorCategories = {}
               ))}
             </div>
           )}
-        </div>
+        </section>
       )}
 
-      <div className="analysis-weekday">
+      <section className="section">
         <div className="analysis-subhead">
           <span>曜日別達成率</span>
           <small>直近30日</small>
@@ -155,11 +159,11 @@ export default function StatsView({ habits, records, today, colorCategories = {}
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="analysis-note">
+      <p className="analysis-note">
         今の対象習慣は {activeHabits.length} 件です。達成率は、その日に対象だった習慣だけで計算しています。
-      </div>
-    </div>
+      </p>
+    </>
   )
 }

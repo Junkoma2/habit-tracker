@@ -704,12 +704,7 @@ export default function App() {
             </div>
 
             <div className="tab-panel" ref={statsPanelRef} aria-hidden={activeTab !== 'stats'}>
-              <section className="section">
-                <div className="section-header">
-                  <h2 className="section-title">これからの続け方</h2>
-                </div>
-                <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} />
-              </section>
+              <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} />
             </div>
           </div>
         </div>
