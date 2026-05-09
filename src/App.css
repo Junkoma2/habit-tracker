@@ -190,6 +190,9 @@
   overflow: hidden;
   height: 100%;
   background: var(--color-bg);
+  /* CSSで横パンをブロックしJSのpreventDefaultを不要にすることで
+     iOS Safariが縦スクロールを即開始できるようにする */
+  touch-action: pan-y;
 }
 
 .tab-track {

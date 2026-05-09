@@ -260,7 +260,6 @@ export default function App() {
     }
 
     if (swipe.horizontal) {
-      e.preventDefault()
       const atFirst = swipe.activeIndex === 0 && dx > 0
       const atLast = swipe.activeIndex === TAB_ORDER.length - 1 && dx < 0
       setTabSettling(false)
@@ -494,7 +493,7 @@ export default function App() {
     const end = (e) => stableHandlersRef.current.tabSwipeEnd(e)
 
     el.addEventListener('touchstart', start, { passive: true })
-    el.addEventListener('touchmove', move, { passive: false })
+    el.addEventListener('touchmove', move, { passive: true })
     el.addEventListener('touchend', end, { passive: true })
     el.addEventListener('touchcancel', end, { passive: true })
 
