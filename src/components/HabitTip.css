@@ -1,5 +1,4 @@
 ﻿.habit-tip-card {
-  margin: 8px 16px 4px;
   padding: 10px 14px;
   border-radius: var(--radius-sm, 8px);
   background: var(--color-surface, #f5f5f5);
