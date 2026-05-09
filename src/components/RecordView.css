@@ -1,8 +1,6 @@
 
 /* フェーズハイライト（実績画面最上部） */
 .section.record-phase-highlight-section {
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
   background: var(--color-primary);
   color: #fff;
   display: flex;
