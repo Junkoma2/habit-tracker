@@ -423,7 +423,7 @@ export default function App() {
     a.download = filename
     a.click()
     URL.revokeObjectURL(url)
-    setToast(`${filename} のダウンロードを開始しました。保存されたかどうかはブラウザで確認してください${skippedText}`)
+    setToast(`${filename} のダウンロードを開始しました。\nキャンセルした場合はバックアップされていません。${skippedText}`)
   }, [habits, records, today])
 
   const handleImportClick = () => fileInputRef.current?.click()
