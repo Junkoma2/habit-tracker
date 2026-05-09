@@ -77,6 +77,7 @@
   --footer-safe-padding: 10px;
   --footer-safe-bottom: max(var(--footer-safe-padding), var(--app-safe-area-bottom));
   --footer-total-height: calc(var(--footer-content-height) + var(--footer-safe-bottom));
+  --content-bottom-breathing: 24px;
   height: var(--app-screen-height);
   display: flex;
   flex-direction: column;
@@ -106,6 +107,10 @@
   .app {
     --footer-safe-padding: 20px;
   }
+}
+
+.app.standalone {
+  --content-bottom-breathing: 32px;
 }
 
 .app-header {
@@ -205,7 +210,7 @@
   flex-direction: column;
   gap: 16px;
   /* padding-top: 20px でoverflow-x: hiddenによるbox-shadow上端クリップを防ぐ */
-  padding: 20px 16px calc(var(--footer-total-height) + 16px);
+  padding: 20px 16px calc(var(--footer-total-height) + var(--content-bottom-breathing));
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
@@ -388,11 +393,7 @@
   background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
-<<<<<<< HEAD
   padding-bottom: var(--footer-safe-bottom);
-=======
-  padding-bottom: max(var(--footer-safe-padding), var(--app-safe-area-bottom));
->>>>>>> origin/main
   z-index: 20;
   touch-action: none;
 }
