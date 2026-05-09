@@ -37,7 +37,6 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null }) 
             placeholder="例：ランニング、読書..."
             value={name}
             onChange={(e) => setName(e.target.value)}
-            autoFocus
             maxLength={20}
           />
         </div>
