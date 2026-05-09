@@ -14,6 +14,17 @@ const COLOR_NAMES = {
   '#6C5CE7': 'パープル',
 }
 
+const COLOR_HINTS = {
+  '#FF6B6B': '生活・食事・体調管理',
+  '#FF9F43': '食事・料理・朝のルーティン',
+  '#FECA57': '気分・趣味・創作',
+  '#48DBB4': '健康・運動・ストレッチ',
+  '#54A0FF': '勉強・読書・学習',
+  '#A29BFE': '睡眠・リラックス・瞑想',
+  '#FD79A8': '美容・ケア・セルフケア',
+  '#6C5CE7': '集中・思考・仕事',
+}
+
 export default function AddHabitModal({ onSave, onClose, initialHabit = null }) {
   const isEdit = !!initialHabit
   const [name, setName] = useState(initialHabit?.name ?? '')
@@ -56,6 +67,9 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null }) 
               />
             ))}
           </div>
+          {COLOR_HINTS[color] && (
+            <p className="color-hint">おすすめ：{COLOR_HINTS[color]}</p>
+          )}
         </div>
 
         <div className="preview-row">
