@@ -174,16 +174,12 @@ export default function App() {
       const visualViewport = window.visualViewport
       const currentWidth = Math.round(visualViewport?.width || window.innerWidth)
       const currentHeight = visualViewport?.height || window.innerHeight
-      const activeElement = document.activeElement
-      const inputFocused = activeElement?.matches?.('input, textarea, [contenteditable="true"]')
 
       if (Math.abs(currentWidth - stableViewportRef.current.width) > 40) {
         stableViewportRef.current = { width: currentWidth, height: 0 }
       }
 
-      const height = inputFocused
-        ? currentHeight
-        : Math.max(stableViewportRef.current.height, currentHeight)
+      const height = Math.max(stableViewportRef.current.height, currentHeight)
 
       stableViewportRef.current = { width: currentWidth, height }
       document.documentElement.style.setProperty('--app-viewport-height', `${height}px`)
