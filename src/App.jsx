@@ -423,7 +423,7 @@ export default function App() {
     a.download = filename
     a.click()
     URL.revokeObjectURL(url)
-    setToast(`${filename} のダウンロードを開始しました。保存されたかどうかはブラウザで確認してください${skippedText}`)
+    setToast(`${filename} をダウンロードしました。「ファイルに保存」を選択して保存してください${skippedText}`)
   }, [habits, records, today])
 
   const handleImportClick = () => fileInputRef.current?.click()
@@ -754,8 +754,10 @@ export default function App() {
       {modal?.type === 'exportConfirm' && (
         <ConfirmModal
           title="バックアップ保存"
-          message={`バックアップファイルを保存します。\n\n対応しているブラウザでは、選んだ場所に「${BACKUP_DIR_NAME}」フォルダを作って保存します。`}
-          confirmLabel="ダウンロード"
+          message={'showDirectoryPicker' in window
+            ? `バックアップファイルを保存します。\n\n保存先フォルダを選択すると「${BACKUP_DIR_NAME}」フォルダを作って自動保存します。\nキャンセルした場合はバックアップされません。`
+            : 'バックアップファイルをダウンロードします。\n\nダウンロード後、「ファイルに保存」を選択してください。\nキャンセルした場合はバックアップされません。'}
+          confirmLabel="保存する"
           danger={false}
           onConfirm={() => { handleExport(); closeModal() }}
           onClose={closeModal}
