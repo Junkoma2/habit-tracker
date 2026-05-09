@@ -386,7 +386,7 @@ export default function App() {
   // --- Export / Import ---
   const handleExport = useCallback(async () => {
     const sanitized = sanitizeImportData({ habits, records })
-    const json = JSON.stringify(sanitized.data, null, 2)
+    const json = JSON.stringify({ ...sanitized.data, colorCategories }, null, 2)
     const blob = new Blob([json], { type: 'application/json' })
     const filename = `habit-tracker-${today}.json`
     const skippedText = sanitized.skippedUnknownRecords > 0
@@ -467,6 +467,7 @@ export default function App() {
     const dayCount = Object.keys(modal.data.records).length
     setHabits(modal.data.habits)
     setRecords(modal.data.records)
+    if (modal.data.colorCategories) setColorCategories(modal.data.colorCategories)
     setModal(null)
     setToast(`データを復元しました（習慣 ${habitCount}件・記録 ${dayCount}日分）`)
   }, [modal])
