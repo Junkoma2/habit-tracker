@@ -36,16 +36,11 @@ async function main() {
   })
 
   for (const { name, size } of SIZES) {
-    // インディゴ背景を作成
-    const bg = new Jimp({ width: size, height: size, color: 0x6366F1FF })
-
-    // デザインをリサイズして重ねる
     const icon = src.clone()
     icon.resize({ w: size, h: size })
-    bg.composite(icon)
 
     const outPath = path.join(OUT, name)
-    await bg.write(outPath)
+    await icon.write(outPath)
     console.log(`✓ ${name} (${size}x${size})`)
   }
 }
