@@ -479,8 +479,12 @@ export default function App() {
   }, [handleTabSwipeStart, handleTouchStart])
 
   const handleAppTouchMove = useCallback((e) => {
-    // 縦スクロール確定後はブラウザのネイティブスクロールに完全に委ねる
-    if (verticalGestureRef.current) return
+    if (verticalGestureRef.current) {
+      // 縦スクロール確定後も、上端での下スワイプは pull-to-refresh へ渡す
+      const atTop = !scrollRef.current || scrollRef.current.scrollTop <= 0
+      if (atTop) handleTouchMove(e)
+      return
+    }
     const swipingTabs = handleTabSwipeMove(e)
     if (!swipingTabs) handleTouchMove(e)
   }, [handleTabSwipeMove, handleTouchMove])
