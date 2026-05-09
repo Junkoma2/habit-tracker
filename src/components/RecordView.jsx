@@ -21,23 +21,6 @@ function countTotalRecords(records) {
   return Object.values(records).reduce((total, ids) => total + new Set(ids).size, 0)
 }
 
-function getRecentHistory(records, habits, limit = 5) {
-  const habitMap = new Map(habits.map(habit => [habit.id, habit]))
-  return Object.entries(records)
-    .map(([date, ids]) => ({
-      date,
-      habits: [...new Set(ids)].map(id => habitMap.get(id)).filter(Boolean),
-    }))
-    .filter(item => item.habits.length > 0)
-    .sort((a, b) => b.date.localeCompare(a.date))
-    .slice(0, limit)
-}
-
-function formatShortDate(dateStr) {
-  const [, month, day] = dateStr.split('-')
-  return `${Number(month)}/${Number(day)}`
-}
-
 export default function RecordView({
   calendarDate,
   onCalendarDateChange,
@@ -50,11 +33,9 @@ export default function RecordView({
   const monthKey = formatMonthKey(calendarDate)
   const monthCount = countRecordsInMonth(records, monthKey)
   const totalCount = countTotalRecords(records)
-  const recentHistory = getRecentHistory(records, habits)
 
   const activeHabits = habits.filter(h => !h.archivedAt)
 
-  // フェーズごとに習慣を分類
   const habitPhaseList = activeHabits.map(habit => {
     const streak = calcCurrentStreak(habit.id, records)
     return { habit, streak, phase: getHabitPhase(streak) }
@@ -66,35 +47,35 @@ export default function RecordView({
     if (!groupedByPhase[label]) groupedByPhase[label] = []
     groupedByPhase[label].push(item)
   }
-  // 各フェーズ内を連続日数降順にソート
   for (const label of PHASE_ORDER) {
     if (groupedByPhase[label]) {
       groupedByPhase[label].sort((a, b) => b.streak - a.streak)
     }
   }
 
-  // フェーズハイライト：連続日数が最も長い習慣
-  const featured = [...habitPhaseList].sort((a, b) => b.streak - a.streak)[0] ?? null
+  // 継続中習慣（streak > 0）を降順で最大5件
+  const streakingHabits = [...habitPhaseList]
+    .filter(item => item.streak > 0)
+    .sort((a, b) => b.streak - a.streak)
+    .slice(0, 5)
 
   return (
     <>
-      {featured && (
+      {streakingHabits.length > 0 && (
         <section className="section record-phase-highlight-section">
-          <div className="phase-highlight-heading">いま一番続いている習慣</div>
-          <div className="phase-highlight-habit-row">
-            {featured.streak > 0 && (
-              <span className="phase-highlight-dot" style={{ backgroundColor: featured.habit.color }} />
-            )}
-            <div className="phase-highlight-habit-name">{featured.habit.name}</div>
+          <div className="phase-highlight-heading">続いている習慣</div>
+          <div className="streak-habit-list">
+            {streakingHabits.map(({ habit, streak, phase }, i) => (
+              <div key={habit.id} className={`streak-habit-row${i === 0 ? ' streak-habit-row--top' : ''}`}>
+                <span className="streak-habit-dot" style={{ backgroundColor: habit.color }} />
+                <span className="streak-habit-name">{habit.name}</span>
+                <span className="streak-habit-count">{streak}日</span>
+              </div>
+            ))}
           </div>
-          <div className="phase-highlight-streak">{featured.streak > 0 ? `${featured.streak}日継続中` : '今日から始めよう'}</div>
-          <div className="phase-highlight-current">
-            <span className="phase-highlight-current-label">現在地</span>
-            <span className="phase-highlight-label">{featured.phase.label}</span>
-          </div>
-          {featured.phase.daysToNext !== null && (
+          {streakingHabits[0]?.phase.daysToNext !== null && (
             <div className="phase-highlight-next">
-              次の目標：「{featured.phase.next}」まであと{featured.phase.daysToNext}日
+              次の目標：「{streakingHabits[0].phase.next}」まであと{streakingHabits[0].phase.daysToNext}日
             </div>
           )}
         </section>
@@ -147,37 +128,6 @@ export default function RecordView({
               )
             })}
           </div>
-        )}
-      </section>
-
-      <section className="section record-history-section">
-        <div className="section-header">
-          <h2 className="section-title">達成履歴</h2>
-        </div>
-        {recentHistory.length > 0 ? (
-          <div className="record-history-list">
-            {recentHistory.map(item => (
-              <button
-                className="record-history-item"
-                key={item.date}
-                onClick={() => onDayClick(item.date)}
-              >
-                <span className="record-history-date">{formatShortDate(item.date)}</span>
-                <span className="record-history-dots">
-                  {item.habits.slice(0, 8).map(habit => (
-                    <span
-                      className="record-history-dot"
-                      style={{ backgroundColor: habit.color }}
-                      key={habit.id}
-                    />
-                  ))}
-                </span>
-                <span className="record-history-count">{item.habits.length}件</span>
-              </button>
-            ))}
-          </div>
-        ) : (
-          <p className="record-empty">記録が増えると、最近の達成がここに並びます。</p>
         )}
       </section>
     </>

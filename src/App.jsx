@@ -683,27 +683,29 @@ export default function App() {
                 )}
               </>
             ) : (
-              <>
-                <div className="habits-grid">
-                  {activeHabits.map(habit => (
-                    <HabitButton
-                      key={habit.id}
-                      habit={habit}
-                      completed={todayRecords.includes(habit.id)}
-                      streak={calcCurrentStreak(habit.id, records)}
-                      onPress={(h) => toggleHabit(h.id, today)}
-                      onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
-                    />
-                  ))}
-                  <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>
-                    <span className="add-icon">＋</span>
-                    <span>追加</span>
-                  </button>
-                </div>
-                <HabitTip today={today} />
-              </>
+              <div className="habits-grid">
+                {activeHabits.map(habit => (
+                  <HabitButton
+                    key={habit.id}
+                    habit={habit}
+                    completed={todayRecords.includes(habit.id)}
+                    streak={calcCurrentStreak(habit.id, records)}
+                    onPress={(h) => toggleHabit(h.id, today)}
+                    onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
+                  />
+                ))}
+                <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>
+                  <span className="add-icon">＋</span>
+                  <span>追加</span>
+                </button>
+              </div>
             )}
           </section>
+          {!editMode && habits.length > 0 && (
+            <section className="section habit-tip-section">
+              <HabitTip today={today} />
+            </section>
+          )}
             </div>
 
             <div className="tab-panel" ref={statsPanelRef} aria-hidden={activeTab !== 'stats'}>
