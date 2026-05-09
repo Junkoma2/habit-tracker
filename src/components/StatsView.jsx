@@ -1,4 +1,4 @@
-import { formatDate, parseLocalDate } from '../utils/date'
+import { formatDate, parseLocalDate, HABIT_COLORS } from '../utils/date'
 import './StatsView.css'
 
 const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土']
@@ -50,16 +50,17 @@ function calcWeekdayRates(habits, records, today, days = 30) {
   }))
 }
 
-function calcCategoryStats(habits, records, today, categories) {
+function calcColorStats(habits, records, today, colorCategories) {
   const activeHabits = habits.filter(h => !h.archivedAt)
-  return categories
-    .map(cat => {
-      const catHabits = activeHabits.filter(h => h.categoryId === cat.id)
+  return HABIT_COLORS
+    .filter(color => colorCategories[color]?.trim())
+    .map(color => {
+      const colorHabits = activeHabits.filter(h => h.color === color)
       return {
-        id: cat.id,
-        name: cat.name,
-        count: catHabits.length,
-        rate: calcRateForRange(catHabits, records, today, 30),
+        color,
+        name: colorCategories[color],
+        count: colorHabits.length,
+        rate: calcRateForRange(colorHabits, records, today, 30),
       }
     })
     .filter(c => c.count > 0)
@@ -79,13 +80,14 @@ function getAdvice(rate30) {
   return '少し負担が大きいかもしれません。習慣を小さくするのがおすすめです。'
 }
 
-export default function StatsView({ habits, records, today, categories = [] }) {
+export default function StatsView({ habits, records, today, colorCategories = {} }) {
   const activeHabits = habits.filter(habit => !habit.archivedAt)
   const rate7 = calcRateForRange(habits, records, today, 7)
   const rate30 = calcRateForRange(habits, records, today, 30)
   const weekdayRates = calcWeekdayRates(habits, records, today)
   const advice = getAdvice(rate7)
-  const categoryStats = calcCategoryStats(habits, records, today, categories)
+  const colorStats = calcColorStats(habits, records, today, colorCategories)
+  const hasNamedColors = Object.values(colorCategories).some(v => v?.trim())
 
   if (habits.length === 0) {
     return <p className="analysis-empty">習慣を追加すると、続け方のヒントが表示されます。</p>
@@ -111,19 +113,19 @@ export default function StatsView({ habits, records, today, categories = [] }) {
         </div>
       </div>
 
-      {categories.length > 0 && (
+      {hasNamedColors && (
         <div className="analysis-color">
           <div className="analysis-subhead">
             <span>カテゴリ別達成率</span>
             <small>直近30日</small>
           </div>
-          {categoryStats.length === 0 ? (
-            <p className="analysis-note">カテゴリが設定された習慣がありません。習慣の編集からカテゴリを設定できます。</p>
+          {colorStats.length === 0 ? (
+            <p className="analysis-note">カテゴリが設定された色の習慣がありません。</p>
           ) : (
             <div className="analysis-color-list">
-              {categoryStats.map(({ id, name, count, rate }) => (
-                <div className="analysis-color-row" key={id}>
-                  <span className="analysis-color-dot" style={{ backgroundColor: 'var(--color-primary)' }} />
+              {colorStats.map(({ color, name, count, rate }) => (
+                <div className="analysis-color-row" key={color}>
+                  <span className="analysis-color-dot" style={{ backgroundColor: color }} />
                   <span className="analysis-color-name">{name}</span>
                   <span className="analysis-color-count">{count}件</span>
                   <div className="analysis-weekday-bar">

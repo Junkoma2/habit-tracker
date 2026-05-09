@@ -57,7 +57,7 @@ export default function App() {
     setShowWelcome(false)
   }, [])
 
-  const { habits, records, categories, setHabits, setRecords, setCategories } = useHabitsStorage()
+  const { habits, records, colorCategories, setHabits, setRecords, setColorCategories } = useHabitsStorage()
   const { themeId, handleThemeSelect } = useTheme()
 
   const [calendarDate, setCalendarDate] = useState(() => new Date())
@@ -321,32 +321,23 @@ export default function App() {
     setUndoAction(null)
   }, [undoAction])
 
-  const addHabit = useCallback(({ name, color, categoryId }) => {
+  const addHabit = useCallback(({ name, color }) => {
     const id = `h_${Date.now()}`
-    setHabits(prev => [...prev, { id, name, color, categoryId: categoryId ?? null, createdAt: today }])
+    setHabits(prev => [...prev, { id, name, color, createdAt: today }])
     setModal(null)
     dismissWelcome()
   }, [today, dismissWelcome])
 
-  const updateHabit = useCallback(({ name, color, categoryId }) => {
+  const updateHabit = useCallback(({ name, color }) => {
     setHabits(prev =>
-      prev.map(h => h.id === modal.habit.id ? { ...h, name, color, categoryId: categoryId ?? null } : h)
+      prev.map(h => h.id === modal.habit.id ? { ...h, name, color } : h)
     )
     setModal(null)
   }, [modal])
 
-  const addCategory = useCallback((cat) => {
-    setCategories(prev => [...prev, cat])
-  }, [])
-
-  const updateCategory = useCallback((id, name) => {
-    setCategories(prev => prev.map(c => c.id === id ? { ...c, name } : c))
-  }, [])
-
-  const deleteCategory = useCallback((id) => {
-    setCategories(prev => prev.filter(c => c.id !== id))
-    setHabits(prev => prev.map(h => h.categoryId === id ? { ...h, categoryId: null } : h))
-  }, [])
+  const handleColorCategoriesUpdate = useCallback((updated) => {
+    setColorCategories(updated)
+  }, [setColorCategories])
 
   const deleteHabit = useCallback((habitId) => {
     setHabits(prev => prev.filter(h => h.id !== habitId))
@@ -707,7 +698,7 @@ export default function App() {
                 <div className="section-header">
                   <h2 className="section-title">これからの続け方</h2>
                 </div>
-                <StatsView habits={habits} records={records} today={today} categories={categories} />
+                <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} />
               </section>
             </div>
           </div>
@@ -724,7 +715,7 @@ export default function App() {
       )}
 
       {modal?.type === 'add' && (
-        <AddHabitModal onSave={addHabit} onClose={closeModal} categories={categories} />
+        <AddHabitModal onSave={addHabit} onClose={closeModal} />
       )}
 
       {modal?.type === 'edit' && (
@@ -732,7 +723,6 @@ export default function App() {
           initialHabit={modal.habit}
           onSave={updateHabit}
           onClose={closeModal}
-          categories={categories}
         />
       )}
 
@@ -824,10 +814,8 @@ export default function App() {
 
       {modal?.type === 'categoryManage' && (
         <CategoryManageModal
-          categories={categories}
-          onAdd={addCategory}
-          onUpdate={updateCategory}
-          onDelete={deleteCategory}
+          colorCategories={colorCategories}
+          onUpdate={handleColorCategoriesUpdate}
           onClose={closeModal}
         />
       )}
