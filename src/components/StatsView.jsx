@@ -3,17 +3,6 @@ import './StatsView.css'
 
 const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土']
 
-const COLOR_CATEGORY_NAMES = {
-  '#FF6B6B': '生活・日課',
-  '#FF9F43': '社交',
-  '#FECA57': '創作',
-  '#48DBB4': '健康',
-  '#54A0FF': '学習',
-  '#A29BFE': 'ケア',
-  '#FD79A8': 'セルフケア',
-  '#6C5CE7': '集中',
-}
-
 function isHabitActiveOn(habit, dateStr) {
   if (habit.createdAt && dateStr < habit.createdAt) return false
   if (habit.archivedAt && dateStr >= habit.archivedAt) return false
@@ -61,22 +50,19 @@ function calcWeekdayRates(habits, records, today, days = 30) {
   }))
 }
 
-function calcColorStats(habits, records, today) {
+function calcCategoryStats(habits, records, today, categories) {
   const activeHabits = habits.filter(h => !h.archivedAt)
-  const colorGroups = {}
-
-  for (const habit of activeHabits) {
-    if (!colorGroups[habit.color]) colorGroups[habit.color] = []
-    colorGroups[habit.color].push(habit)
-  }
-
-  return Object.entries(colorGroups)
-    .map(([color, groupHabits]) => ({
-      color,
-      name: COLOR_CATEGORY_NAMES[color] || color,
-      count: groupHabits.length,
-      rate: calcRateForRange(groupHabits, records, today, 30),
-    }))
+  return categories
+    .map(cat => {
+      const catHabits = activeHabits.filter(h => h.categoryId === cat.id)
+      return {
+        id: cat.id,
+        name: cat.name,
+        count: catHabits.length,
+        rate: calcRateForRange(catHabits, records, today, 30),
+      }
+    })
+    .filter(c => c.count > 0)
     .sort((a, b) => (b.rate ?? -1) - (a.rate ?? -1))
 }
 
@@ -93,13 +79,13 @@ function getAdvice(rate30) {
   return '少し負担が大きいかもしれません。習慣を小さくするのがおすすめです。'
 }
 
-export default function StatsView({ habits, records, today }) {
+export default function StatsView({ habits, records, today, categories = [] }) {
   const activeHabits = habits.filter(habit => !habit.archivedAt)
   const rate7 = calcRateForRange(habits, records, today, 7)
   const rate30 = calcRateForRange(habits, records, today, 30)
   const weekdayRates = calcWeekdayRates(habits, records, today)
-  const advice = getAdvice(rate30)
-  const colorStats = calcColorStats(habits, records, today)
+  const advice = getAdvice(rate7)
+  const categoryStats = calcCategoryStats(habits, records, today, categories)
 
   if (habits.length === 0) {
     return <p className="analysis-empty">習慣を追加すると、続け方のヒントが表示されます。</p>
@@ -125,25 +111,29 @@ export default function StatsView({ habits, records, today }) {
         </div>
       </div>
 
-      {colorStats.length > 1 && (
+      {categories.length > 0 && (
         <div className="analysis-color">
           <div className="analysis-subhead">
             <span>カテゴリ別達成率</span>
             <small>直近30日</small>
           </div>
-          <div className="analysis-color-list">
-            {colorStats.map(({ color, name, count, rate }) => (
-              <div className="analysis-color-row" key={color}>
-                <span className="analysis-color-dot" style={{ backgroundColor: color }} />
-                <span className="analysis-color-name">{name}</span>
-                <span className="analysis-color-count">{count}件</span>
-                <div className="analysis-weekday-bar">
-                  <span style={{ width: `${rate ?? 0}%`, backgroundColor: color }} />
+          {categoryStats.length === 0 ? (
+            <p className="analysis-note">カテゴリが設定された習慣がありません。習慣の編集からカテゴリを設定できます。</p>
+          ) : (
+            <div className="analysis-color-list">
+              {categoryStats.map(({ id, name, count, rate }) => (
+                <div className="analysis-color-row" key={id}>
+                  <span className="analysis-color-dot" style={{ backgroundColor: 'var(--color-primary)' }} />
+                  <span className="analysis-color-name">{name}</span>
+                  <span className="analysis-color-count">{count}件</span>
+                  <div className="analysis-weekday-bar">
+                    <span style={{ width: `${rate ?? 0}%` }} />
+                  </div>
+                  <span className="analysis-color-rate">{rate !== null ? `${rate}%` : '-'}</span>
                 </div>
-                <span className="analysis-color-rate">{rate !== null ? `${rate}%` : '-'}</span>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 

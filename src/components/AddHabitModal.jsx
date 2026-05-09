@@ -25,16 +25,17 @@ const COLOR_HINTS = {
   '#6C5CE7': '集中・スキル系',
 }
 
-export default function AddHabitModal({ onSave, onClose, initialHabit = null }) {
+export default function AddHabitModal({ onSave, onClose, initialHabit = null, categories = [] }) {
   const isEdit = !!initialHabit
   const [name, setName] = useState(initialHabit?.name ?? '')
   const [color, setColor] = useState(initialHabit?.color ?? HABIT_COLORS[0])
+  const [categoryId, setCategoryId] = useState(initialHabit?.categoryId ?? null)
 
   const handleSubmit = (e) => {
     e.preventDefault()
     const trimmed = name.trim()
     if (!trimmed) return
-    onSave({ name: trimmed, color })
+    onSave({ name: trimmed, color, categoryId })
   }
 
   return (
@@ -72,6 +73,31 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null }) 
             <p className="color-hint">おすすめ：{COLOR_HINTS[color]}</p>
           )}
         </div>
+
+        {categories.length > 0 && (
+          <div className="form-group">
+            <label className="form-label">カテゴリ</label>
+            <div className="category-chips">
+              <button
+                type="button"
+                className={`category-chip${categoryId === null ? ' selected' : ''}`}
+                onClick={() => setCategoryId(null)}
+              >
+                なし
+              </button>
+              {categories.map(cat => (
+                <button
+                  key={cat.id}
+                  type="button"
+                  className={`category-chip${categoryId === cat.id ? ' selected' : ''}`}
+                  onClick={() => setCategoryId(cat.id)}
+                >
+                  {cat.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="preview-row">
           <div
