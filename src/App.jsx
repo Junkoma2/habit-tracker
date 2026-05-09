@@ -150,12 +150,11 @@ export default function App() {
     const handleMainTouchMove = (e) => {
       if (e.touches.length !== 1) return
 
+      // 上端で引き下げ（pull-to-refresh）のみ防ぐ。
+      // 下端は overscroll-behavior-y: contain に任せる（atBottom 判定は浮動小数点ズレで誤検知しやすい）
       const deltaY = e.touches[0].clientY - touchStartY
       const atTop = scrollEl.scrollTop <= 0
-      const atBottom =
-        scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 1
-
-      if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
+      if (atTop && deltaY > 0) {
         e.preventDefault()
       }
     }
