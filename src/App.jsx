@@ -83,6 +83,7 @@ export default function App() {
   const fileInputRef = useRef(null)
   const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
   const tabSwipeRef = useRef(null)
+  const verticalGestureRef = useRef(false)
 
   const today = getToday()
   const yesterday = getYesterday()
@@ -260,6 +261,7 @@ export default function App() {
 
     if (Math.abs(dy) > 18 && Math.abs(dy) > Math.abs(dx)) {
       tabSwipeRef.current = null
+      verticalGestureRef.current = true
     }
 
     return false
@@ -471,11 +473,14 @@ export default function App() {
   }, [])
 
   const handleAppTouchStart = useCallback((e) => {
+    verticalGestureRef.current = false
     handleTabSwipeStart(e)
     handleTouchStart(e)
   }, [handleTabSwipeStart, handleTouchStart])
 
   const handleAppTouchMove = useCallback((e) => {
+    // 縦スクロール確定後はブラウザのネイティブスクロールに完全に委ねる
+    if (verticalGestureRef.current) return
     const swipingTabs = handleTabSwipeMove(e)
     if (!swipingTabs) handleTouchMove(e)
   }, [handleTabSwipeMove, handleTouchMove])
