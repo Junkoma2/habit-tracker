@@ -2,6 +2,21 @@ import { formatDate, parseLocalDate } from './date'
 
 const MS_PER_DAY = 86400000
 
+// 習慣化フェーズ定義（habitPhase.js を廃止しここに一本化）
+export const PHASES = [
+  { label: 'まず2週間続けてみよう', days: 14 },
+  { label: 'リズムができてきた', days: 30 },
+  { label: '日常に馴染んできた', days: 90 },
+  { label: '生活の一部', days: Infinity },
+]
+
+export function getPhase(streak) {
+  for (let i = 0; i < PHASES.length; i++) {
+    if (streak < PHASES[i].days) return { phase: PHASES[i], index: i }
+  }
+  return { phase: PHASES[PHASES.length - 1], index: PHASES.length - 1 }
+}
+
 export function calcCurrentStreak(habitId, records) {
   let count = 0
   const d = new Date()
@@ -51,11 +66,22 @@ export function calcStats(habitId, records) {
 }
 
 export function getHabitPhase(currentStreak) {
-  if (currentStreak >= 90) return { label: '生活の一部', next: null, daysToNext: null, tip: 'もう自然と続いています。この調子で。' }
-  if (currentStreak >= 30) return { label: '日常に馴染んできた', next: '生活の一部', daysToNext: 90 - currentStreak, tip: '1日抜けても大丈夫。戻ってくることが大切です。' }
-  if (currentStreak >= 14) return { label: 'リズムができてきた', next: '日常に馴染んできた', daysToNext: 30 - currentStreak, tip: '同じ時間・場所でやると定着しやすくなります。' }
-  return { label: 'まず2週間続けてみよう', next: 'リズムができてきた', daysToNext: 14 - currentStreak, tip: '今日1回できればOK。完璧より継続を。' }
+  const { phase, index } = getPhase(currentStreak)
+  const next = index < PHASES.length - 1 ? PHASES[index + 1] : null
+  return {
+    label: phase.label,
+    next: next?.label ?? null,
+    daysToNext: next ? phase.days - currentStreak : null,
+    tip: _PHASE_TIPS[index] ?? '',
+  }
 }
+
+const _PHASE_TIPS = [
+  '今日1回できればOK。完璧より継続を。',
+  '同じ時間・場所でやると定着しやすくなります。',
+  '1日抜けても大丈夫。戻ってくることが大切です。',
+  'もう自然と続いています。この調子で。',
+]
 
 export function calcPeriodStats(habitId, records, today, createdAt, archivedAt) {
   const todayDate = parseLocalDate(today)
