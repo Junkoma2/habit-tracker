@@ -25,7 +25,19 @@ export default function Modal({ onClose, children, title }) {
 
   useEffect(() => {
     document.documentElement.classList.add('modal-open')
-    return () => document.documentElement.classList.remove('modal-open')
+    const meta = document.querySelector('meta[name="theme-color"]')
+    const prevColor = meta?.getAttribute('content') ?? null
+    // iOS PWA: status bar をモーダルの暗幕に合わせて暗くする
+    meta?.setAttribute('content', '#000000')
+    return () => {
+      document.documentElement.classList.remove('modal-open')
+      if (meta) {
+        // テーマが変更されていた場合は変更後の primary を使う
+        const current = getComputedStyle(document.documentElement)
+          .getPropertyValue('--color-primary').trim()
+        meta.setAttribute('content', current || prevColor)
+      }
+    }
   }, [])
 
   useEffect(() => {
