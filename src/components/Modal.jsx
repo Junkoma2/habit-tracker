@@ -19,7 +19,7 @@ export default function Modal({ onClose, children, title }) {
 
   // アニメーション完了後にフォーカスを移動（重複effectを解消）
   useEffect(() => {
-    const timer = setTimeout(() => sheetRef.current?.focus(), 220)
+    const timer = setTimeout(() => sheetRef.current?.focus({ preventScroll: true }), 220)
     return () => clearTimeout(timer)
   }, [])
 
