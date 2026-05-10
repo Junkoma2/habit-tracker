@@ -6,9 +6,12 @@ import StatsCategoryCard from './StatsCategoryCard'
 import './StatsView.css'
 
 const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土']
-const ROUTE_MILESTONES = PHASES
-  .filter(phase => Number.isFinite(phase.days))
-  .map(phase => ({ days: phase.days, label: `${phase.days}日` }))
+const ROUTE_MILESTONES = [
+  { days: 3, label: '3日', name: '脱3日坊主' },
+  ...PHASES
+    .filter(phase => Number.isFinite(phase.days))
+    .map(phase => ({ days: phase.days, label: `${phase.days}日`, name: phase.label })),
+]
 
 function calcRouteProgress(streak) {
   if (ROUTE_MILESTONES.length === 0) return 0
@@ -47,12 +50,16 @@ function PhaseRoute({ streak }) {
       <div className="phase-route-line" aria-hidden="true">
         <span style={{ width: `${progress}%` }} />
       </div>
-      <div className="phase-route-milestones">
+      <div
+        className="phase-route-milestones"
+        style={{ gridTemplateColumns: `repeat(${ROUTE_MILESTONES.length}, minmax(0, 1fr))` }}
+      >
         {ROUTE_MILESTONES.map(milestone => (
           <span
             key={milestone.days}
             className={`phase-route-milestone${streak >= milestone.days ? ' achieved' : ''}`}
-            aria-label={`${milestone.label}${streak >= milestone.days ? ' 到達済み' : ' 未到達'}`}
+            aria-label={`${milestone.name}（${milestone.label}）${streak >= milestone.days ? ' 到達済み' : ' 未到達'}`}
+            title={milestone.name}
           >
             <span className="phase-route-dot" />
             <span className="phase-route-label">{milestone.label}</span>
