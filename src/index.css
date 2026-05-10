@@ -51,7 +51,7 @@ html, body {
 html.pwa-standalone,
 html.pwa-standalone body,
 html.pwa-standalone #root {
-  background: var(--color-bg);
+  background: var(--color-surface);
 }
 
 html.pwa-standalone body::after {

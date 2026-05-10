@@ -74,8 +74,6 @@
 .app {
   --app-header-height: calc(56px + var(--app-safe-area-top));
   --footer-content-height: 60px;
-  --footer-safe-bottom: var(--app-safe-area-bottom);
-  --footer-total-height: calc(var(--footer-content-height) + var(--footer-safe-bottom));
   --content-bottom-breathing: 24px;
   height: var(--app-screen-height);
   display: flex;
@@ -400,7 +398,7 @@
   background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
-  height: var(--footer-total-height);
+  height: var(--footer-content-height);
   z-index: 20;
   touch-action: none;
 }
@@ -409,12 +407,12 @@
   display: flex;
   align-items: center;
   justify-content: space-around;
-  height: var(--footer-content-height);
+  height: 100%;
 }
 
 .undo-toast {
   position: fixed;
-  bottom: calc(var(--footer-total-height) + 12px);
+  bottom: calc(var(--footer-content-height) + 12px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
