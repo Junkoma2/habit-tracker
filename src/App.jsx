@@ -230,17 +230,42 @@ export default function App() {
       }
     }
 
+    const refreshTimers = new Set()
+    const refreshViewport = () => {
+      requestAnimationFrame(setViewportHeight)
+      ;[100, 300].forEach((delay) => {
+        const timer = window.setTimeout(() => {
+          refreshTimers.delete(timer)
+          setViewportHeight()
+        }, delay)
+        refreshTimers.add(timer)
+      })
+    }
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        refreshViewport()
+      }
+    }
+
     document.documentElement.classList.toggle('viewport-debug-enabled', viewportDebug)
-    setViewportHeight()
+    refreshViewport()
     window.visualViewport?.addEventListener('resize', setViewportHeight)
     window.visualViewport?.addEventListener('scroll', setViewportHeight)
     window.addEventListener('resize', setViewportHeight)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('pageshow', refreshViewport)
+    window.addEventListener('focus', refreshViewport)
 
     return () => {
       document.documentElement.classList.remove('viewport-debug-enabled')
+      refreshTimers.forEach((timer) => window.clearTimeout(timer))
       window.visualViewport?.removeEventListener('resize', setViewportHeight)
       window.visualViewport?.removeEventListener('scroll', setViewportHeight)
       window.removeEventListener('resize', setViewportHeight)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('pageshow', refreshViewport)
+      window.removeEventListener('focus', refreshViewport)
     }
   }, [viewportDebug])
 
