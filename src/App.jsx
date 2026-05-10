@@ -190,16 +190,18 @@ export default function App() {
       const visualViewport = window.visualViewport
       const currentWidth = Math.round(visualViewport?.width || window.innerWidth)
       const visualHeight = visualViewport?.height || window.innerHeight
-      const currentHeight = Math.max(visualHeight, window.innerHeight)
+      const inputFocused = document.activeElement?.matches?.('input, textarea, [contenteditable="true"]')
 
-      if (Math.abs(currentWidth - stableViewportRef.current.width) > 40) {
-        stableViewportRef.current = { width: currentWidth, height: 0 }
+      let height
+      if (inputFocused) {
+        // キーボード表示中は以前の安定値を維持してレイアウト崩れを防ぐ
+        height = stableViewportRef.current.height || window.innerHeight
+      } else {
+        height = window.innerHeight
+        stableViewportRef.current = { width: currentWidth, height }
       }
 
-      const height = Math.max(stableViewportRef.current.height, currentHeight)
-
-      stableViewportRef.current = { width: currentWidth, height }
-      document.documentElement.style.setProperty('--app-viewport-height', `${height}px`)
+      document.documentElement.style.setProperty('--app-viewport-height', `${Math.round(height)}px`)
       if (viewportDebug) {
         const appEl = document.querySelector('.app')
         const appRect = appEl?.getBoundingClientRect()
