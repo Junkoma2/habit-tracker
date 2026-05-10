@@ -51,7 +51,19 @@ html, body {
 html.pwa-standalone,
 html.pwa-standalone body,
 html.pwa-standalone #root {
+  background: var(--color-bg);
+}
+
+html.pwa-standalone body::after {
+  content: "";
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: var(--app-safe-area-top);
   background: var(--color-primary);
+  pointer-events: none;
+  z-index: 28;
 }
 
 html.pwa-standalone.modal-open body::before {
