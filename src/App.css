@@ -75,11 +75,13 @@
   --app-header-height: calc(56px + var(--app-safe-area-top));
   --footer-content-height: 60px;
   --footer-safe-padding: 10px;
-  --footer-safe-bottom: max(var(--footer-safe-padding), var(--app-safe-area-bottom));
+  --footer-safe-bottom-max: 34px;
+  --footer-safe-bottom: clamp(var(--footer-safe-padding), var(--app-safe-area-bottom), var(--footer-safe-bottom-max));
   --footer-total-height: calc(var(--footer-content-height) + var(--footer-safe-bottom));
   --content-bottom-breathing: 24px;
   height: var(--app-screen-height);
   display: flex;
+  position: relative;
   flex-direction: column;
   width: 100%;
   max-width: 480px;
@@ -411,6 +413,10 @@
   touch-action: none;
 }
 
+.app.standalone .app-footer {
+  position: absolute;
+}
+
 .app-footer-inner {
   display: flex;
   align-items: center;
@@ -435,6 +441,10 @@
   z-index: 30;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   animation: toast-in 0.2s ease;
+}
+
+.app.standalone .undo-toast {
+  position: absolute;
 }
 
 @keyframes toast-in {
@@ -558,6 +568,16 @@
   background: #00e676;
 }
 
+.viewport-debug-safe-probe {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: var(--app-safe-area-bottom);
+  pointer-events: none;
+  visibility: hidden;
+}
+
 .viewport-debug-panel {
   position: fixed;
   right: 8px;
@@ -570,5 +590,6 @@
   color: #fff;
   font-size: 10px;
   line-height: 1.2;
+  white-space: pre;
 }
 
