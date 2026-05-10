@@ -413,10 +413,6 @@
   touch-action: none;
 }
 
-.app.standalone .app-footer {
-  position: absolute;
-}
-
 .app-footer-inner {
   display: flex;
   align-items: center;
@@ -441,10 +437,6 @@
   z-index: 30;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
   animation: toast-in 0.2s ease;
-}
-
-.app.standalone .undo-toast {
-  position: absolute;
 }
 
 @keyframes toast-in {
