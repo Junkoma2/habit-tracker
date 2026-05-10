@@ -74,9 +74,7 @@
 .app {
   --app-header-height: calc(56px + var(--app-safe-area-top));
   --footer-content-height: 60px;
-  --footer-safe-padding: 10px;
-  --footer-safe-bottom-max: 34px;
-  --footer-safe-bottom: clamp(var(--footer-safe-padding), var(--app-safe-area-bottom), var(--footer-safe-bottom-max));
+  --footer-safe-bottom: var(--app-safe-area-bottom);
   --footer-total-height: calc(var(--footer-content-height) + var(--footer-safe-bottom));
   --content-bottom-breathing: 24px;
   height: var(--app-screen-height);
@@ -103,12 +101,6 @@
   background: var(--color-primary);
   pointer-events: none;
   z-index: 29;
-}
-
-@supports (-webkit-touch-callout: none) {
-  .app {
-    --footer-safe-padding: 20px;
-  }
 }
 
 .app.standalone {
@@ -408,7 +400,7 @@
   background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
-  padding-bottom: var(--footer-safe-bottom);
+  height: var(--footer-total-height);
   z-index: 20;
   touch-action: none;
 }
