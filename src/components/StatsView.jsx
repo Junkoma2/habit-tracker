@@ -6,6 +6,62 @@ import StatsCategoryCard from './StatsCategoryCard'
 import './StatsView.css'
 
 const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土']
+const ROUTE_MILESTONES = PHASES
+  .filter(phase => Number.isFinite(phase.days))
+  .map(phase => ({ days: phase.days, label: `${phase.days}日` }))
+
+function calcRouteProgress(streak) {
+  if (ROUTE_MILESTONES.length === 0) return 0
+
+  let previousDays = 0
+  let previousPosition = 0
+  const segmentWidth = 100 / ROUTE_MILESTONES.length
+
+  for (let i = 0; i < ROUTE_MILESTONES.length; i++) {
+    const milestone = ROUTE_MILESTONES[i]
+    const nextPosition = segmentWidth * (i + 1)
+
+    if (streak <= milestone.days) {
+      const daysInSegment = milestone.days - previousDays
+      const segmentProgress = daysInSegment > 0
+        ? (streak - previousDays) / daysInSegment
+        : 1
+      return Math.max(0, Math.min(100, previousPosition + segmentProgress * segmentWidth))
+    }
+
+    previousDays = milestone.days
+    previousPosition = nextPosition
+  }
+
+  return 100
+}
+
+function PhaseRoute({ streak }) {
+  const progress = calcRouteProgress(streak)
+
+  return (
+    <div
+      className="phase-route"
+      aria-label={`習慣化の進捗 ${Math.round(progress)}%`}
+    >
+      <div className="phase-route-line" aria-hidden="true">
+        <span style={{ width: `${progress}%` }} />
+      </div>
+      <div className="phase-route-milestones">
+        {ROUTE_MILESTONES.map(milestone => (
+          <span
+            key={milestone.days}
+            className={`phase-route-milestone${streak >= milestone.days ? ' achieved' : ''}`}
+            aria-label={`${milestone.label}${streak >= milestone.days ? ' 到達済み' : ' 未到達'}`}
+          >
+            <span className="phase-route-dot" />
+            <span className="phase-route-label">{milestone.label}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function isHabitActiveOn(habit, dateStr) {
   if (habit.createdAt && dateStr < habit.createdAt) return false
@@ -106,25 +162,12 @@ export default function StatsView({ habits, records, today, colorCategories = {}
             <span>習慣化フェーズ</span>
           </div>
           <div className="phase-list">
-            {habitPhases.map(({ habit, streak, phaseInfo, index }) => (
+            {habitPhases.map(({ habit, streak, phaseInfo }) => (
               <div key={habit.id} className="phase-row">
                 <span className="phase-dot" style={{ backgroundColor: habit.color }} />
                 <div className="phase-row-info">
                   <span className="phase-name">{habit.name}</span>
-                  <div className="phase-milestones">
-                    {PHASES.map((p, i) => {
-                      const achieved = i < index
-                      const current = i === index
-                      return (
-                        <span
-                          key={i}
-                          className={`phase-milestone${achieved ? ' achieved' : current ? ' current' : ' upcoming'}`}
-                        >
-                          {p.label}
-                        </span>
-                      )
-                    })}
-                  </div>
+                  <PhaseRoute streak={streak} />
                   {phaseInfo.daysToNext !== null && (
                     <span className="phase-next-hint">あと{phaseInfo.daysToNext}日で「{phaseInfo.next}」へ</span>
                   )}

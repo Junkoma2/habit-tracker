@@ -236,36 +236,70 @@
   overflow: hidden;
 }
 
-.phase-milestones {
+.phase-route {
+  position: relative;
+  min-width: 0;
+  padding: 6px 0 14px;
+}
+
+.phase-route-line {
+  position: absolute;
+  top: 10px;
+  right: 0;
+  left: 0;
+  overflow: hidden;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--color-border);
+}
+
+.phase-route-line span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-primary);
+  opacity: 0.55;
+}
+
+.phase-route-milestones {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+}
+
+.phase-route-milestone {
   display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
 }
 
-.phase-milestone {
-  font-size: 0.62rem;
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 20px;
-  white-space: nowrap;
+.phase-route-dot {
+  width: 9px;
+  height: 9px;
+  border: 2px solid var(--color-border);
+  border-radius: 50%;
+  background: var(--color-surface);
 }
 
-.phase-milestone.achieved {
+.phase-route-milestone.achieved .phase-route-dot {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  opacity: 0.55;
+}
+
+.phase-route-label {
+  overflow: hidden;
+  max-width: 100%;
   color: var(--color-text-secondary);
-  background: var(--color-bg);
-  opacity: 0.5;
-}
-
-.phase-milestone.current {
-  color: var(--color-primary);
-  background: var(--color-primary-light);
+  font-size: 0.58rem;
   font-weight: 700;
-}
-
-.phase-milestone.upcoming {
-  color: var(--color-text-secondary);
-  background: var(--color-bg);
-  opacity: 0.35;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .phase-next-hint {
