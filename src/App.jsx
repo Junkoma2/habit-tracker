@@ -32,6 +32,7 @@ import CategoryManageModal from './components/CategoryManageModal'
 import { useHabitsStorage, loadData } from './hooks/useHabitsStorage'
 import { useTheme } from './hooks/useTheme'
 import { usePullToRefresh, PULL_THRESHOLD } from './hooks/usePullToRefresh'
+import { useTabSwipe } from './hooks/useTabSwipe'
 import { getToday, getYesterday } from './utils/date'
 import { calcCurrentStreak } from './utils/stats'
 import { sanitizeImportData, validateImportData } from './utils/validation'
@@ -41,8 +42,6 @@ const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
 const ONBOARDING_KEY = 'habit-tracker-onboarding-done'
 const EDIT_HINT_KEY = 'habit-tracker-edit-hint-seen'
 const TAB_ORDER = ['record', 'habit', 'stats']
-const SWIPE_THRESHOLD_X = 72
-const SWIPE_MAX_Y = 60
 const BACKUP_DIR_NAME = 'habit-tracker-backups'
 
 export default function App() {
@@ -77,8 +76,6 @@ export default function App() {
     try { return localStorage.getItem(LAST_BACKUP_KEY) || null } catch { return null }
   })
   const [activeTab, setActiveTab] = useState('habit')
-  const [tabDragX, setTabDragX] = useState(0)
-  const [tabSettling, setTabSettling] = useState(false)
   const [viewportDebugInfo, setViewportDebugInfo] = useState('')
   const [undoAction, setUndoAction] = useState(null)
   const undoTimerRef = useRef(null)
@@ -92,7 +89,6 @@ export default function App() {
   const safeAreaProbeRef = useRef(null)
   const fileInputRef = useRef(null)
   const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
-  const tabSwipeRef = useRef(null)
   const tabViewportRef = useRef(null)
   const stableHandlersRef = useRef(null)
 
@@ -250,78 +246,22 @@ export default function App() {
   const handleTabSelect = useCallback((tab) => {
     if (tabsLocked || tab === activeTab) return
     setTabSettling(true)
-    setTabDragX(0)
     setActiveTab(tab)
   }, [activeTab, tabsLocked])
 
-  const handleTabSwipeStart = useCallback((e) => {
-    if (
-      modal ||
-      editMode ||
-      tabsLocked ||
-      e.touches.length !== 1 ||
-      e.target.closest('button, a, input, textarea, select, [contenteditable], [role="button"], .app-header, .app-footer, .modal-backdrop')
-    ) {
-      tabSwipeRef.current = null
-      return
-    }
-
-    const touch = e.touches[0]
-    const activeIndex = TAB_ORDER.indexOf(activeTab)
-    tabSwipeRef.current = {
-      x: touch.clientX,
-      y: touch.clientY,
-      horizontal: false,
-      activeIndex,
-    }
-  }, [activeTab, editMode, modal, tabsLocked])
-
-  const handleTabSwipeMove = useCallback((e) => {
-    const swipe = tabSwipeRef.current
-    if (!swipe || e.touches.length !== 1) return false
-
-    const touch = e.touches[0]
-    const dx = touch.clientX - swipe.x
-    const dy = touch.clientY - swipe.y
-
-    if (!swipe.horizontal && Math.abs(dx) > 18 && Math.abs(dx) > Math.abs(dy) * 1.4) {
-      swipe.horizontal = true
-    }
-
-    if (swipe.horizontal) {
-      const atFirst = swipe.activeIndex === 0 && dx > 0
-      const atLast = swipe.activeIndex === TAB_ORDER.length - 1 && dx < 0
-      setTabSettling(false)
-      setTabDragX((atFirst || atLast) ? dx * 0.28 : dx)
-      return true
-    }
-
-    if (Math.abs(dy) > 18 && Math.abs(dy) > Math.abs(dx)) {
-      tabSwipeRef.current = null
-    }
-
-    return false
-  }, [])
-
-  const handleTabSwipeEnd = useCallback((e) => {
-    const swipe = tabSwipeRef.current
-    tabSwipeRef.current = null
-    if (!swipe?.horizontal || tabsLocked) {
-      setTabDragX(0)
-      return
-    }
-
-    const touch = e.changedTouches[0]
-    const dx = touch.clientX - swipe.x
-    const dy = touch.clientY - swipe.y
-    setTabSettling(true)
-    setTabDragX(0)
-    if (Math.abs(dx) < SWIPE_THRESHOLD_X || Math.abs(dy) > SWIPE_MAX_Y) return
-
-    const nextIndex = dx < 0 ? swipe.activeIndex + 1 : swipe.activeIndex - 1
-    const nextTab = TAB_ORDER[nextIndex]
-    if (nextTab) setActiveTab(nextTab)
-  }, [tabsLocked])
+  const {
+    tabDragX,
+    tabSettling,
+    setTabSettling,
+    handleStart: handleTabSwipeStart,
+    handleMove: handleTabSwipeMove,
+    handleEnd: handleTabSwipeEnd,
+  } = useTabSwipe({
+    tabOrder: TAB_ORDER,
+    activeTab,
+    onTabChange: setActiveTab,
+    disabled: Boolean(modal || editMode || tabsLocked),
+  })
 
   const toggleHabit = useCallback((habitId, dateStr) => {
     const wasOn = (records[dateStr] || []).includes(habitId)
