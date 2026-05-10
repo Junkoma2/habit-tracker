@@ -81,6 +81,7 @@ export default function App() {
   const scrollRef = useRef(null)
   const headerRef = useRef(null)
   const footerRef = useRef(null)
+  const safeAreaProbeRef = useRef(null)
   const fileInputRef = useRef(null)
   const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
   const tabSwipeRef = useRef(null)
@@ -183,7 +184,8 @@ export default function App() {
     const setViewportHeight = () => {
       const visualViewport = window.visualViewport
       const currentWidth = Math.round(visualViewport?.width || window.innerWidth)
-      const currentHeight = visualViewport?.height || window.innerHeight
+      const visualHeight = visualViewport?.height || window.innerHeight
+      const currentHeight = Math.max(visualHeight, window.innerHeight)
 
       if (Math.abs(currentWidth - stableViewportRef.current.width) > 40) {
         stableViewportRef.current = { width: currentWidth, height: 0 }
@@ -194,11 +196,29 @@ export default function App() {
       stableViewportRef.current = { width: currentWidth, height }
       document.documentElement.style.setProperty('--app-viewport-height', `${height}px`)
       if (viewportDebug) {
-        const appHeight = document.querySelector('.app')?.getBoundingClientRect().height
+        const appEl = document.querySelector('.app')
+        const appRect = appEl?.getBoundingClientRect()
+        const footerRect = footerRef.current?.getBoundingClientRect()
         const styles = getComputedStyle(document.documentElement)
+        const appStyles = appEl ? getComputedStyle(appEl) : styles
+        const footerStyles = footerRef.current ? getComputedStyle(footerRef.current) : null
+        const afterStyles = scrollRef.current ? getComputedStyle(scrollRef.current, '::after') : null
         const screenHeight = styles.getPropertyValue('--app-screen-height').trim()
+        const displayStandalone = window.matchMedia('(display-mode: standalone)').matches
+        const footerGap = footerRect ? window.innerHeight - footerRect.bottom : 0
+        const safeBottom = safeAreaProbeRef.current?.getBoundingClientRect().height || 0
         setViewportDebugInfo(
-          `vv:${Math.round(currentHeight)} stable:${Math.round(height)} ih:${window.innerHeight} app:${Math.round(appHeight || 0)} shell:${screenHeight}`
+          [
+            `mode:${displayStandalone ? 'standalone' : 'browser'}/${window.navigator.standalone === true ? 'ios-standalone' : 'nav'}`,
+            `vv:${Math.round(visualHeight)} ih:${window.innerHeight} stable:${Math.round(height)}`,
+            `app:${Math.round(appRect?.height || 0)} viewport:${styles.getPropertyValue('--app-viewport-height').trim()} shell:${screenHeight}`,
+            `safe:${Math.round(safeBottom)}px raw:${styles.getPropertyValue('--app-safe-area-bottom').trim()}`,
+            `footerSafe:${footerStyles?.paddingBottom || appStyles.getPropertyValue('--footer-safe-bottom').trim()}`,
+            `footerTotal:${appStyles.getPropertyValue('--footer-total-height').trim()}`,
+            `breath:${appStyles.getPropertyValue('--content-bottom-breathing').trim()}`,
+            `after:${afterStyles?.flexBasis || 'n/a'}`,
+            `gap:${Math.round(footerGap)}`,
+          ].join('\n')
         )
       }
     }
@@ -917,6 +937,7 @@ export default function App() {
 
       {viewportDebug && (
         <>
+          <div ref={safeAreaProbeRef} className="viewport-debug-safe-probe" />
           <div className="viewport-debug-shell-bar" />
           <div className="viewport-debug-fixed-bar" />
           <div className="viewport-debug-panel">{viewportDebugInfo}</div>
