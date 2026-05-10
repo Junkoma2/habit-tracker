@@ -33,6 +33,7 @@ import { useHabitsStorage, loadData } from './hooks/useHabitsStorage'
 import { useTheme } from './hooks/useTheme'
 import { usePullToRefresh, PULL_THRESHOLD } from './hooks/usePullToRefresh'
 import { useTabSwipe } from './hooks/useTabSwipe'
+import { useModalState } from './hooks/useModalState'
 import { getToday, getYesterday } from './utils/date'
 import { calcCurrentStreak } from './utils/stats'
 import { sanitizeImportData, validateImportData } from './utils/validation'
@@ -62,7 +63,7 @@ export default function App() {
 
   const [calendarDate, setCalendarDate] = useState(() => new Date())
   const [editMode, setEditMode] = useState(false)
-  const [modal, setModal] = useState(null)
+  const { modal, setModal, closeModal } = useModalState()
   const [toast, setToast] = useState(null)
   const [lastBackupDate, setLastBackupDate] = useState(() => {
     try { return localStorage.getItem(LAST_BACKUP_KEY) || null } catch { return null }
@@ -212,8 +213,6 @@ export default function App() {
       window.removeEventListener('resize', setViewportHeight)
     }
   }, [viewportDebug])
-
-  const closeModal = useCallback(() => setModal(null), [])
 
   const handleTabSelect = useCallback((tab) => {
     if (tabsLocked || tab === activeTab) return
