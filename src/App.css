@@ -223,7 +223,7 @@
    flex item として末尾に挿入することで確実にスクロール余地を確保する */
 .tab-panel::after {
   content: "";
-  flex: 0 0 calc(var(--footer-total-height) + var(--content-bottom-breathing));
+  flex: 0 0 calc(var(--footer-content-height) + var(--content-bottom-breathing));
 }
 
 
