@@ -39,6 +39,7 @@ import './App.css'
 
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
 const ONBOARDING_KEY = 'habit-tracker-onboarding-done'
+const EDIT_HINT_KEY = 'habit-tracker-edit-hint-seen'
 const TAB_ORDER = ['record', 'habit', 'stats']
 const SWIPE_THRESHOLD_X = 72
 const SWIPE_MAX_Y = 60
@@ -53,9 +54,16 @@ export default function App() {
   const [showWelcome, setShowWelcome] = useState(() => {
     try { return !localStorage.getItem(ONBOARDING_KEY) } catch { return false }
   })
+  const [showEditHint, setShowEditHint] = useState(() => {
+    try { return !localStorage.getItem(EDIT_HINT_KEY) } catch { return false }
+  })
   const dismissWelcome = useCallback(() => {
     try { localStorage.setItem(ONBOARDING_KEY, '1') } catch {}
     setShowWelcome(false)
+  }, [])
+  const dismissEditHint = useCallback(() => {
+    try { localStorage.setItem(EDIT_HINT_KEY, '1') } catch {}
+    setShowEditHint(false)
   }, [])
 
   const { habits, records, colorCategories, setHabits, setRecords, setColorCategories } = useHabitsStorage()
@@ -637,6 +645,13 @@ export default function App() {
               )}
             </div>
 
+            {activeHabits.length > 0 && !editMode && showEditHint && (
+              <div className="edit-hint">
+                <span>習慣は長押しで編集できます。</span>
+                <button type="button" onClick={dismissEditHint}>閉じる</button>
+              </div>
+            )}
+
             {habits.length === 0 ? (
               <div className="empty-state">
                 {showWelcome ? (
@@ -712,7 +727,7 @@ export default function App() {
                     completed={todayRecords.includes(habit.id)}
                     streak={calcCurrentStreak(habit.id, records)}
                     onPress={(h) => toggleHabit(h.id, today)}
-                    onLongPress={(h) => setModal({ type: 'longPress', habit: h })}
+                    onLongPress={(h) => { dismissEditHint(); setModal({ type: 'longPress', habit: h }) }}
                   />
                 ))}
                 <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>

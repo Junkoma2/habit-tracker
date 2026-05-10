@@ -79,11 +79,11 @@
   margin-bottom: 8px;
   padding: 13px;
   border-radius: var(--radius-sm);
-  border: 1.5px solid var(--color-border);
-  background: var(--color-surface);
-  color: var(--color-text);
+  border: 1.5px solid var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
   font-size: 0.95rem;
-  font-weight: 600;
+  font-weight: 700;
   transition: opacity 0.15s;
 }
 
