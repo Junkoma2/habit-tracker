@@ -86,7 +86,6 @@ export default function App() {
   const statsPanelRef = useRef(null)
   const scrollRef = useRef(null)
   const headerRef = useRef(null)
-  const footerRef = useRef(null)
   const safeAreaProbeRef = useRef(null)
   const fileInputRef = useRef(null)
   const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
@@ -127,7 +126,7 @@ export default function App() {
     const preventChromeScroll = (e) => {
       e.preventDefault()
     }
-    const chromeEls = [headerRef.current, footerRef.current].filter(Boolean)
+    const chromeEls = [headerRef.current].filter(Boolean)
     chromeEls.forEach(el => {
       el.addEventListener('touchmove', preventChromeScroll, { passive: false })
     })
@@ -205,14 +204,11 @@ export default function App() {
       if (viewportDebug) {
         const appEl = document.querySelector('.app')
         const appRect = appEl?.getBoundingClientRect()
-        const footerRect = footerRef.current?.getBoundingClientRect()
         const styles = getComputedStyle(document.documentElement)
         const appStyles = appEl ? getComputedStyle(appEl) : styles
-        const footerStyles = footerRef.current ? getComputedStyle(footerRef.current) : null
         const afterStyles = scrollRef.current ? getComputedStyle(scrollRef.current, '::after') : null
         const screenHeight = styles.getPropertyValue('--app-screen-height').trim()
         const displayStandalone = window.matchMedia('(display-mode: standalone)').matches
-        const footerGap = footerRect ? window.innerHeight - footerRect.bottom : 0
         const safeBottom = safeAreaProbeRef.current?.getBoundingClientRect().height || 0
         setViewportDebugInfo(
           [
@@ -220,11 +216,7 @@ export default function App() {
             `vv:${Math.round(visualHeight)} ih:${window.innerHeight} stable:${Math.round(height)}`,
             `app:${Math.round(appRect?.height || 0)} viewport:${styles.getPropertyValue('--app-viewport-height').trim()} shell:${screenHeight}`,
             `safe:${Math.round(safeBottom)}px raw:${styles.getPropertyValue('--app-safe-area-bottom').trim()}`,
-            `footerHeight:${footerStyles?.height || appStyles.getPropertyValue('--footer-content-height').trim()}`,
-            `footerBottom:${footerStyles?.bottom || 'n/a'}`,
-            `breath:${appStyles.getPropertyValue('--content-bottom-breathing').trim()}`,
             `after:${afterStyles?.flexBasis || 'n/a'}`,
-            `gap:${Math.round(footerGap)}`,
           ].join('\n')
         )
       }
@@ -875,7 +867,6 @@ export default function App() {
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
 
       <footer
-        ref={footerRef}
         className="app-footer"
       >
         <div className="app-footer-inner">
