@@ -91,7 +91,7 @@ export default function StatsView({ habits, records, today, colorCategories = {}
   const hasNamedColors = Object.values(colorCategories).some(v => v?.trim())
 
   if (habits.length === 0) {
-    return <p className="analysis-empty">習慣を追加すると、達成率が表示されます。</p>
+    return <p className="analysis-empty">習慣を追加すると達成率が表示されます。</p>
   }
 
   return (
