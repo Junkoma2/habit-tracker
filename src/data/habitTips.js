@@ -23,3 +23,8 @@ export function getDailyTip(today) {
   const seed = parseInt(today.replace(/-/g, ''), 10)
   return tips[seed % tips.length]
 }
+
+export function getRandomTip(exclude) {
+  const pool = exclude != null ? tips.filter((_, i) => i !== exclude) : tips
+  return pool[Math.floor(Math.random() * pool.length)]
+}
