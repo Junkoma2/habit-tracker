@@ -19,7 +19,7 @@ export function applyTheme(theme) {
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme.primary)
 }
 
-export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onManageCategories, onClose, lastBackupDate, debugEnabled, onToggleDebug }) {
+export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onManageCategories, onClose, lastBackupDate, debugEnabled, onToggleDebug, statsStartDate, onStatsStartDateChange }) {
   return (
     <Modal title="設定" onClose={onClose}>
       <p className="settings-section-title">見た目</p>
@@ -59,6 +59,24 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
           <span>カテゴリを管理</span>
         </button>
       </div>
+
+      <hr className="settings-divider" />
+
+      <p className="settings-section-title">分析</p>
+      <div className="stats-start-date-row">
+        <label className="stats-start-date-label" htmlFor="stats-start-date">集計開始日</label>
+        <input
+          id="stats-start-date"
+          type="date"
+          className="stats-start-date-input"
+          value={statsStartDate ?? ''}
+          onChange={e => onStatsStartDateChange(e.target.value || null)}
+          aria-describedby="stats-start-date-hint"
+        />
+      </div>
+      <p className="stats-start-date-hint" id="stats-start-date-hint">
+        この日より前を達成率の分母に含めません
+      </p>
 
       <hr className="settings-divider" />
 

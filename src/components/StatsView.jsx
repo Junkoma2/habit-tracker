@@ -13,14 +13,18 @@ function isHabitActiveOn(habit, dateStr) {
   return true
 }
 
-function calcRateForRange(habits, records, today, days) {
+// statsStartDate が設定されている場合、その日より前は集計対象外にする
+function calcRateForRange(habits, records, today, days, statsStartDate) {
   const end = parseLocalDate(today)
+  const startBound = statsStartDate ? parseLocalDate(statsStartDate) : null
   let achieved = 0
   let total = 0
 
   for (let offset = days - 1; offset >= 0; offset--) {
     const date = new Date(end)
     date.setDate(date.getDate() - offset)
+    // statsStartDate より前の日は集計に含めない
+    if (startBound && date < startBound) continue
     const dateStr = formatDate(date)
     const activeHabits = habits.filter(habit => isHabitActiveOn(habit, dateStr))
     const dayRecords = records[dateStr] || []
@@ -32,13 +36,15 @@ function calcRateForRange(habits, records, today, days) {
   return total > 0 ? Math.round((achieved / total) * 100) : null
 }
 
-function calcWeekdayRates(habits, records, today, days = 30) {
+function calcWeekdayRates(habits, records, today, days = 30, statsStartDate) {
   const end = parseLocalDate(today)
+  const startBound = statsStartDate ? parseLocalDate(statsStartDate) : null
   const buckets = DOW_LABELS.map(label => ({ label, achieved: 0, total: 0 }))
 
   for (let offset = days - 1; offset >= 0; offset--) {
     const date = new Date(end)
     date.setDate(date.getDate() - offset)
+    if (startBound && date < startBound) continue
     const dateStr = formatDate(date)
     const bucket = buckets[date.getDay()]
     const activeHabits = habits.filter(habit => isHabitActiveOn(habit, dateStr))
@@ -54,7 +60,7 @@ function calcWeekdayRates(habits, records, today, days = 30) {
   }))
 }
 
-function calcColorStats(habits, records, today, colorCategories) {
+function calcColorStats(habits, records, today, colorCategories, statsStartDate) {
   const activeHabits = habits.filter(h => !h.archivedAt)
   return HABIT_COLORS
     .filter(color => colorCategories[color]?.trim())
@@ -64,18 +70,18 @@ function calcColorStats(habits, records, today, colorCategories) {
         color,
         name: colorCategories[color],
         count: colorHabits.length,
-        rate: calcRateForRange(colorHabits, records, today, 30),
+        rate: calcRateForRange(colorHabits, records, today, 30, statsStartDate),
       }
     })
     .filter(c => c.count > 0)
     .sort((a, b) => (b.rate ?? -1) - (a.rate ?? -1))
 }
 
-export default function StatsView({ habits, records, today, colorCategories = {} }) {
-  const rate7 = calcRateForRange(habits, records, today, 7)
-  const rate30 = calcRateForRange(habits, records, today, 30)
-  const weekdayRates = calcWeekdayRates(habits, records, today)
-  const colorStats = calcColorStats(habits, records, today, colorCategories)
+export default function StatsView({ habits, records, today, colorCategories = {}, statsStartDate = null }) {
+  const rate7 = calcRateForRange(habits, records, today, 7, statsStartDate)
+  const rate30 = calcRateForRange(habits, records, today, 30, statsStartDate)
+  const weekdayRates = calcWeekdayRates(habits, records, today, 30, statsStartDate)
+  const colorStats = calcColorStats(habits, records, today, colorCategories, statsStartDate)
   const hasNamedColors = Object.values(colorCategories).some(v => v?.trim())
 
   if (habits.length === 0) {
@@ -84,7 +90,7 @@ export default function StatsView({ habits, records, today, colorCategories = {}
 
   return (
     <>
-      <StatsAdviceCard rate7={rate7} rate30={rate30} />
+      <StatsAdviceCard rate7={rate7} rate30={rate30} statsStartDate={statsStartDate} />
 
       {hasNamedColors && (
         <StatsCategoryCard colorStats={colorStats} />

@@ -125,3 +125,41 @@
   color: var(--color-text-secondary);
   font-weight: 400;
 }
+
+/* 集計開始日設定（#275） */
+.stats-start-date-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.stats-start-date-label {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+.stats-start-date-input {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 0.88rem;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.stats-start-date-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.stats-start-date-hint {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  margin: 0;
+  line-height: 1.5;
+}

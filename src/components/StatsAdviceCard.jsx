@@ -6,7 +6,14 @@ function getAdvice(rate7) {
   return '無理のないペースで続けることが、長続きにつながりやすいです。'
 }
 
-export default function StatsAdviceCard({ rate7, rate30 }) {
+// statsStartDate がある場合、ラベルを実態に合わせて調整する
+function getRangeLabel(days, statsStartDate) {
+  if (!statsStartDate) return `直近${days}日`
+  // 開始日が設定されている場合はシンプルに表示
+  return `直近${days}日（開始日以降）`
+}
+
+export default function StatsAdviceCard({ rate7, rate30, statsStartDate = null }) {
   const advice = getAdvice(rate7)
 
   return (
@@ -18,12 +25,12 @@ export default function StatsAdviceCard({ rate7, rate30 }) {
         <div className="analysis-rate-card">
           <span className="analysis-rate-value">{rate7 ?? '-'}</span>
           {rate7 !== null && <span className="analysis-rate-unit">%</span>}
-          <span className="analysis-rate-label">直近7日</span>
+          <span className="analysis-rate-label">{getRangeLabel(7, statsStartDate)}</span>
         </div>
         <div className="analysis-rate-card">
           <span className="analysis-rate-value">{rate30 ?? '-'}</span>
           {rate30 !== null && <span className="analysis-rate-unit">%</span>}
-          <span className="analysis-rate-label">直近30日</span>
+          <span className="analysis-rate-label">{getRangeLabel(30, statsStartDate)}</span>
         </div>
       </div>
       {advice && <p className="analysis-advice-note">{advice}</p>}

@@ -81,7 +81,7 @@ export default function App() {
     setShowEditHint(false)
   }, [])
 
-  const { habits, records, colorCategories, setHabits, setRecords, setColorCategories } = useHabitsStorage()
+  const { habits, records, colorCategories, statsStartDate, setHabits, setRecords, setColorCategories, setStatsStartDate } = useHabitsStorage()
   const { themeId, handleThemeSelect } = useTheme()
 
   const [calendarDate, setCalendarDate] = useState(() => new Date())
@@ -585,7 +585,7 @@ export default function App() {
 
           {/* 分析セクション */}
           <div id="section-stats" className="section-group">
-            <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} />
+            <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} statsStartDate={statsStartDate} />
           </div>
         </div>
       </main>
@@ -696,6 +696,8 @@ export default function App() {
           onManageCategories={() => { closeModal(); setTimeout(() => setModal({ type: 'categoryManage' }), 50) }}
           onClose={closeModal}
           lastBackupDate={lastBackupDate}
+          statsStartDate={statsStartDate}
+          onStatsStartDateChange={setStatsStartDate}
           debugEnabled={viewportDebug}
           onToggleDebug={toggleViewportDebug}
         />
