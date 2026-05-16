@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 
 const STORAGE_KEY = 'habit-tracker-v1'
+const SETTINGS_KEY = 'habit-tracker-settings'
 
 export function loadData() {
   try {
@@ -27,16 +28,36 @@ export function loadData() {
   return { habits: [], records: {}, colorCategories: {} }
 }
 
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY)
+    if (raw) {
+      const s = JSON.parse(raw)
+      if (s && typeof s === 'object') return s
+    }
+  } catch {}
+  return {}
+}
+
 const _initial = loadData()
+const _initialSettings = loadSettings()
 
 export function useHabitsStorage() {
   const [habits, setHabits] = useState(_initial.habits)
   const [records, setRecords] = useState(_initial.records)
   const [colorCategories, setColorCategories] = useState(_initial.colorCategories)
+  // 集計開始日（YYYY-MM-DD 形式。未設定なら null）
+  const [statsStartDate, setStatsStartDate] = useState(_initialSettings.statsStartDate ?? null)
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ habits, records, colorCategories }))
   }, [habits, records, colorCategories])
 
-  return { habits, records, colorCategories, setHabits, setRecords, setColorCategories }
+  useEffect(() => {
+    const settings = {}
+    if (statsStartDate) settings.statsStartDate = statsStartDate
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
+  }, [statsStartDate])
+
+  return { habits, records, colorCategories, statsStartDate, setHabits, setRecords, setColorCategories, setStatsStartDate }
 }
