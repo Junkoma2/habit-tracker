@@ -343,6 +343,12 @@ export default function App() {
     main.scrollBy({ top: elTop - mainTop, behavior: 'smooth' })
   }, [])
 
+
+  // タイトルタップで今日の習慣へ戻る
+  const scrollToTop = useCallback(() => {
+    mainRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [])
+
   // handlers の最新版を常に参照できるよう ref で保持
   useLayoutEffect(() => {
     stableHandlersRef.current = {
@@ -361,7 +367,7 @@ export default function App() {
         ref={headerRef}
         className="app-header"
       >
-        <h1 className="app-title">習慣</h1>
+        <button className="app-title" onClick={scrollToTop} aria-label="今日の習慣へ戻る" title="今日の習慣へ戻る">習慣</button>
         <div className="header-actions">
           {/* 実績（カレンダー）へ移動 */}
           <button

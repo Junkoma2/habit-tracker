@@ -126,6 +126,12 @@
 .app-title {
   flex: 1 1 auto;
   min-width: 0;
+  /* button reset */
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
   color: #fff;
   font-size: 1.25rem;
   font-weight: 700;
