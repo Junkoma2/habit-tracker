@@ -28,7 +28,7 @@ function summarizeColorCategories(colorCategories) {
   return names.slice(0, 3).join(' / ') + (names.length > 3 ? ' …' : '')
 }
 
-export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onManageCategories, onClose, lastBackupDate, debugEnabled, onToggleDebug, statsStartDate, onStatsStartDateChange, colorCategories }) {
+export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onManageCategories, onClose, lastBackupDate, debugEnabled, onToggleDebug, statsStartDate, autoStatsStartDate, onStatsStartDateChange, colorCategories }) {
   const colorSummary = summarizeColorCategories(colorCategories)
 
   return (
@@ -92,7 +92,9 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
         />
       </div>
       <p className="stats-start-date-hint" id="stats-start-date-hint">
-        この日より前を達成率の分母に含めません
+        {!statsStartDate && autoStatsStartDate
+          ? `自動: ${autoStatsStartDate}（最初の記録日）`
+          : 'この日より前を達成率の分母に含めません'}
       </p>
 
       <hr className="settings-divider" />
