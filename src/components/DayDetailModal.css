@@ -23,6 +23,11 @@
   color: #4338CA;
 }
 
+
+.readonly-badge {
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+}
 .day-summary {
   text-align: center;
   margin-bottom: 18px;
@@ -55,6 +60,10 @@
   margin-bottom: 16px;
 }
 
+
+.day-habit-list.is-readonly {
+  opacity: 0.7;
+}
 .day-habit-item {
   width: 100%;
 }
