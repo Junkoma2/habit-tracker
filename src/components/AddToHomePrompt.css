@@ -37,3 +37,19 @@
 .add-to-home-dismiss:active {
   opacity: 1;
 }
+
+.add-to-home-install-btn {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: none;
+  border: 1.5px solid var(--color-primary);
+  border-radius: 6px;
+  padding: 3px 10px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.add-to-home-install-btn:active {
+  opacity: 0.7;
+}
