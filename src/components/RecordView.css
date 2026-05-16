@@ -13,13 +13,13 @@
   flex-direction: column;
 }
 
-/* section-sub（0.72rem）に合わせて統一 */
 .phase-highlight-heading {
-  font-size: 0.72rem;
-  font-weight: 700;
-  opacity: 0.75;
-  letter-spacing: 0.04em;
-  margin-bottom: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin-bottom: 10px;
 }
 
 .phase-highlight-next {
