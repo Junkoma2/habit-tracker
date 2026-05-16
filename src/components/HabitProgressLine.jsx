@@ -1,34 +1,31 @@
+import { MILESTONES, getNextMilestone } from '../utils/stats'
 import './HabitProgressLine.css'
 
-const STAGES = [
-  { label: '脱3日坊主', minDays: 4 },
-  { label: '1週間継続', minDays: 8 },
-  { label: '定着期', minDays: 22 },
-  { label: '安定期', minDays: 67 },
-]
+// 表示するマイルストン（最初の4件 = 1日・4日・1週間・2週間）
+const DISPLAY_MILESTONES = MILESTONES.slice(0, 4)
 
 export default function HabitProgressLine({ habit, streak }) {
-  const nextStage = STAGES.find(s => streak < s.minDays)
+  const next = getNextMilestone(streak)
 
   return (
     <div className="hpl-row">
       <div className="hpl-header">
         <span className="hpl-habit-dot" style={{ backgroundColor: habit.color }} />
         <span className="hpl-habit-name">{habit.name}</span>
-        {nextStage && (
-          <span className="hpl-next">NEXT：{nextStage.label}まであと{nextStage.minDays - streak}日</span>
+        {next && (
+          <span className="hpl-next">あと{next.days - streak}日で{next.label}</span>
         )}
       </div>
       <div className="hpl-track">
-        {STAGES.map((stage, i) => {
-          const reached = streak >= stage.minDays
+        {DISPLAY_MILESTONES.map((milestone) => {
+          const reached = streak >= milestone.days
           return (
             <div
-              key={stage.label}
+              key={milestone.days}
               className={`hpl-stage${reached ? ' hpl-stage--reached' : ''}`}
             >
               <div className="hpl-node" />
-              <span className="hpl-stage-label">{stage.label}</span>
+              <span className="hpl-stage-label">{milestone.label}</span>
             </div>
           )
         })}
