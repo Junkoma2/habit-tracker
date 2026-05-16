@@ -3,6 +3,14 @@ import { useState, useEffect } from 'react'
 const STORAGE_KEY = 'habit-tracker-v1'
 const SETTINGS_KEY = 'habit-tracker-settings'
 
+// 未達成日の扱いモード (#294)
+export const STREAK_MODES = [
+  { id: 'reset',       label: 'リセットする',    metricLabel: '連続日数' },
+  { id: 'decrement',   label: '1日分だけ戻す',   metricLabel: '積み上がり' },
+  { id: 'accumulate',  label: '減らさない',       metricLabel: '積み上がり' },
+]
+export const DEFAULT_STREAK_MODE = 'decrement'
+
 export function loadData() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY)
@@ -48,6 +56,8 @@ export function useHabitsStorage() {
   const [colorCategories, setColorCategories] = useState(_initial.colorCategories)
   // 集計開始日（YYYY-MM-DD 形式。未設定なら null）
   const [statsStartDate, setStatsStartDate] = useState(_initialSettings.statsStartDate ?? null)
+  // #294: 未達成日の扱いモード
+  const [streakMode, setStreakMode] = useState(_initialSettings.streakMode ?? DEFAULT_STREAK_MODE)
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ habits, records, colorCategories }))
@@ -56,8 +66,9 @@ export function useHabitsStorage() {
   useEffect(() => {
     const settings = {}
     if (statsStartDate) settings.statsStartDate = statsStartDate
+    settings.streakMode = streakMode
     localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
-  }, [statsStartDate])
+  }, [statsStartDate, streakMode])
 
-  return { habits, records, colorCategories, statsStartDate, setHabits, setRecords, setColorCategories, setStatsStartDate }
+  return { habits, records, colorCategories, statsStartDate, streakMode, setHabits, setRecords, setColorCategories, setStatsStartDate, setStreakMode }
 }

@@ -1,6 +1,6 @@
 import Calendar from './Calendar'
 import HabitProgressLine from './HabitProgressLine'
-import { calcCurrentStreak, MILESTONES, getNextMilestone } from '../utils/stats'
+import { calcCurrentStreakWithMode, MILESTONES, getNextMilestone } from '../utils/stats'
 import './RecordView.css'
 
 function formatMonthKey(date) {
@@ -38,6 +38,7 @@ export default function RecordView({
   habits,
   records,
   today,
+  streakMode = 'decrement',
   onDayClick,
   onMonthTitleClick,
 }) {
@@ -48,7 +49,7 @@ export default function RecordView({
   const activeHabits = habits.filter(h => !h.archivedAt)
 
   const habitStreakList = activeHabits.map(habit => {
-    const streak = calcCurrentStreak(habit.id, records)
+    const streak = calcCurrentStreakWithMode(habit.id, records, streakMode)
     return { habit, streak }
   })
 
@@ -88,7 +89,8 @@ export default function RecordView({
       {/* 積み上がり（#293: 現在日数 + 次のマイルストンで表示） */}
       <section className="section record-summary-section">
         <div className="section-header">
-          <h2 className="section-title">積み上がり</h2>
+          {/* #294: streakModeに応じてセクションタイトルを変更 */}
+          <h2 className="section-title">{streakMode === 'reset' ? '連続日数' : '積み上がり'}</h2>
           <div className="record-mini-stats">
             <span>{monthCount}回 今月</span>
             <span>累計 {totalCount}回</span>

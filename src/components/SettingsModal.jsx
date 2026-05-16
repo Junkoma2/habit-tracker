@@ -1,4 +1,5 @@
 import Modal from './Modal'
+import { STREAK_MODES } from '../hooks/useHabitsStorage'
 import './SettingsModal.css'
 
 export const THEMES = [

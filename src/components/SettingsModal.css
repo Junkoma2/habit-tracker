@@ -163,6 +163,45 @@
   margin: 0;
   line-height: 1.5;
 }
+
+/* #294: さぼったときの扱い設定 */
+.streak-mode-section {
+  margin-bottom: 12px;
+}
+
+.streak-mode-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+
+.streak-mode-options {
+  display: flex;
+  gap: 6px;
+}
+
+.streak-mode-btn {
+  flex: 1;
+  padding: 8px 4px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-align: center;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  cursor: pointer;
+}
+
+.streak-mode-btn.selected {
+  border-color: var(--color-primary);
+  background: var(--color-primary-light);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
 /* #295: 色の名前設定の入口に表示する要約 */
 .color-summary {
   font-size: 0.72rem;
