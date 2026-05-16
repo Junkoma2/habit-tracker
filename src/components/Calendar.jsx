@@ -1,6 +1,6 @@
+import { DOW_LABELS } from '../utils/date'
 import './Calendar.css'
 
-const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土']
 
 function toDateStr(y, m, d) {
   return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
