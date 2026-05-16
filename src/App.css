@@ -73,7 +73,8 @@
 
 .app {
   --app-header-height: calc(56px + var(--app-safe-area-top));
-  height: var(--app-screen-height);
+  height: 100svh;
+  height: 100dvh;
   display: flex;
   position: relative;
   flex-direction: column;
@@ -82,7 +83,7 @@
   margin: 0 auto;
   padding-top: var(--app-header-height);
   background: var(--color-bg);
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
 .app::before {
