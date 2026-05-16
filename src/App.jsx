@@ -367,7 +367,12 @@ export default function App() {
         ref={headerRef}
         className="app-header"
       >
-        <button className="app-title" onClick={scrollToTop} aria-label="今日の習慣へ戻る" title="今日の習慣へ戻る">習慣</button>
+        <button className="app-title" onClick={scrollToTop} aria-label="今日の習慣へ戻る" title="今日の習慣へ戻る">
+          習慣
+          {scrolled && (
+            <svg className="title-home-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15" /></svg>
+          )}
+        </button>
         <div className="header-actions">
           {/* 実績（カレンダー）へ移動 */}
           <button
@@ -467,7 +472,7 @@ export default function App() {
               )}
             </div>
 
-            {activeHabits.length > 0 && !editMode && showEditHint && (
+            {activeHabits.length > 0 && !editMode && !showWelcome && showEditHint && (
               <div className="edit-hint">
                 <span>習慣は長押しで編集できます。</span>
                 <button type="button" onClick={dismissEditHint}>閉じる</button>
@@ -566,7 +571,7 @@ export default function App() {
           )}
 
           {/* 実績セクション */}
-          <section id="section-record" className="section">
+          <div id="section-record">
             <RecordView
               calendarDate={calendarDate}
               onCalendarDateChange={setCalendarDate}
@@ -576,12 +581,12 @@ export default function App() {
               onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
               onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
             />
-          </section>
+          </div>
 
           {/* 分析セクション */}
-          <section id="section-stats" className="section">
+          <div id="section-stats">
             <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} />
-          </section>
+          </div>
         </div>
       </main>
 
