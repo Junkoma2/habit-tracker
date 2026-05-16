@@ -238,11 +238,6 @@
   text-transform: uppercase;
 }
 
-/* 今日の習慣セクション: 他より少しだけ主役として目立たせる */
-.section-title--primary {
-  color: var(--color-primary);
-  font-size: 0.95rem;
-}
 
 /* カード見出しの補足テキスト（期間ラベル等）#297 */
 .section-sub {
