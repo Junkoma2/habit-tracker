@@ -1,4 +1,4 @@
-import { useState, useEffect, useLayoutEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useLayoutEffect, useCallback, useRef, useMemo } from 'react'
 import {
   DndContext,
   closestCenter,
@@ -84,6 +84,13 @@ export default function App() {
 
   const { habits, records, colorCategories, statsStartDate, streakMode, setHabits, setRecords, setColorCategories, setStatsStartDate, setStreakMode } = useHabitsStorage()
   const { themeId, handleThemeSelect } = useTheme()
+
+  // 記録の中で最も古い日付（未設定時の集計開始日フォールバック）
+  const oldestRecordDate = useMemo(() => {
+    const dates = Object.keys(records).filter(d => (records[d] || []).length > 0).sort()
+    return dates.length > 0 ? dates[0] : null
+  }, [records])
+  const effectiveStatsStartDate = statsStartDate ?? oldestRecordDate
 
   const [calendarDate, setCalendarDate] = useState(() => new Date())
   const [editMode, setEditMode] = useState(false)
@@ -634,7 +641,7 @@ export default function App() {
 
           {/* 分析セクション */}
           <div id="section-stats" className="section-group">
-            <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} statsStartDate={statsStartDate} />
+            <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} statsStartDate={effectiveStatsStartDate} />
           </div>
           <HabitTip tip={currentTip} visible={showDeepTip} returning={deepTipReturning} />
         </div>
@@ -748,6 +755,7 @@ export default function App() {
           onClose={closeModal}
           lastBackupDate={lastBackupDate}
           statsStartDate={statsStartDate}
+          autoStatsStartDate={oldestRecordDate}
           onStatsStartDateChange={setStatsStartDate}
           debugEnabled={viewportDebug}
           onToggleDebug={toggleViewportDebug}
