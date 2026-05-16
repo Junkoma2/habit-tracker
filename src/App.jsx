@@ -104,9 +104,45 @@ export default function App() {
   }, [setHabits, setRecords])
 
   const {
-    pullY, pullReturning, refreshing, refreshComplete, scrolled, showDeepTip,
+    pullY, pullReturning, refreshing, refreshComplete, scrolled,
     handleTouchStart, handleTouchMove, handleTouchEnd,
   } = usePullToRefresh({ mainRef, onRefresh })
+
+  // 最下部 overscroll 検知による deep tip 表示
+  const [showDeepTip, setShowDeepTip] = useState(false)
+  const deepTipTimer = useRef(null)
+  const overscrollStartY = useRef(null)
+
+  useEffect(() => {
+    const el = mainRef.current
+    if (!el) return
+    const onTouchStart = (e) => {
+      const atBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2
+      overscrollStartY.current = atBottom ? e.touches[0].clientY : null
+    }
+    const onTouchMove = (e) => {
+      if (overscrollStartY.current === null) return
+      // 指を上方向に動かす = コンテンツをさらに引き下げる → dy が正
+      const dy = overscrollStartY.current - e.touches[0].clientY
+      if (dy > 30) {
+        setShowDeepTip(true)
+        clearTimeout(deepTipTimer.current)
+      }
+    }
+    const onTouchEnd = () => {
+      overscrollStartY.current = null
+      deepTipTimer.current = setTimeout(() => setShowDeepTip(false), 2500)
+    }
+    el.addEventListener('touchstart', onTouchStart, { passive: true })
+    el.addEventListener('touchmove', onTouchMove, { passive: true })
+    el.addEventListener('touchend', onTouchEnd, { passive: true })
+    return () => {
+      el.removeEventListener('touchstart', onTouchStart)
+      el.removeEventListener('touchmove', onTouchMove)
+      el.removeEventListener('touchend', onTouchEnd)
+      clearTimeout(deepTipTimer.current)
+    }
+  }, [mainRef])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -456,7 +492,6 @@ export default function App() {
         )}
       </div>
 
-      <HabitTip today={today} visible={showDeepTip} />
       <main ref={mainRef} className="app-main">
         {/* 習慣セクション（トップ） */}
         <div className="main-content">
@@ -583,6 +618,7 @@ export default function App() {
           <div id="section-stats" className="section-group">
             <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} statsStartDate={statsStartDate} />
           </div>
+          <HabitTip today={today} visible={showDeepTip} />
         </div>
       </main>
 
