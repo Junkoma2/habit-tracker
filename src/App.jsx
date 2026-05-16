@@ -110,8 +110,18 @@ export default function App() {
 
   // 最下部 overscroll 検知による deep tip 表示
   const [showDeepTip, setShowDeepTip] = useState(false)
+  const [deepTipReturning, setDeepTipReturning] = useState(false)
   const deepTipTimer = useRef(null)
+  const deepTipReturnTimer = useRef(null)
   const overscrollStartY = useRef(null)
+
+  const hideDeepTip = useCallback(() => {
+    setDeepTipReturning(true)
+    deepTipReturnTimer.current = setTimeout(() => {
+      setShowDeepTip(false)
+      setDeepTipReturning(false)
+    }, 700)
+  }, [])
 
   useEffect(() => {
     const el = mainRef.current
@@ -122,16 +132,17 @@ export default function App() {
     }
     const onTouchMove = (e) => {
       if (overscrollStartY.current === null) return
-      // 指を上方向に動かす = コンテンツをさらに引き下げる → dy が正
       const dy = overscrollStartY.current - e.touches[0].clientY
       if (dy > 30) {
         setShowDeepTip(true)
+        setDeepTipReturning(false)
         clearTimeout(deepTipTimer.current)
+        clearTimeout(deepTipReturnTimer.current)
       }
     }
     const onTouchEnd = () => {
       overscrollStartY.current = null
-      deepTipTimer.current = setTimeout(() => setShowDeepTip(false), 2500)
+      deepTipTimer.current = setTimeout(() => hideDeepTip(), 2500)
     }
     el.addEventListener('touchstart', onTouchStart, { passive: true })
     el.addEventListener('touchmove', onTouchMove, { passive: true })
@@ -141,8 +152,9 @@ export default function App() {
       el.removeEventListener('touchmove', onTouchMove)
       el.removeEventListener('touchend', onTouchEnd)
       clearTimeout(deepTipTimer.current)
+      clearTimeout(deepTipReturnTimer.current)
     }
-  }, [mainRef])
+  }, [mainRef, hideDeepTip])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -618,7 +630,7 @@ export default function App() {
           <div id="section-stats" className="section-group">
             <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} statsStartDate={statsStartDate} />
           </div>
-          <HabitTip today={today} visible={showDeepTip} />
+          <HabitTip today={today} visible={showDeepTip} returning={deepTipReturning} />
         </div>
       </main>
 
