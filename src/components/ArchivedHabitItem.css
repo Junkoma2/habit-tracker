@@ -2,16 +2,6 @@
   margin-top: 20px;
 }
 
-.archived-section-title {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--color-text-secondary);
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-  padding: 0 2px;
-}
-
 .archived-habit-item {
   display: flex;
   align-items: center;

@@ -587,7 +587,7 @@ export default function App() {
                 </button>
                 {archivedHabits.length > 0 && (
                   <div className="archived-section">
-                    <p className="archived-section-title">終了した習慣</p>
+                    <p className="section-title">終了した習慣</p>
                     {archivedHabits.map(habit => (
                       <ArchivedHabitItem
                         key={habit.id}
