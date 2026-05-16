@@ -116,9 +116,10 @@ export default function App() {
   const overscrollStartY = useRef(null)
 
   const hideDeepTip = useCallback(() => {
+    // visible を外して returning だけ残すことでバネアニメーションを発動
+    setShowDeepTip(false)
     setDeepTipReturning(true)
     deepTipReturnTimer.current = setTimeout(() => {
-      setShowDeepTip(false)
       setDeepTipReturning(false)
     }, 700)
   }, [])
