@@ -104,7 +104,7 @@ export default function App() {
   }, [setHabits, setRecords])
 
   const {
-    pullY, pullReturning, refreshing, refreshComplete, scrolled,
+    pullY, pullReturning, refreshing, refreshComplete, scrolled, showDeepTip,
     handleTouchStart, handleTouchMove, handleTouchEnd,
   } = usePullToRefresh({ mainRef, onRefresh })
 
