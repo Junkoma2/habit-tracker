@@ -1,12 +1,12 @@
 import { getDailyTip } from '../data/habitTips'
 import './HabitTip.css'
 
-export default function HabitTip({ today }) {
+// 深いスワイプ時だけ表示するヒント（常設なし）
+export default function HabitTip({ today, visible }) {
   const tip = getDailyTip(today)
   return (
-    <div className="habit-tip-card" aria-label="習慣化のヒント">
-      <span className="habit-tip-title">習慣化のヒント</span>
-      <p className="habit-tip-body">{tip}</p>
+    <div className={`habit-tip-pull${visible ? ' visible' : ''}`} aria-live="polite" aria-atomic="true">
+      <p className="habit-tip-pull-body">{tip}</p>
     </div>
   )
 }

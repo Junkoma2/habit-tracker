@@ -1,22 +1,30 @@
-﻿.habit-tip-card {
-  padding: 10px 14px;
+/* 深いスワイプ時だけ表示されるアプリ設計思想の一言 */
+.habit-tip-pull {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  max-width: calc(min(640px, 100vw) - 32px);
+  width: calc(100% - 32px);
+  padding: 12px 16px;
   border-radius: var(--radius-sm, 8px);
   background: var(--color-surface, #f5f5f5);
   border-left: 3px solid var(--color-primary, #6366f1);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 25;
 }
 
-.habit-tip-title {
-  display: block;
-  margin-bottom: 4px;
-  color: var(--color-primary, #6366f1);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
+.habit-tip-pull.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
-.habit-tip-body {
+.habit-tip-pull-body {
   color: var(--color-text-muted, #888);
-  font-size: 0.78rem;
-  line-height: 1.5;
-  font-style: italic;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  white-space: pre-line;
 }

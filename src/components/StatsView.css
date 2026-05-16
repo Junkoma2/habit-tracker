@@ -35,6 +35,15 @@
   font-weight: 800;
 }
 
+.analysis-rate-count {
+  grid-column: 1 / -1;
+  color: var(--color-text-secondary);
+  font-size: 0.72rem;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+
 .analysis-rate-label {
   grid-column: 1 / -1;
   align-self: end;

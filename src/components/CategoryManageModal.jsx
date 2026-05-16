@@ -30,8 +30,8 @@ export default function CategoryManageModal({ colorCategories, onUpdate, onClose
   }
 
   return (
-    <Modal title="カテゴリ管理" onClose={onClose}>
-      <p className="cat-description">色ごとにカテゴリ名を設定できます。名前をつけた色は分析画面でグループ表示されます。</p>
+    <Modal title="色の名前を設定" onClose={onClose}>
+      <p className="cat-description">色に名前をつけておくと、分析画面でグループ表示されます。設定しなくても使えます。</p>
       <div className="cat-color-list">
         {HABIT_COLORS.map(color => (
           <div key={color} className="cat-color-row">

@@ -52,6 +52,10 @@ export default function RecordView({
 
   return (
     <>
+      {/* #278/#280: 実績画面の役割を明確にするヘッダー */}
+      <div className="record-section-header">
+        <h2 className="section-title">実績</h2>
+      </div>
       {/* #272: カレンダーを今日の習慣の直後（最上部）に配置 */}
       <section className="section record-calendar-section">
         <Calendar

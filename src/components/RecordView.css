@@ -1,3 +1,12 @@
+/* 実績セクション全体のタイトルヘッダー */
+.record-section-header {
+  padding: 4px 0 0;
+}
+
+.record-section-header .section-title {
+  color: var(--color-text-secondary);
+}
+
 /* フェーズハイライト（実績画面最上部） */
 .section.record-phase-highlight-section {
   background: var(--color-primary);
