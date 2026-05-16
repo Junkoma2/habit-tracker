@@ -3,7 +3,13 @@ import './HabitButton.css'
 
 const LONG_PRESS_DELAY = 500
 
-export default function HabitButton({ habit, completed, streak, onPress, onLongPress }) {
+// streakModeに応じた連続日数の単位ラベル
+function getStreakUnit(streakMode) {
+  if (streakMode === 'reset') return '日連続'
+  return '日'
+}
+
+export default function HabitButton({ habit, completed, streak, streakMode = 'decrement', onPress, onLongPress }) {
   const timerRef = useRef(null)
   const isLongPressRef = useRef(false)
   const startPosRef = useRef(null)
@@ -51,6 +57,8 @@ export default function HabitButton({ habit, completed, streak, onPress, onLongP
     isLongPressRef.current = false
   }, [habit, onPress, completed])
 
+  const streakUnit = getStreakUnit(streakMode)
+
   return (
     <button
       className={`habit-btn${completed ? ' completed' : ''}${popping ? ' pop' : ''}`}
@@ -69,7 +77,7 @@ export default function HabitButton({ habit, completed, streak, onPress, onLongP
         style={{ backgroundColor: completed ? '#fff' : habit.color }}
       />
       <span className="habit-name">{habit.name}</span>
-      {streak > 1 && <span className="habit-streak">{streak}日継続</span>}
+      {streak > 1 && <span className="habit-streak">{streak}{streakUnit}</span>}
       {completed && <span className="habit-check">✓</span>}
     </button>
   )
