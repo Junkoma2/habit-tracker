@@ -1,6 +1,6 @@
 import Calendar from './Calendar'
 import HabitProgressLine from './HabitProgressLine'
-import { calcCurrentStreak, MILESTONES } from '../utils/stats'
+import { calcCurrentStreak, MILESTONES, getNextMilestone } from '../utils/stats'
 import './RecordView.css'
 
 function formatMonthKey(date) {
@@ -20,11 +20,16 @@ function countTotalRecords(records) {
   return Object.values(records).reduce((total, ids) => total + new Set(ids).size, 0)
 }
 
-// 達成したマイルストン数をラベル付きで返す
-function getMilestoneLabel(streak) {
-  const reached = MILESTONES.filter(m => streak >= m.days)
-  if (reached.length === 0) return null
-  return reached[reached.length - 1].label
+// 現在地（継続日数）と次のマイルストンを返す
+// #293: フェーズ名ではなく「現在日数 + 次の目標」を表示する
+function getStreakDisplay(streak) {
+  if (streak === 0) return { current: null, next: null }
+  const next = getNextMilestone(streak)
+  const reachedMilestones = MILESTONES.filter(m => streak >= m.days)
+  const currentLabel = reachedMilestones.length > 0
+    ? reachedMilestones[reachedMilestones.length - 1].label
+    : null
+  return { currentLabel, next }
 }
 
 export default function RecordView({
@@ -42,13 +47,12 @@ export default function RecordView({
 
   const activeHabits = habits.filter(h => !h.archivedAt)
 
-  const habitPhaseList = activeHabits.map(habit => {
+  const habitStreakList = activeHabits.map(habit => {
     const streak = calcCurrentStreak(habit.id, records)
-    const milestoneLabel = getMilestoneLabel(streak)
-    return { habit, streak, milestoneLabel }
+    return { habit, streak }
   })
 
-  const sortedHabits = [...habitPhaseList].sort((a, b) => b.streak - a.streak)
+  const sortedHabits = [...habitStreakList].sort((a, b) => b.streak - a.streak)
 
   return (
     <>
@@ -81,7 +85,7 @@ export default function RecordView({
         </section>
       )}
 
-      {/* 積み上がり（#273: マイルストン到達ラベルで表示） */}
+      {/* 積み上がり（#293: 現在日数 + 次のマイルストンで表示） */}
       <section className="section record-summary-section">
         <div className="section-header">
           <h2 className="section-title">積み上がり</h2>
@@ -95,21 +99,29 @@ export default function RecordView({
           <p className="record-empty">習慣を追加すると、積み上がりがここに表示されます。</p>
         ) : (
           <div className="streak-summary-list">
-            {sortedHabits.map(({ habit, streak, milestoneLabel }) => (
-              <div key={habit.id} className="streak-summary-row">
-                <span className="streak-summary-dot" style={{ backgroundColor: habit.color }} />
-                <span className="streak-summary-name">{habit.name}</span>
-                <div className="streak-summary-right">
-                  {milestoneLabel && (
-                    <span className="streak-summary-milestone">{milestoneLabel}</span>
-                  )}
-                  {/* #274: streak 0 のとき「未開始」ではなく空欄にしてやわらかく */}
-                  <span className="streak-summary-days">
-                    {streak > 0 ? `${streak}日継続中` : 'まだ記録なし'}
-                  </span>
+            {sortedHabits.map(({ habit, streak }) => {
+              const { currentLabel, next } = getStreakDisplay(streak)
+              return (
+                <div key={habit.id} className="streak-summary-row">
+                  <span className="streak-summary-dot" style={{ backgroundColor: habit.color }} />
+                  <span className="streak-summary-name">{habit.name}</span>
+                  <div className="streak-summary-right">
+                    {streak > 0 ? (
+                      <>
+                        <span className="streak-summary-days">{streak}日継続中</span>
+                        {next ? (
+                          <span className="streak-summary-next">次は{next.label}</span>
+                        ) : currentLabel ? (
+                          <span className="streak-summary-next streak-summary-next--done">{currentLabel} 達成</span>
+                        ) : null}
+                      </>
+                    ) : (
+                      <span className="streak-summary-days">まだ記録なし</span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </section>
