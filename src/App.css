@@ -207,6 +207,13 @@
   overflow: hidden;
 }
 
+/* セクショングループ: RecordView/StatsViewなど複数sectionを返すコンポーネントの外側コンテナ */
+.section-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 /* Section */
 .section {
   background: var(--color-surface);

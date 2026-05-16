@@ -571,7 +571,7 @@ export default function App() {
           )}
 
           {/* 実績セクション */}
-          <div id="section-record">
+          <div id="section-record" className="section-group">
             <RecordView
               calendarDate={calendarDate}
               onCalendarDateChange={setCalendarDate}
@@ -584,7 +584,7 @@ export default function App() {
           </div>
 
           {/* 分析セクション */}
-          <div id="section-stats">
+          <div id="section-stats" className="section-group">
             <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} />
           </div>
         </div>
