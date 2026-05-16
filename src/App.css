@@ -244,6 +244,13 @@
   font-size: 0.95rem;
 }
 
+/* カード見出しの補足テキスト（期間ラベル等）#297 */
+.section-sub {
+  font-size: 0.72rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
 .edit-toggle-btn {
   font-size: 0.82rem;
   font-weight: 600;

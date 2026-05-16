@@ -230,3 +230,16 @@
   font-weight: 600;
   white-space: nowrap;
 }
+
+/* #293: 次のマイルストン表示 */
+.streak-summary-next {
+  font-size: 0.68rem;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.streak-summary-next--done {
+  color: var(--color-primary);
+  font-weight: 600;
+}
