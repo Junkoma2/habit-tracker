@@ -70,7 +70,7 @@ function calcColorStats(habits, records, today, colorCategories, statsStartDate)
         color,
         name: colorCategories[color],
         count: colorHabits.length,
-        rate: calcRateForRange(colorHabits, records, today, 30, statsStartDate),
+        rate: calcRateForRange(colorHabits, records, today, 30, statsStartDate).rate,
       }
     })
     .filter(c => c.count > 0)
@@ -78,8 +78,10 @@ function calcColorStats(habits, records, today, colorCategories, statsStartDate)
 }
 
 export default function StatsView({ habits, records, today, colorCategories = {}, statsStartDate = null }) {
-  const rate7 = calcRateForRange(habits, records, today, 7, statsStartDate)
-  const rate30 = calcRateForRange(habits, records, today, 30, statsStartDate)
+  const stats7 = calcRateForRange(habits, records, today, 7, statsStartDate)
+  const rate7 = stats7.rate
+  const stats30 = calcRateForRange(habits, records, today, 30, statsStartDate)
+  const rate30 = stats30.rate
   const weekdayRates = calcWeekdayRates(habits, records, today, 30, statsStartDate)
   const colorStats = calcColorStats(habits, records, today, colorCategories, statsStartDate)
   const hasNamedColors = Object.values(colorCategories).some(v => v?.trim())
@@ -90,7 +92,7 @@ export default function StatsView({ habits, records, today, colorCategories = {}
 
   return (
     <>
-      <StatsAdviceCard rate7={rate7} rate30={rate30} statsStartDate={statsStartDate} />
+      <StatsAdviceCard rate7={rate7} rate30={rate30} statsStartDate={statsStartDate} achieved7={stats7.achieved} total7={stats7.total} achieved30={stats30.achieved} total30={stats30.total} />
 
       {hasNamedColors && (
         <StatsCategoryCard colorStats={colorStats} />

@@ -456,12 +456,13 @@ export default function App() {
         )}
       </div>
 
+      <HabitTip today={today} visible={showDeepTip} />
       <main ref={mainRef} className="app-main">
         {/* 習慣セクション（トップ） */}
         <div className="main-content">
           <section className="section">
             <div className="section-header">
-              <h2 className="section-title">今日の習慣</h2>
+              <h2 className="section-title section-title--primary">今日の習慣</h2>
               {habits.length > 0 && (
                 <button
                   className={`edit-toggle-btn ${editMode ? 'active' : ''}`}
@@ -564,12 +565,6 @@ export default function App() {
               </div>
             )}
           </section>
-          {!editMode && habits.length > 0 && (
-            <section className="section habit-tip-section">
-              <HabitTip today={today} />
-            </section>
-          )}
-
           {/* 実績セクション */}
           <div id="section-record" className="section-group">
             <RecordView

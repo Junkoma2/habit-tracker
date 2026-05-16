@@ -238,6 +238,12 @@
   text-transform: uppercase;
 }
 
+/* 今日の習慣セクション: 他より少しだけ主役として目立たせる */
+.section-title--primary {
+  color: var(--color-primary);
+  font-size: 0.95rem;
+}
+
 .edit-toggle-btn {
   font-size: 0.82rem;
   font-weight: 600;
