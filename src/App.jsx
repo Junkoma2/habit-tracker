@@ -418,8 +418,9 @@ export default function App() {
     a.download = filename
     a.click()
     URL.revokeObjectURL(url)
+    markSaved()
     setToast(`バックアップを保存しました${skippedText}`)
-  }, [habits, records, today])
+  }, [habits, records, today, colorCategories])
 
   const handleImportClick = () => fileInputRef.current?.click()
 
