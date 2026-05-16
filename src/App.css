@@ -73,8 +73,6 @@
 
 .app {
   --app-header-height: calc(56px + var(--app-safe-area-top));
-  --footer-content-height: 60px;
-  --content-bottom-breathing: 24px;
   height: var(--app-screen-height);
   display: flex;
   position: relative;
@@ -101,9 +99,6 @@
   z-index: 29;
 }
 
-.app.standalone {
-  --content-bottom-breathing: 32px;
-}
 
 .app-header {
   position: fixed;
@@ -221,7 +216,7 @@
    flex item として末尾に挿入することで確実にスクロール余地を確保する */
 .tab-panel::after {
   content: "";
-  flex: 0 0 calc(var(--footer-content-height) + var(--content-bottom-breathing));
+  flex: 0 0 24px;
 }
 
 
@@ -388,18 +383,14 @@
 
 /* Footer */
 .app-footer {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  margin: 0 auto;
+  position: static;
+  flex: 0 0 auto;
   width: 100%;
-  max-width: 480px;
   background: var(--color-surface);
   border-top: 2px solid var(--color-primary);
   box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
-  height: var(--footer-content-height);
-  z-index: 20;
+  height: 60px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   touch-action: none;
 }
 
@@ -412,7 +403,7 @@
 
 .undo-toast {
   position: fixed;
-  bottom: calc(var(--footer-content-height) + 12px);
+  bottom: 80px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
