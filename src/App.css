@@ -169,56 +169,23 @@
 .app-main {
   flex: 1 1 auto;
   min-height: 0;
-  overflow: hidden;
-  background: var(--color-bg);
-}
-
-.tab-viewport {
-  overflow: hidden;
-  height: 100%;
-  background: var(--color-bg);
-  /* CSSで横パンをブロックしJSのpreventDefaultを不要にすることで
-     iOS Safariが縦スクロールを即開始できるようにする */
-  touch-action: pan-y;
-}
-
-.tab-track {
-  display: flex;
-  height: 100%;
-  will-change: transform;
-}
-
-.tab-track.settling {
-  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.tab-panel {
-  display: flex;
-  flex: 0 0 calc(100% / 3);
-  height: 100%;
-  min-width: 0;
-  min-height: 0;
-  flex-direction: column;
-  gap: 16px;
-  /* padding-top: 12px でoverflow-x: hiddenによるbox-shadow上端クリップを防ぐ（shadow blur: 12px） */
-  /* padding-bottom は iOS Safari の flex コンテナ scroll 高さバグを避けるため
-     ::after flex item に移動（padding-bottom は scrollHeight に含まれないケースがある） */
-  padding: 12px 16px 0;
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
-  scroll-behavior: auto;
-  touch-action: pan-y;
+  background: var(--color-bg);
 }
 
-/* iOS Safari では flex コンテナの padding-bottom が scrollHeight に反映されないバグがある。
-   flex item として末尾に挿入することで確実にスクロール余地を確保する */
-.tab-panel::after {
-  content: "";
-  flex: 0 0 24px;
-}
 
+
+
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 16px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
+}
 
 .modal-open .app-main {
   overflow: hidden;
@@ -381,29 +348,11 @@
   opacity: 0.6;
 }
 
-/* Footer */
-.app-footer {
-  position: static;
-  flex: 0 0 auto;
-  width: 100%;
-  background: var(--color-surface);
-  border-top: 2px solid var(--color-primary);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.07);
-  height: 60px;
-  padding-bottom: env(safe-area-inset-bottom, 0px);
-  touch-action: none;
-}
 
-.app-footer-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  height: 100%;
-}
 
 .undo-toast {
   position: fixed;
-  bottom: 80px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -471,56 +420,8 @@
   padding: 2px 4px;
 }
 
-.footer-btn {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-  flex: 0 1 88px;
-  color: var(--color-text-secondary);
-  padding: 1px 4px;
-  border-radius: 8px;
-  font-size: 0.56rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
-  transform: translateZ(0);
-  transition: color 0.18s ease, background 0.18s ease, opacity 0.18s ease;
-}
-
-.footer-btn svg {
-  width: 24px;
-  height: 24px;
-  flex: 0 0 auto;
-}
-
-.footer-btn.active {
-  background: var(--color-primary-light);
-  color: var(--color-primary);
-}
-
-.footer-btn:disabled {
-  cursor: default;
-  opacity: 0.55;
-}
-
-.footer-btn:active {
-  background: var(--color-primary-light);
-  color: var(--color-primary);
-}
-
-/* 中央「習慣」ボタン — アイコンをわずかに大きくして主役感を出す */
-.footer-btn.main svg {
-  width: 26px;
-  height: 26px;
-}
 
 @media (prefers-reduced-motion: reduce) {
-  .tab-track.settling {
-    transition: none;
-  }
-
-  .footer-btn,
-  .footer-btn svg,
   .edit-toggle-btn,
   .add-habit-btn,
   .add-first-btn,
@@ -528,7 +429,6 @@
     transition: none;
   }
 
-  .footer-btn:active,
   .add-habit-btn:active,
   .add-first-btn:active,
   .add-in-edit-btn:active {

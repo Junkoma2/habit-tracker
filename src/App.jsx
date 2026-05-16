@@ -32,7 +32,6 @@ import CategoryManageModal from './components/CategoryManageModal'
 import { useHabitsStorage, loadData } from './hooks/useHabitsStorage'
 import { useTheme } from './hooks/useTheme'
 import { usePullToRefresh, PULL_THRESHOLD } from './hooks/usePullToRefresh'
-import { useTabSwipe } from './hooks/useTabSwipe'
 import { useModalState } from './hooks/useModalState'
 import { getToday, getYesterday } from './utils/date'
 import { calcCurrentStreak } from './utils/stats'
@@ -42,7 +41,6 @@ import './App.css'
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
 const ONBOARDING_KEY = 'habit-tracker-onboarding-done'
 const EDIT_HINT_KEY = 'habit-tracker-edit-hint-seen'
-const TAB_ORDER = ['record', 'habit', 'stats']
 const BACKUP_DIR_NAME = 'habit-tracker-backups'
 
 export default function App() {
@@ -76,30 +74,18 @@ export default function App() {
   const [lastBackupDate, setLastBackupDate] = useState(() => {
     try { return localStorage.getItem(LAST_BACKUP_KEY) || null } catch { return null }
   })
-  const [activeTab, setActiveTab] = useState('habit')
   const [viewportDebugInfo, setViewportDebugInfo] = useState('')
   const [undoAction, setUndoAction] = useState(null)
   const undoTimerRef = useRef(null)
   const mainRef = useRef(null)
-  const recordPanelRef = useRef(null)
-  const habitPanelRef = useRef(null)
-  const statsPanelRef = useRef(null)
-  const scrollRef = useRef(null)
   const headerRef = useRef(null)
   const safeAreaProbeRef = useRef(null)
   const fileInputRef = useRef(null)
   const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
-  const tabViewportRef = useRef(null)
   const stableHandlersRef = useRef(null)
 
   const today = getToday()
   const yesterday = getYesterday()
-  const screenTitle = activeTab === 'record'
-    ? '実績'
-    : activeTab === 'stats'
-      ? '分析'
-      : '習慣'
-
   const onRefresh = useCallback(() => {
     const fresh = loadData()
     setHabits(fresh.habits)
@@ -109,8 +95,7 @@ export default function App() {
   const {
     pullY, pullReturning, refreshing, refreshComplete, scrolled,
     handleTouchStart, handleTouchMove, handleTouchEnd,
-  } = usePullToRefresh({ mainRef: scrollRef, scrollKey: activeTab, onRefresh })
-  const tabsLocked = refreshing && !refreshComplete
+  } = usePullToRefresh({ mainRef, onRefresh })
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -137,15 +122,8 @@ export default function App() {
     }
   }, [])
 
-  const panelRefMap = { record: recordPanelRef, habit: habitPanelRef, stats: statsPanelRef }
-
-  useLayoutEffect(() => {
-    scrollRef.current = panelRefMap[activeTab]?.current ?? null
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab])
-
   useEffect(() => {
-    const scrollEl = scrollRef.current
+    const scrollEl = mainRef.current
     if (!scrollEl) return undefined
 
     let touchStartY = 0
@@ -182,7 +160,8 @@ export default function App() {
       scrollEl.removeEventListener('touchend', handlePanelTouchEnd)
       scrollEl.removeEventListener('touchcancel', handlePanelTouchEnd)
     }
-  }, [activeTab])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const setViewportHeight = () => {
@@ -205,8 +184,6 @@ export default function App() {
         const appEl = document.querySelector('.app')
         const appRect = appEl?.getBoundingClientRect()
         const styles = getComputedStyle(document.documentElement)
-        const appStyles = appEl ? getComputedStyle(appEl) : styles
-        const afterStyles = scrollRef.current ? getComputedStyle(scrollRef.current, '::after') : null
         const screenHeight = styles.getPropertyValue('--app-screen-height').trim()
         const displayStandalone = window.matchMedia('(display-mode: standalone)').matches
         const safeBottom = safeAreaProbeRef.current?.getBoundingClientRect().height || 0
@@ -216,7 +193,6 @@ export default function App() {
             `vv:${Math.round(visualHeight)} ih:${window.innerHeight} stable:${Math.round(height)}`,
             `app:${Math.round(appRect?.height || 0)} viewport:${styles.getPropertyValue('--app-viewport-height').trim()} shell:${screenHeight}`,
             `safe:${Math.round(safeBottom)}px raw:${styles.getPropertyValue('--app-safe-area-bottom').trim()}`,
-            `after:${afterStyles?.flexBasis || 'n/a'}`,
           ].join('\n')
         )
       }
@@ -260,26 +236,6 @@ export default function App() {
       window.removeEventListener('focus', refreshViewport)
     }
   }, [viewportDebug])
-
-  const handleTabSelect = useCallback((tab) => {
-    if (tabsLocked || tab === activeTab) return
-    setTabSettling(true)
-    setActiveTab(tab)
-  }, [activeTab, tabsLocked])
-
-  const {
-    tabDragX,
-    tabSettling,
-    setTabSettling,
-    handleStart: handleTabSwipeStart,
-    handleMove: handleTabSwipeMove,
-    handleEnd: handleTabSwipeEnd,
-  } = useTabSwipe({
-    tabOrder: TAB_ORDER,
-    activeTab,
-    onTabChange: setActiveTab,
-    disabled: Boolean(modal || editMode || tabsLocked),
-  })
 
   const toggleHabit = useCallback((habitId, dateStr) => {
     const wasOn = (records[dateStr] || []).includes(habitId)
@@ -458,46 +414,25 @@ export default function App() {
     setToast(`復元しました（${habitCount}件・${dayCount}日分）`)
   }, [modal])
 
+  // セクションへスクロール（ヘッダーのアイコンボタンから呼ぶ）
+  const scrollToSection = useCallback((id) => {
+    const main = mainRef.current
+    if (!main) return
+    const el = document.getElementById(`section-${id}`)
+    if (!el) return
+    const mainTop = main.getBoundingClientRect().top
+    const elTop = el.getBoundingClientRect().top
+    main.scrollBy({ top: elTop - mainTop, behavior: 'smooth' })
+  }, [])
+
   // handlers の最新版を常に参照できるよう ref で保持
   useLayoutEffect(() => {
     stableHandlersRef.current = {
-      tabSwipeStart: handleTabSwipeStart,
-      tabSwipeMove: handleTabSwipeMove,
-      tabSwipeEnd: handleTabSwipeEnd,
       pullStart: handleTouchStart,
       pullMove: handleTouchMove,
       pullEnd: handleTouchEnd,
     }
   })
-
-  // 横スワイプ検知を .tab-viewport のネイティブリスナーに移動
-  // → React の非 passive onTouchMove を .app から外し iOS Safari の縦スクロール干渉を解消
-  useEffect(() => {
-    const el = tabViewportRef.current
-    if (!el) return undefined
-
-    const start = (e) => stableHandlersRef.current.tabSwipeStart(e)
-    const move = (e) => stableHandlersRef.current.tabSwipeMove(e)
-    const end = (e) => stableHandlersRef.current.tabSwipeEnd(e)
-
-    el.addEventListener('touchstart', start, { passive: true })
-    el.addEventListener('touchmove', move, { passive: true })
-    el.addEventListener('touchend', end, { passive: true })
-    el.addEventListener('touchcancel', end, { passive: true })
-
-    return () => {
-      el.removeEventListener('touchstart', start)
-      el.removeEventListener('touchmove', move)
-      el.removeEventListener('touchend', end)
-      el.removeEventListener('touchcancel', end)
-    }
-  }, [])
-
-  const activeTabIndex = TAB_ORDER.indexOf(activeTab)
-  const tabTrackStyle = {
-    width: `${TAB_ORDER.length * 100}%`,
-    transform: `translateX(calc(${-activeTabIndex * (100 / TAB_ORDER.length)}% + ${tabDragX}px))`,
-  }
 
   return (
     <div
@@ -508,8 +443,30 @@ export default function App() {
         ref={headerRef}
         className="app-header"
       >
-        <h1 className="app-title">{screenTitle}</h1>
+        <h1 className="app-title">習慣</h1>
         <div className="header-actions">
+          {/* 実績（カレンダー）へ移動 */}
+          <button
+            className="header-btn"
+            onClick={() => scrollToSection('record')}
+            aria-label="実績"
+            title="実績"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+          </button>
+          {/* 分析（グラフ）へ移動 */}
+          <button
+            className="header-btn"
+            onClick={() => scrollToSection('stats')}
+            aria-label="分析"
+            title="分析"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
+            </svg>
+          </button>
           <button
             className="header-btn"
             onClick={() => setModal({ type: 'help' })}
@@ -571,26 +528,9 @@ export default function App() {
       </div>
 
       <main ref={mainRef} className="app-main">
-        <div className="tab-viewport" ref={tabViewportRef}>
-          <div
-            className={`tab-track${tabSettling ? ' settling' : ''}`}
-            style={tabTrackStyle}
-            onTransitionEnd={() => setTabSettling(false)}
-          >
-            <div className="tab-panel" ref={recordPanelRef} aria-hidden={activeTab !== 'record'}>
-              <RecordView
-                calendarDate={calendarDate}
-                onCalendarDateChange={setCalendarDate}
-                habits={habits}
-                records={records}
-                today={today}
-                onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
-                onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
-              />
-            </div>
-
-            <div className="tab-panel" ref={habitPanelRef} aria-hidden={activeTab !== 'habit'}>
-              <section className="section">
+        {/* 習慣セクション（トップ） */}
+        <div className="main-content">
+          <section className="section">
             <div className="section-header">
               <h2 className="section-title">今日の習慣</h2>
               {habits.length > 0 && (
@@ -700,12 +640,24 @@ export default function App() {
               <HabitTip today={today} />
             </section>
           )}
-            </div>
 
-            <div className="tab-panel" ref={statsPanelRef} aria-hidden={activeTab !== 'stats'}>
-              <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} />
-            </div>
-          </div>
+          {/* 実績セクション */}
+          <section id="section-record" className="section">
+            <RecordView
+              calendarDate={calendarDate}
+              onCalendarDateChange={setCalendarDate}
+              habits={habits}
+              records={records}
+              today={today}
+              onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
+              onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
+            />
+          </section>
+
+          {/* 分析セクション */}
+          <section id="section-stats" className="section">
+            <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} />
+          </section>
         </div>
       </main>
 
@@ -865,47 +817,6 @@ export default function App() {
         </div>
       )}
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
-
-      <footer
-        className="app-footer"
-      >
-        <div className="app-footer-inner">
-          <button
-            className={`footer-btn${activeTab === 'record' ? ' active' : ''}`}
-            onClick={() => handleTabSelect('record')}
-            disabled={tabsLocked}
-            aria-disabled={tabsLocked}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-              <line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
-            </svg>
-            <span>実績</span>
-          </button>
-          <button
-            className={`footer-btn main${activeTab === 'habit' ? ' active' : ''}`}
-            onClick={() => handleTabSelect('habit')}
-            disabled={tabsLocked}
-            aria-disabled={tabsLocked}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
-            </svg>
-            <span>習慣</span>
-          </button>
-          <button
-            className={`footer-btn${activeTab === 'stats' ? ' active' : ''}`}
-            onClick={() => handleTabSelect('stats')}
-            disabled={tabsLocked}
-            aria-disabled={tabsLocked}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
-            </svg>
-            <span>分析</span>
-          </button>
-        </div>
-      </footer>
 
       {viewportDebug && (
         <>
