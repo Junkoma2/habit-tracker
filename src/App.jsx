@@ -10,7 +10,6 @@ import {
 import {
   SortableContext,
   verticalListSortingStrategy,
-  arrayMove,
 } from '@dnd-kit/sortable'
 import HabitButton from './components/HabitButton'
 import HabitEditItem from './components/HabitEditItem'
@@ -33,15 +32,16 @@ import { useHabitsStorage, loadData } from './hooks/useHabitsStorage'
 import { useTheme } from './hooks/useTheme'
 import { usePullToRefresh, PULL_THRESHOLD } from './hooks/usePullToRefresh'
 import { useModalState } from './hooks/useModalState'
+import { useHabitActions } from './hooks/useHabitActions'
+import { useBackupManager } from './hooks/useBackupManager'
 import { getToday, getYesterday } from './utils/date'
 import { calcCurrentStreak } from './utils/stats'
-import { sanitizeImportData, validateImportData } from './utils/validation'
 import './App.css'
 
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
 const ONBOARDING_KEY = 'habit-tracker-onboarding-done'
-const EDIT_HINT_KEY = 'habit-tracker-edit-hint-seen'
 const BACKUP_DIR_NAME = 'habit-tracker-backups'
+const EDIT_HINT_KEY = 'habit-tracker-edit-hint-seen'
 const DEBUG_VIEWPORT_KEY = 'habit-tracker-debug-viewport'
 
 export default function App() {
@@ -88,16 +88,10 @@ export default function App() {
   const [editMode, setEditMode] = useState(false)
   const { modal, setModal, closeModal } = useModalState()
   const [toast, setToast] = useState(null)
-  const [lastBackupDate, setLastBackupDate] = useState(() => {
-    try { return localStorage.getItem(LAST_BACKUP_KEY) || null } catch { return null }
-  })
   const [viewportDebugInfo, setViewportDebugInfo] = useState('')
-  const [undoAction, setUndoAction] = useState(null)
-  const undoTimerRef = useRef(null)
   const mainRef = useRef(null)
   const headerRef = useRef(null)
   const safeAreaProbeRef = useRef(null)
-  const fileInputRef = useRef(null)
   const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
   const stableHandlersRef = useRef(null)
 
@@ -118,6 +112,45 @@ export default function App() {
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
   )
+
+  const {
+    undoAction,
+    toggleHabit,
+    handleUndo,
+    addHabit,
+    updateHabit,
+    deleteHabit,
+    archiveHabit,
+    restoreHabit,
+    handleDragEnd,
+  } = useHabitActions({
+    records,
+    today,
+    setHabits,
+    setRecords,
+    setModal,
+    onAddHabit: dismissWelcome,
+  })
+
+  const {
+    lastBackupDate,
+    fileInputRef,
+    handleExport,
+    handleImportClick,
+    handleFileChange,
+    handleImportConfirm,
+  } = useBackupManager({
+    habits,
+    records,
+    colorCategories,
+    today,
+    setHabits,
+    setRecords,
+    setColorCategories,
+    setModal,
+    setToast,
+    modal,
+  })
 
   useEffect(() => {
     document.documentElement.classList.toggle('pwa-standalone', isStandalone)
@@ -289,183 +322,15 @@ export default function App() {
     }
   }, [viewportDebug])
 
-  const toggleHabit = useCallback((habitId, dateStr) => {
-    const wasOn = (records[dateStr] || []).includes(habitId)
-    setRecords(prev => {
-      const dr = prev[dateStr] || []
-      const on = dr.includes(habitId)
-      return {
-        ...prev,
-        [dateStr]: on ? dr.filter(id => id !== habitId) : [...dr, habitId],
-      }
-    })
-    clearTimeout(undoTimerRef.current)
-    if (wasOn) {
-      setUndoAction({ habitId, dateStr })
-      undoTimerRef.current = setTimeout(() => setUndoAction(null), 4000)
-    } else {
-      setUndoAction(null)
-    }
-  }, [records])
-
-  const handleUndo = useCallback(() => {
-    if (!undoAction) return
-    clearTimeout(undoTimerRef.current)
-    const { habitId, dateStr } = undoAction
-    setRecords(prev => {
-      const dr = prev[dateStr] || []
-      if (dr.includes(habitId)) return prev
-      return { ...prev, [dateStr]: [...dr, habitId] }
-    })
-    setUndoAction(null)
-  }, [undoAction])
-
-  const addHabit = useCallback(({ name, color }) => {
-    const id = `h_${Date.now()}`
-    setHabits(prev => [...prev, { id, name, color, createdAt: today }])
-    setModal(null)
-    dismissWelcome()
-  }, [today, dismissWelcome])
-
-  const updateHabit = useCallback(({ name, color }) => {
-    setHabits(prev =>
-      prev.map(h => h.id === modal.habit.id ? { ...h, name, color } : h)
-    )
-    setModal(null)
-  }, [modal])
-
   const handleColorCategoriesUpdate = useCallback((updated) => {
     setColorCategories(updated)
   }, [setColorCategories])
-
-  const deleteHabit = useCallback((habitId) => {
-    setHabits(prev => prev.filter(h => h.id !== habitId))
-    setRecords(prev => {
-      const next = {}
-      for (const [date, ids] of Object.entries(prev)) {
-        const filtered = ids.filter(id => id !== habitId)
-        if (filtered.length > 0) next[date] = filtered
-      }
-      return next
-    })
-    setModal(null)
-  }, [])
-
-  const archiveHabit = useCallback((habitId) => {
-    setHabits(prev => prev.map(h => h.id === habitId ? { ...h, archivedAt: today } : h))
-    setModal(null)
-  }, [today])
-
-  const restoreHabit = useCallback((habitId) => {
-    setHabits(prev => prev.map(h => h.id === habitId ? { ...h, archivedAt: null } : h))
-    setModal(null)
-  }, [])
-
-  const handleDragEnd = useCallback(({ active, over }) => {
-    if (over && active.id !== over.id) {
-      setHabits(prev => {
-        const oldIndex = prev.findIndex(h => h.id === active.id)
-        const newIndex = prev.findIndex(h => h.id === over.id)
-        return arrayMove(prev, oldIndex, newIndex)
-      })
-    }
-  }, [])
 
   const isEditableDate = (dateStr) => dateStr === today || dateStr === yesterday
 
   const activeHabits = habits.filter(h => !h.archivedAt)
   const archivedHabits = habits.filter(h => h.archivedAt)
   const todayRecords = records[today] || []
-
-  // --- Export / Import ---
-  const handleExport = useCallback(async () => {
-    const sanitized = sanitizeImportData({ habits, records })
-    const json = JSON.stringify({ ...sanitized.data, colorCategories }, null, 2)
-    const blob = new Blob([json], { type: 'application/json' })
-    const filename = `habit-tracker-${today}.json`
-    const skippedText = sanitized.skippedUnknownRecords > 0
-      ? `（不明な記録 ${sanitized.skippedUnknownRecords}件を除外）`
-      : ''
-
-    const markSaved = () => {
-      try { localStorage.setItem(LAST_BACKUP_KEY, today) } catch {}
-      setLastBackupDate(today)
-    }
-
-    if ('showDirectoryPicker' in window) {
-      try {
-        const rootDir = await window.showDirectoryPicker({ mode: 'readwrite' })
-        const backupDir = await rootDir.getDirectoryHandle(BACKUP_DIR_NAME, { create: true })
-        const fileHandle = await backupDir.getFileHandle(filename, { create: true })
-        const writable = await fileHandle.createWritable()
-        await writable.write(blob)
-        await writable.close()
-        markSaved()
-        setToast(`バックアップを保存しました${skippedText}`)
-        return
-      } catch (error) {
-        if (error?.name === 'AbortError') {
-          setToast('保存をキャンセルしました')
-          return
-        }
-        console.warn('Directory backup failed, falling back to download', error)
-      }
-    }
-
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = filename
-    a.click()
-    URL.revokeObjectURL(url)
-    markSaved()
-    setToast(`バックアップを保存しました${skippedText}`)
-  }, [habits, records, today, colorCategories])
-
-  const handleImportClick = () => fileInputRef.current?.click()
-
-  const handleFileChange = useCallback((e) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const MAX_FILE_SIZE = 2 * 1024 * 1024
-    if (file.size > MAX_FILE_SIZE) {
-      setModal({ type: 'importError', message: 'ファイルサイズが大きすぎます（上限 2MB）。\nバックアップファイルを確認してください。' })
-      e.target.value = ''
-      return
-    }
-    const reader = new FileReader()
-    reader.onload = (ev) => {
-      try {
-        const data = JSON.parse(ev.target.result)
-        const error = validateImportData(data)
-        if (error) {
-          setModal({ type: 'importError', message: error })
-        } else {
-          const sanitized = sanitizeImportData(data)
-          setModal({
-            type: 'importFile',
-            data: sanitized.data,
-            filename: file.name,
-            skippedUnknownRecords: sanitized.skippedUnknownRecords,
-          })
-        }
-      } catch {
-        setModal({ type: 'importError', message: 'JSONの解析に失敗しました。\nファイルが壊れているか、形式が正しくありません。' })
-      }
-      e.target.value = ''
-    }
-    reader.readAsText(file)
-  }, [])
-
-  const handleImportConfirm = useCallback(() => {
-    const habitCount = modal.data.habits.length
-    const dayCount = Object.keys(modal.data.records).length
-    setHabits(modal.data.habits)
-    setRecords(modal.data.records)
-    if (modal.data.colorCategories) setColorCategories(modal.data.colorCategories)
-    setModal(null)
-    setToast(`復元しました（${habitCount}件・${dayCount}日分）`)
-  }, [modal])
 
   // セクションへスクロール（ヘッダーのアイコンボタンから呼ぶ）
   const scrollToSection = useCallback((id) => {
@@ -730,7 +595,7 @@ export default function App() {
       {modal?.type === 'edit' && (
         <AddHabitModal
           initialHabit={modal.habit}
-          onSave={updateHabit}
+          onSave={({ name, color }) => updateHabit({ name, color, habitId: modal.habit.id })}
           onClose={closeModal}
         />
       )}
