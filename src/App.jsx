@@ -689,6 +689,7 @@ export default function App() {
           onExport={() => { closeModal(); setTimeout(() => setModal({ type: 'exportConfirm' }), 50) }}
           onImport={() => { closeModal(); setTimeout(() => setModal({ type: 'importConfirm' }), 50) }}
           onManageCategories={() => { closeModal(); setTimeout(() => setModal({ type: 'categoryManage' }), 50) }}
+          colorCategories={colorCategories}
           onClose={closeModal}
           lastBackupDate={lastBackupDate}
           statsStartDate={statsStartDate}
