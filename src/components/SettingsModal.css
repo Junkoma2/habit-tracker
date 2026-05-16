@@ -117,6 +117,11 @@
   font-weight: 400;
 }
 
+/* 設定モーダル内のsection-titleとコンテンツの間の余白 */
+.modal-sheet .section-title {
+  margin-bottom: 12px;
+}
+
 /* 集計開始日設定（#275） */
 .stats-start-date-row {
   display: flex;
