@@ -33,7 +33,7 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
 
   return (
     <Modal title="設定" onClose={onClose}>
-      <p className="settings-section-title">見た目</p>
+      <p className="section-title">見た目</p>
       <div className="theme-grid">
         {THEMES.map(theme => (
           <button
@@ -61,7 +61,7 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
 
       <hr className="settings-divider" />
 
-      <p className="settings-section-title">習慣</p>
+      <p className="section-title">習慣</p>
       <div className="data-mgmt-list">
         <button className="data-mgmt-btn" onClick={onManageCategories}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -79,7 +79,7 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
 
       <hr className="settings-divider" />
 
-      <p className="settings-section-title">分析</p>
+      <p className="section-title">分析</p>
       <div className="stats-start-date-row">
         <label className="stats-start-date-label" htmlFor="stats-start-date">集計開始日</label>
         <input
@@ -97,7 +97,7 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
 
       <hr className="settings-divider" />
 
-      <p className="settings-section-title">データ</p>
+      <p className="section-title">データ</p>
       <div className="data-mgmt-list">
         <button className="data-mgmt-btn" onClick={onExport}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -119,7 +119,7 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
       {onToggleDebug && (
         <>
           <hr className="settings-divider" />
-          <p className="settings-section-title">開発者</p>
+          <p className="section-title">開発者</p>
           {/* #296: ON/OFF文言からトグルスイッチUIへ */}
           <div className="debug-toggle-row">
             <div className="debug-toggle-label">

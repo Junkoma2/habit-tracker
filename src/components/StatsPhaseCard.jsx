@@ -42,8 +42,8 @@ export default function StatsPhaseCard({ habitPhases }) {
 
   return (
     <section className="section">
-      <div className="analysis-subhead">
-        <span>習慣化フェーズ</span>
+      <div className="section-header">
+        <span className="section-title">習慣化フェーズ</span>
         <button
           className="phase-info-btn"
           onClick={() => setShowInfo(v => !v)}

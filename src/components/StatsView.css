@@ -59,17 +59,6 @@
   line-height: 1.5;
 }
 
-.analysis-subhead {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 12px;
-  color: var(--color-text);
-  font-size: 0.86rem;
-  font-weight: 800;
-}
-
 .analysis-weekday-list {
   display: flex;
   flex-direction: column;
