@@ -35,7 +35,7 @@ import { useModalState } from './hooks/useModalState'
 import { useHabitActions } from './hooks/useHabitActions'
 import { useBackupManager } from './hooks/useBackupManager'
 import { getToday, getYesterday } from './utils/date'
-import { calcCurrentStreak } from './utils/stats'
+import { calcCurrentStreak, calcCurrentStreakWithMode } from './utils/stats'
 import './App.css'
 
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
@@ -81,7 +81,7 @@ export default function App() {
     setShowEditHint(false)
   }, [])
 
-  const { habits, records, colorCategories, statsStartDate, setHabits, setRecords, setColorCategories, setStatsStartDate } = useHabitsStorage()
+  const { habits, records, colorCategories, statsStartDate, streakMode, setHabits, setRecords, setColorCategories, setStatsStartDate, setStreakMode } = useHabitsStorage()
   const { themeId, handleThemeSelect } = useTheme()
 
   const [calendarDate, setCalendarDate] = useState(() => new Date())
@@ -553,7 +553,7 @@ export default function App() {
                     key={habit.id}
                     habit={habit}
                     completed={todayRecords.includes(habit.id)}
-                    streak={calcCurrentStreak(habit.id, records)}
+                    streak={calcCurrentStreakWithMode(habit.id, records, streakMode)}
                     onPress={(h) => toggleHabit(h.id, today)}
                     onLongPress={(h) => { dismissEditHint(); setModal({ type: 'longPress', habit: h }) }}
                   />
@@ -573,6 +573,7 @@ export default function App() {
               habits={habits}
               records={records}
               today={today}
+              streakMode={streakMode}
               onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
               onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
             />
@@ -696,6 +697,8 @@ export default function App() {
           onStatsStartDateChange={setStatsStartDate}
           debugEnabled={viewportDebug}
           onToggleDebug={toggleViewportDebug}
+          streakMode={streakMode}
+          onStreakModeChange={setStreakMode}
         />
       )}
 

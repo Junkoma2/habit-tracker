@@ -57,6 +57,42 @@ export function calcCurrentStreak(habitId, records) {
   }
   return count
 }
+
+// #294: 未達成日の扱いモードに応じた積み上がりを計算
+// mode: 'reset' (連続), 'decrement' (1日減算), 'accumulate' (減らさない)
+export function calcCurrentStreakWithMode(habitId, records, mode = 'decrement') {
+  if (mode === 'reset') {
+    return calcCurrentStreak(habitId, records)
+  }
+
+  if (mode === 'accumulate') {
+    // 達成した日の総数（全期間）
+    return Object.values(records).filter(ids => (ids || []).includes(habitId)).length
+  }
+
+  // decrement: 達成日は+1、未達成日は-1、ただし0未満にはしない
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  // 最古の記録日から今日まで走査するため、まず記録のある最古日を取得
+  const sortedDates = Object.keys(records).filter(date => (records[date] || []).includes(habitId)).sort()
+  if (sortedDates.length === 0) return 0
+  const earliest = new Date(sortedDates[0])
+  earliest.setHours(0, 0, 0, 0)
+  // earliest から today まで走査
+  const cur = new Date(earliest)
+  let score = 0
+  while (cur <= today) {
+    const dateStr = formatDate(cur)
+    if ((records[dateStr] || []).includes(habitId)) {
+      score++
+    } else if (dateStr < formatDate(today)) {
+      // 今日はまだ達成できるので減算しない
+      score = Math.max(0, score - 1)
+    }
+    cur.setDate(cur.getDate() + 1)
+  }
+  return score
+}
 
 export function calcStats(habitId, records) {
   const completedDates = Object.keys(records)
