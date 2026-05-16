@@ -515,7 +515,7 @@ export default function App() {
         <div className="main-content">
           <section className="section">
             <div className="section-header">
-              <h2 className="section-title section-title--primary">今日の習慣</h2>
+              <h2 className="section-title">今日の習慣</h2>
               {habits.length > 0 && (
                 <button
                   className={`edit-toggle-btn ${editMode ? 'active' : ''}`}
