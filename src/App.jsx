@@ -545,7 +545,7 @@ export default function App() {
                 {showWelcome ? (
                   <div className="welcome-card">
                     <p className="welcome-title">ようこそ！</p>
-                    <p className="welcome-body">まず最初の習慣を1つ追加してみましょう。毎日の記録がここに並びます。</p>
+                    <p className="welcome-body">まず最初の習慣を1つ追加してみましょう。記録した日がカレンダーに積み上がっていきます。</p>
                   </div>
                 ) : (
                   <p className="empty-text">習慣を追加してみよう</p>
@@ -775,7 +775,7 @@ export default function App() {
       {modal?.type === 'archiveConfirm' && (
         <ConfirmModal
           title="習慣を終了"
-          message={`「${modal.habitName}」を終了しますか？\n\n過去の記録は保持されます。\nいつでも再開できます。`}
+          message={`「${modal.habitName}」を終了しますか？\n\n✓ 過去の記録は残ります\n✓ いつでも再開できます`}
           confirmLabel="終了する"
           danger={false}
           onConfirm={() => archiveHabit(modal.habitId)}
@@ -786,7 +786,7 @@ export default function App() {
       {modal?.type === 'deleteConfirm' && (
         <ConfirmModal
           title="習慣を完全に削除"
-          message={`「${modal.habitName}」を完全に削除しますか？\n\n⚠ 過去の記録もすべて削除されます。\nこの操作は取り消せません。`}
+          message={`「${modal.habitName}」を完全に削除しますか？\n\n⚠ 過去の記録もすべて消えます\n✗ この操作は取り消せません`}
           confirmLabel="完全に削除"
           onConfirm={() => deleteHabit(modal.habitId)}
           onClose={closeModal}
