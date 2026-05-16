@@ -1,8 +1,6 @@
-import { getDailyTip } from '../data/habitTips'
 import './HabitTip.css'
 
-export default function HabitTip({ today, visible, returning }) {
-  const tip = getDailyTip(today)
+export default function HabitTip({ tip, visible, returning }) {
   const cls = [
     'habit-tip-pull',
     visible ? 'visible' : '',

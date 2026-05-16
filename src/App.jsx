@@ -25,6 +25,7 @@ import ArchivedHabitItem from './components/ArchivedHabitItem'
 import AddToHomePrompt from './components/AddToHomePrompt'
 import MonthPickerModal from './components/MonthPickerModal'
 import HabitTip from './components/HabitTip'
+import { getRandomTip } from './data/habitTips'
 import RecordView from './components/RecordView'
 import StatsView from './components/StatsView'
 import CategoryManageModal from './components/CategoryManageModal'
@@ -111,12 +112,14 @@ export default function App() {
   // 最下部 overscroll 検知による deep tip 表示
   const [showDeepTip, setShowDeepTip] = useState(false)
   const [deepTipReturning, setDeepTipReturning] = useState(false)
+  const [currentTip, setCurrentTip] = useState(() => getRandomTip())
+  const showDeepTipRef = useRef(false)
   const deepTipTimer = useRef(null)
   const deepTipReturnTimer = useRef(null)
   const overscrollStartY = useRef(null)
 
   const hideDeepTip = useCallback(() => {
-    // visible を外して returning だけ残すことでバネアニメーションを発動
+    showDeepTipRef.current = false
     setShowDeepTip(false)
     setDeepTipReturning(true)
     deepTipReturnTimer.current = setTimeout(() => {
@@ -135,6 +138,8 @@ export default function App() {
       if (overscrollStartY.current === null) return
       const dy = overscrollStartY.current - e.touches[0].clientY
       if (dy > 30) {
+        if (!showDeepTipRef.current) setCurrentTip(getRandomTip())
+        showDeepTipRef.current = true
         setShowDeepTip(true)
         setDeepTipReturning(false)
         clearTimeout(deepTipTimer.current)
@@ -631,7 +636,7 @@ export default function App() {
           <div id="section-stats" className="section-group">
             <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} statsStartDate={statsStartDate} />
           </div>
-          <HabitTip today={today} visible={showDeepTip} returning={deepTipReturning} />
+          <HabitTip tip={currentTip} visible={showDeepTip} returning={deepTipReturning} />
         </div>
       </main>
 
