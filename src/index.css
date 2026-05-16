@@ -48,12 +48,6 @@ html, body {
   background: var(--color-bg);
 }
 
-html.pwa-standalone,
-html.pwa-standalone body,
-html.pwa-standalone #root {
-  background: var(--color-surface);
-}
-
 html.pwa-standalone body::after {
   content: "";
   position: fixed;
