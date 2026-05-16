@@ -74,8 +74,10 @@
   color: var(--color-danger);
 }
 
-.archived-action.delete:hover {
-  background: #FEF2F2;
+@media (hover: hover) {
+  .archived-action.delete:hover {
+    background: #FEF2F2;
+  }
 }
 
 .archived-action.delete:active {

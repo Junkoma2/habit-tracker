@@ -32,9 +32,11 @@
   transition: color 0.12s, background 0.12s;
 }
 
-.drag-handle:hover {
-  color: var(--color-text-secondary);
-  background: var(--color-bg);
+@media (hover: hover) {
+  .drag-handle:hover {
+    color: var(--color-text-secondary);
+    background: var(--color-bg);
+  }
 }
 
 .drag-handle:active {
@@ -73,8 +75,10 @@
   color: var(--color-primary);
 }
 
-.habit-edit-action.edit:hover {
-  background: var(--color-primary-light);
+@media (hover: hover) {
+  .habit-edit-action.edit:hover {
+    background: var(--color-primary-light);
+  }
 }
 
 .habit-edit-action.edit:active {
@@ -85,9 +89,11 @@
   color: var(--color-text-secondary);
 }
 
-.habit-edit-action.archive:hover {
-  background: var(--color-bg);
-  color: var(--color-text);
+@media (hover: hover) {
+  .habit-edit-action.archive:hover {
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
 }
 
 .habit-edit-action.archive:active {
@@ -98,8 +104,10 @@
   color: var(--color-danger);
 }
 
-.habit-edit-action.delete:hover {
-  background: #FEF2F2;
+@media (hover: hover) {
+  .habit-edit-action.delete:hover {
+    background: #FEF2F2;
+  }
 }
 
 .habit-edit-action.delete:active {

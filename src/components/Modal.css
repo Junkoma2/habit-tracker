@@ -29,7 +29,7 @@
   border-radius: 24px 24px 0 0;
   padding: 12px 20px calc(24px + env(safe-area-inset-bottom));
   width: 100%;
-  max-width: 480px;
+  max-width: 640px;
   animation: slideUp 0.34s cubic-bezier(0.22, 1, 0.36, 1) both;
   max-height: calc(var(--app-screen-height) - var(--app-safe-area-top));
   overflow-y: auto;
