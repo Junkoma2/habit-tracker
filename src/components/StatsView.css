@@ -105,7 +105,7 @@
 
 .analysis-color-row {
   display: grid;
-  grid-template-columns: 12px auto auto 1fr 40px;
+  grid-template-columns: 12px minmax(0, 7rem) 1fr 36px;
   align-items: center;
   gap: 8px;
 }
@@ -117,10 +117,20 @@
   flex-shrink: 0;
 }
 
+.analysis-color-label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+  overflow: hidden;
+}
+
 .analysis-color-name {
   color: var(--color-text);
   font-size: 0.78rem;
   font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 

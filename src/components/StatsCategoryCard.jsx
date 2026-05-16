@@ -12,8 +12,10 @@ export default function StatsCategoryCard({ colorStats }) {
           {colorStats.map(({ color, name, count, rate }) => (
             <div className="analysis-color-row" key={color}>
               <span className="analysis-color-dot" style={{ backgroundColor: color }} />
-              <span className="analysis-color-name">{name}</span>
-              <span className="analysis-color-count">{count}件</span>
+              <span className="analysis-color-label">
+                <span className="analysis-color-name">{name}</span>
+                <span className="analysis-color-count">{count}件</span>
+              </span>
               <div className="analysis-weekday-bar">
                 <span style={{ width: `${rate ?? 0}%` }} />
               </div>
