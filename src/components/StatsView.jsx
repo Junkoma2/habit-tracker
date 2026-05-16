@@ -33,7 +33,11 @@ function calcRateForRange(habits, records, today, days, statsStartDate) {
     achieved += activeHabits.filter(habit => dayRecords.includes(habit.id)).length
   }
 
-  return total > 0 ? Math.round((achieved / total) * 100) : null
+  return {
+    rate: total > 0 ? Math.round((achieved / total) * 100) : null,
+    achieved,
+    total,
+  }
 }
 
 function calcWeekdayRates(habits, records, today, days = 30, statsStartDate) {
