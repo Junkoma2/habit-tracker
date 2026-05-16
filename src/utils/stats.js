@@ -2,7 +2,25 @@ import { formatDate, parseLocalDate } from './date'
 
 const MS_PER_DAY = 86400000
 
-// 習慣化フェーズ定義（habitPhase.js を廃止しここに一本化）
+// 共通マイルストン定義（#273: 全画面で同じ定義を使う）
+export const MILESTONES = [
+  { days: 1,   label: '1日目' },
+  { days: 4,   label: '4日目' },
+  { days: 7,   label: '1週間' },
+  { days: 14,  label: '2週間' },
+  { days: 30,  label: '1か月' },
+  { days: 60,  label: '2か月' },
+  { days: 90,  label: '3か月' },
+  { days: 180, label: '6か月' },
+  { days: 365, label: '1年' },
+]
+
+// 次のマイルストンを返す（null = 全達成）
+export function getNextMilestone(streak) {
+  return MILESTONES.find(m => streak < m.days) ?? null
+}
+
+// 後方互換: 旧 PHASES ベースのAPI（RecordViewの積み上がりグループ表示で使用）
 export const PHASES = [
   { label: 'まず2週間続けてみよう', days: 14 },
   { label: 'リズムができてきた', days: 30 },

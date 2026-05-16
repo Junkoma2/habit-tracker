@@ -1,9 +1,7 @@
 import Calendar from './Calendar'
 import HabitProgressLine from './HabitProgressLine'
-import { calcCurrentStreak, getHabitPhase } from '../utils/stats'
+import { calcCurrentStreak, MILESTONES } from '../utils/stats'
 import './RecordView.css'
-
-const PHASE_ORDER = ['生活の一部', '日常に馴染んできた', 'リズムができてきた', 'まず2週間続けてみよう']
 
 function formatMonthKey(date) {
   const y = date.getFullYear()
@@ -20,6 +18,13 @@ function countRecordsInMonth(records, monthKey) {
 
 function countTotalRecords(records) {
   return Object.values(records).reduce((total, ids) => total + new Set(ids).size, 0)
+}
+
+// 達成したマイルストン数をラベル付きで返す
+function getMilestoneLabel(streak) {
+  const reached = MILESTONES.filter(m => streak >= m.days)
+  if (reached.length === 0) return null
+  return reached[reached.length - 1].label
 }
 
 export default function RecordView({
@@ -39,36 +44,15 @@ export default function RecordView({
 
   const habitPhaseList = activeHabits.map(habit => {
     const streak = calcCurrentStreak(habit.id, records)
-    return { habit, streak, phase: getHabitPhase(streak) }
+    const milestoneLabel = getMilestoneLabel(streak)
+    return { habit, streak, milestoneLabel }
   })
-
-  const groupedByPhase = {}
-  for (const item of habitPhaseList) {
-    const label = item.phase.label
-    if (!groupedByPhase[label]) groupedByPhase[label] = []
-    groupedByPhase[label].push(item)
-  }
-  for (const label of PHASE_ORDER) {
-    if (groupedByPhase[label]) {
-      groupedByPhase[label].sort((a, b) => b.streak - a.streak)
-    }
-  }
 
   const sortedHabits = [...habitPhaseList].sort((a, b) => b.streak - a.streak)
 
   return (
     <>
-      {activeHabits.length > 0 && (
-        <section className="section record-phase-highlight-section">
-          <div className="phase-highlight-heading">習慣の進捗</div>
-          <div className="progress-line-list">
-            {sortedHabits.map(({ habit, streak }) => (
-              <HabitProgressLine key={habit.id} habit={habit} streak={streak} />
-            ))}
-          </div>
-        </section>
-      )}
-
+      {/* #272: カレンダーを今日の習慣の直後（最上部）に配置 */}
       <section className="section record-calendar-section">
         <Calendar
           date={calendarDate}
@@ -81,6 +65,19 @@ export default function RecordView({
         />
       </section>
 
+      {/* 習慣の進捗（#272: カレンダーの後に移動） */}
+      {activeHabits.length > 0 && (
+        <section className="section record-phase-highlight-section">
+          <div className="phase-highlight-heading">習慣の進捗</div>
+          <div className="progress-line-list">
+            {sortedHabits.map(({ habit, streak }) => (
+              <HabitProgressLine key={habit.id} habit={habit} streak={streak} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* 積み上がり（#273: マイルストン到達ラベルで表示） */}
       <section className="section record-summary-section">
         <div className="section-header">
           <h2 className="section-title">積み上がり</h2>
@@ -93,28 +90,22 @@ export default function RecordView({
         {activeHabits.length === 0 ? (
           <p className="record-empty">習慣を追加すると、積み上がりがここに表示されます。</p>
         ) : (
-          <div className="phase-groups">
-            {PHASE_ORDER.map(phaseLabel => {
-              const items = groupedByPhase[phaseLabel]
-              if (!items || items.length === 0) return null
-              return (
-                <div key={phaseLabel} className="phase-group">
-                  <h3 className="phase-group-title">{phaseLabel}</h3>
-                  {items.map(({ habit, streak, phase }) => (
-                    <div key={habit.id} className="phase-habit-row">
-                      <span className="phase-habit-dot" style={{ backgroundColor: habit.color }} />
-                      <div className="phase-habit-info">
-                        <span className="phase-habit-name">{habit.name}</span>
-                        {streak > 0 && <span className="phase-habit-streak">{streak}日継続中</span>}
-                        {phase.daysToNext !== null && (
-                          <span className="phase-habit-next">あと{phase.daysToNext}日で「{phase.next}」へ</span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+          <div className="streak-summary-list">
+            {sortedHabits.map(({ habit, streak, milestoneLabel }) => (
+              <div key={habit.id} className="streak-summary-row">
+                <span className="streak-summary-dot" style={{ backgroundColor: habit.color }} />
+                <span className="streak-summary-name">{habit.name}</span>
+                <div className="streak-summary-right">
+                  {milestoneLabel && (
+                    <span className="streak-summary-milestone">{milestoneLabel}</span>
+                  )}
+                  {/* #274: streak 0 のとき「未開始」ではなく空欄にしてやわらかく */}
+                  <span className="streak-summary-days">
+                    {streak > 0 ? `${streak}日継続中` : 'まだ記録なし'}
+                  </span>
                 </div>
-              )
-            })}
+              </div>
+            ))}
           </div>
         )}
       </section>
