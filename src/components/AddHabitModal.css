@@ -18,6 +18,15 @@
   text-transform: uppercase;
 }
 
+.color-name-hint {
+  margin-left: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .form-input {
   border: 2px solid var(--color-border);
   border-radius: var(--radius-sm);

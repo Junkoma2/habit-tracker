@@ -657,7 +657,7 @@ export default function App() {
       )}
 
       {modal?.type === 'add' && (
-        <AddHabitModal onSave={addHabit} onClose={closeModal} />
+        <AddHabitModal onSave={addHabit} onClose={closeModal} colorCategories={colorCategories} />
       )}
 
       {modal?.type === 'edit' && (
@@ -665,6 +665,7 @@ export default function App() {
           initialHabit={modal.habit}
           onSave={({ name, color }) => updateHabit({ name, color, habitId: modal.habit.id })}
           onClose={closeModal}
+          colorCategories={colorCategories}
         />
       )}
 
