@@ -1,9 +1,9 @@
 export default function StatsCategoryCard({ colorStats }) {
   return (
     <section className="section">
-      <div className="analysis-subhead">
-        <span>色別達成率</span>
-        <small>直近30日</small>
+      <div className="section-header">
+        <h2 className="section-title">色別達成率</h2>
+        <small className="section-sub">直近30日</small>
       </div>
       {colorStats.length === 0 ? (
         <p className="analysis-note">カテゴリが設定された色の習慣がありません。</p>

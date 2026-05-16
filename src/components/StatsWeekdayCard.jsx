@@ -1,11 +1,9 @@
-const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土']
-
 export default function StatsWeekdayCard({ weekdayRates }) {
   return (
     <section className="section">
-      <div className="analysis-subhead">
-        <span>曜日別達成率</span>
-        <small>直近30日</small>
+      <div className="section-header">
+        <h2 className="section-title">曜日別達成率</h2>
+        <small className="section-sub">直近30日</small>
       </div>
       <div className="analysis-weekday-list">
         {weekdayRates.map(item => (
