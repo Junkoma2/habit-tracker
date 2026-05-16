@@ -1,7 +1,5 @@
-/* pull-to-refresh 深スワイプ時にのみ表示される一言 */
-/* pull-indicator 直後、通常フロー内に max-height で展開する */
+/* コンテンツ末尾に配置。通常時は画面外へ隠し、最下部 overscroll 時だけ覗く */
 .habit-tip-pull {
-  flex: 0 0 auto;
   overflow: hidden;
   max-height: 0;
   opacity: 0;

@@ -1,8 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react'
 
 export const PULL_THRESHOLD = 80
-// 通常のpull-to-refreshよりさらに深く引いたときのしきい値
-export const DEEP_PULL_THRESHOLD = 150
 
 export function usePullToRefresh({ mainRef, scrollKey, onRefresh }) {
   const [pullY, setPullY] = useState(0)
@@ -10,12 +8,10 @@ export function usePullToRefresh({ mainRef, scrollKey, onRefresh }) {
   const [refreshing, setRefreshing] = useState(false)
   const [refreshComplete, setRefreshComplete] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [showDeepTip, setShowDeepTip] = useState(false)
 
   const pullStartY = useRef(null)
   const justScrolledToTop = useRef(false)
   const scrollStopTimer = useRef(null)
-  const deepPullTriggered = useRef(false)
 
   useEffect(() => {
     const scrollEl = mainRef.current
@@ -45,7 +41,6 @@ export function usePullToRefresh({ mainRef, scrollKey, onRefresh }) {
     // スクロール戻り直後はpull-to-refreshを許可しない
     if ((mainRef.current?.scrollTop ?? 0) === 0 && !justScrolledToTop.current) {
       pullStartY.current = e.touches[0].clientY
-      deepPullTriggered.current = false
     }
   }, [mainRef])
 
@@ -59,13 +54,6 @@ export function usePullToRefresh({ mainRef, scrollKey, onRefresh }) {
         ? visual
         : Math.min(PULL_THRESHOLD + (visual - PULL_THRESHOLD) * 0.3, PULL_THRESHOLD + 50)
       setPullY(clamped)
-
-      // 深いスワイプ検知: 元の指の移動量がDEEP_PULL_THRESHOLD/0.4を超えたとき
-      const rawDy = dy
-      if (rawDy >= DEEP_PULL_THRESHOLD && !deepPullTriggered.current) {
-        deepPullTriggered.current = true
-        setShowDeepTip(true)
-      }
     } else {
       pullStartY.current = null
       setPullY(0)
@@ -73,7 +61,6 @@ export function usePullToRefresh({ mainRef, scrollKey, onRefresh }) {
   }, [])
 
   const handleTouchEnd = useCallback(async () => {
-    deepPullTriggered.current = false
     if (pullY >= PULL_THRESHOLD) {
       setRefreshing(true)
       setPullY(0)
@@ -143,14 +130,10 @@ export function usePullToRefresh({ mainRef, scrollKey, onRefresh }) {
       })
     }
     pullStartY.current = null
-    // deep tipは2秒後に自動的に消す
-    if (showDeepTip) {
-      setTimeout(() => setShowDeepTip(false), 2500)
-    }
-  }, [pullY, onRefresh, showDeepTip])
+  }, [pullY, onRefresh])
 
   return {
-    pullY, pullReturning, refreshing, refreshComplete, scrolled, showDeepTip,
+    pullY, pullReturning, refreshing, refreshComplete, scrolled,
     handleTouchStart, handleTouchMove, handleTouchEnd,
   }
 }
