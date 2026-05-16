@@ -6,7 +6,7 @@ export default function StatsCategoryCard({ colorStats }) {
         <small className="section-sub">直近30日</small>
       </div>
       {colorStats.length === 0 ? (
-        <p className="analysis-note">カテゴリが設定された色の習慣がありません。</p>
+        <p className="analysis-note">名前が設定された色の習慣がありません。</p>
       ) : (
         <div className="analysis-color-list">
           {colorStats.map(({ color, name, count, rate }) => (
