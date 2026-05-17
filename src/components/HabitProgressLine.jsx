@@ -1,21 +1,41 @@
 import { MILESTONES, getNextMilestone } from '../utils/stats'
 import './HabitProgressLine.css'
 
-// 表示するマイルストンを streak に応じて動的に選択する
-// - 達成済みの最後のものを含む
-// - 未達成のものを最大3件含む
-// - 常に最低1件は未達成を含む（全達成なら末尾を表示）
+// 表示ノードを streak に応じて動的に組み立てる
+// 構成: [達成済み最後] → [今ここ] → [未達成1] → [未達成2]
+// streak がマイルストンにぴったり当たる場合は そのノードを「今ここ」として扱う
 function getDisplayMilestones(streak) {
   const reachedIdx = MILESTONES.reduce((last, m, i) => (streak >= m.days ? i : last), -1)
-  // 未達成の先頭インデックス
   const nextIdx = reachedIdx + 1
 
-  // 達成済みは最後の1件だけ表示（先頭なら省く）
-  const startIdx = reachedIdx >= 0 ? reachedIdx : 0
-  // 未達成は最大3件
-  const endIdx = Math.min(nextIdx + 2, MILESTONES.length - 1)
+  // streak = 0: まだ開始前、未達成を3件表示
+  if (streak === 0) {
+    return MILESTONES.slice(0, 3).map(m => ({ ...m, isReached: false, isCurrent: false }))
+  }
 
-  return MILESTONES.slice(startIdx, endIdx + 1)
+  // streak がちょうどマイルストンに一致する場合、そのノードを今こことして扱う
+  const exactHit = reachedIdx >= 0 && MILESTONES[reachedIdx].days === streak
+
+  const nodes = []
+
+  // 達成済み最後（exactHit でない場合のみ）
+  if (reachedIdx >= 0 && !exactHit) {
+    nodes.push({ ...MILESTONES[reachedIdx], isReached: true, isCurrent: false })
+  }
+
+  // 今ここノード
+  if (exactHit) {
+    nodes.push({ ...MILESTONES[reachedIdx], isReached: true, isCurrent: true })
+  } else {
+    nodes.push({ days: streak, label: '今ここ', isReached: false, isCurrent: true })
+  }
+
+  // 未達成を2件（全達成なら追加しない）
+  MILESTONES.slice(nextIdx, nextIdx + 2).forEach(m => {
+    nodes.push({ ...m, isReached: false, isCurrent: false })
+  })
+
+  return nodes
 }
 
 export default function HabitProgressLine({ habit, streak }) {
@@ -35,18 +55,22 @@ export default function HabitProgressLine({ habit, streak }) {
         )}
       </div>
       <div className="hpl-track" style={{ gridTemplateColumns: `repeat(${displayMilestones.length}, 1fr)` }}>
-        {displayMilestones.map((milestone, i) => {
-          const reached = streak >= milestone.days
-          const isFirst = i === 0
-          // 先頭が達成済みで、かつその前に達成済みマイルストンがある場合は「...」を示す
-          const showLeadingDots = isFirst && reached && MILESTONES.indexOf(milestone) > 0
+        {displayMilestones.map((milestone) => {
+          const classes = [
+            'hpl-stage',
+            milestone.isReached ? 'hpl-stage--reached' : '',
+            milestone.isCurrent ? 'hpl-stage--current' : '',
+          ].filter(Boolean).join(' ')
           return (
-            <div
-              key={milestone.days}
-              className={`hpl-stage${reached ? ' hpl-stage--reached' : ''}${showLeadingDots ? ' hpl-stage--has-prev' : ''}`}
-            >
+            <div key={`${milestone.days}-${milestone.isCurrent}`} className={classes}>
               <div className="hpl-node" />
-              <span className="hpl-stage-label">{milestone.label}</span>
+              {milestone.isCurrent && !milestone.isReached ? (
+                <span className="hpl-stage-label">
+                  {streak}日<br />今ここ
+                </span>
+              ) : (
+                <span className="hpl-stage-label">{milestone.label}</span>
+              )}
             </div>
           )
         })}
