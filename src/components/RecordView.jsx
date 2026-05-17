@@ -61,7 +61,7 @@ export default function RecordView({
       {/* #278/#280: 実績タイトルをカード内に統一 */}
       <section className="section record-calendar-section">
         <div className="section-header">
-          <h2 className="section-title">実績</h2>
+          <h2 className="section-title">カレンダー</h2>
         </div>
         <Calendar
           date={calendarDate}
