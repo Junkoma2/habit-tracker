@@ -29,6 +29,20 @@ export function formatDisplayDate(dateStr) {
   return `${year}年${month}月${day}日（${dow}）`
 }
 
+export const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土']
+export const MONTH_LABELS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+
+// 'YYYY-MM-DD' の日付文字列から '2026年5月17日' 形式の文字列を返す
+export function formatYMD(dateStr) {
+  const d = parseLocalDate(dateStr)
+  return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日'
+}
+
+// Date オブジェクトから '2026年5月' 形式の文字列を返す
+export function formatYearMonth(date) {
+  return date.getFullYear() + '年' + (date.getMonth() + 1) + '月'
+}
+
 export const HABIT_COLORS = [
   '#FF6B6B',
   '#FF9F43',

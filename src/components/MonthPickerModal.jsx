@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react'
 import Modal from './Modal'
+import { MONTH_LABELS } from '../utils/date'
 import './MonthPickerModal.css'
-
-const MONTH_LABELS = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-
+
 export default function MonthPickerModal({ currentDate, records, onSelect, onClose }) {
   const [pickerYear, setPickerYear] = useState(currentDate.getFullYear())
   const currentYear = currentDate.getFullYear()
