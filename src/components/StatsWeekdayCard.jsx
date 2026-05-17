@@ -7,7 +7,7 @@ export default function StatsWeekdayCard({ weekdayRates }) {
       </div>
       <div className="analysis-weekday-list">
         {weekdayRates.map(item => (
-          <div className="analysis-weekday-row" key={item.label}>
+          <div className={`analysis-weekday-row${item.isToday ? ' analysis-weekday-row--today' : ''}`} key={item.label}>
             <span className="analysis-weekday-label">{item.label}</span>
             <div className="analysis-weekday-bar">
               <span style={{ width: `${item.rate ?? 0}%` }} />

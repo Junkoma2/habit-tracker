@@ -43,6 +43,7 @@ function calcRateForRange(habits, records, today, days, statsStartDate) {
 
 function calcWeekdayRates(habits, records, today, days = 30, statsStartDate) {
   const end = parseLocalDate(today)
+  const todayDow = end.getDay()
   const startBound = statsStartDate ? parseLocalDate(statsStartDate) : null
   const buckets = DOW_LABELS.map(label => ({ label, achieved: 0, total: 0 }))
 
@@ -59,9 +60,10 @@ function calcWeekdayRates(habits, records, today, days = 30, statsStartDate) {
     bucket.achieved += activeHabits.filter(habit => dayRecords.includes(habit.id)).length
   }
 
-  return buckets.map(bucket => ({
+  return buckets.map((bucket, i) => ({
     label: bucket.label,
     rate: bucket.total > 0 ? Math.round((bucket.achieved / bucket.total) * 100) : null,
+    isToday: i === todayDow,
   }))
 }
 
