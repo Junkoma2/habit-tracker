@@ -1,4 +1,3 @@
-import Calendar from './Calendar'
 import Modal from './Modal'
 import HabitProgressLine from './HabitProgressLine'
 import { calcCurrentStreakWithMode, MILESTONES, getNextMilestone } from '../utils/stats'
@@ -60,22 +59,6 @@ export default function RecordView({
 
   const body = (
     <>
-      {/* #272: カレンダーを今日の習慣の直後（最上部）に配置 */}
-      <section className="section record-calendar-section">
-        <div className="section-header">
-          <h2 className="section-title">カレンダー</h2>
-        </div>
-        <Calendar
-          date={calendarDate}
-          onDateChange={onCalendarDateChange}
-          habits={habits}
-          records={records}
-          today={today}
-          onDayClick={onDayClick}
-          onMonthTitleClick={onMonthTitleClick}
-        />
-      </section>
-
       {/* 習慣の進捗 */}
       {activeHabits.length > 0 && (
         <section className="section record-phase-highlight-section">
