@@ -66,15 +66,19 @@ function calcWeekdayRates(habits, records, today, days = 30, statsStartDate) {
 }
 
 function calcColorStats(habits, records, today, colorCategories, statsStartDate) {
-  const activeHabits = habits.filter(h => !h.archivedAt)
+  // #344: 分析では終了済み習慣も活動期間内の実績を含める
+  // activeHabitのみではなく全habitを対象にし、isHabitActiveOnで期間フィルタ
   return HABIT_COLORS
     .filter(color => colorCategories[color]?.trim())
     .map(color => {
-      const colorHabits = activeHabits.filter(h => h.color === color)
+      const colorHabits = habits.filter(h => h.color === color)
+      // カウントはアクティブなもののみ（終了済みは数の表示に含めない）
+      const activeCount = colorHabits.filter(h => !h.archivedAt).length
+      // 達成率は終了済みも含めた全体（活動期間内で計算）
       return {
         color,
         name: colorCategories[color],
-        count: colorHabits.length,
+        count: activeCount,
         rate: calcRateForRange(colorHabits, records, today, 30, statsStartDate).rate,
       }
     })
