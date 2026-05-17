@@ -98,7 +98,7 @@ export default function RecordView({
         </div>
 
         {activeHabits.length === 0 ? (
-          <p className="record-empty">習慣を追加すると、積み上がりがここに表示されます。</p>
+          <p className="record-empty">習慣を追加すると続いた日数が表示されます。</p>
         ) : (
           <div className="streak-summary-list">
             {sortedHabits.map(({ habit, streak }) => {

@@ -94,7 +94,7 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
       <p className="stats-start-date-hint" id="stats-start-date-hint">
         {!statsStartDate && autoStatsStartDate
           ? `自動: ${autoStatsStartDate}（最初の記録日）`
-          : 'この日より前を達成率の分母に含めません'}
+          : 'この日より前の記録を達成率の計算から除きます'}
       </p>
 
       <hr className="settings-divider" />
