@@ -79,7 +79,9 @@ export default function RecordView({
       {/* 習慣の進捗 */}
       {activeHabits.length > 0 && (
         <section className="section record-phase-highlight-section">
-          <div className="phase-highlight-heading">習慣の進捗</div>
+          <div className="section-header">
+            <h2 className="section-title">習慣の進捗</h2>
+          </div>
           <div className="progress-line-list">
             {sortedHabits.map(({ habit, streak }) => (
               <HabitProgressLine key={habit.id} habit={habit} streak={streak} />
