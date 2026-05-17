@@ -95,7 +95,7 @@
 }
 
 /* 今ここ縦線マーカーがある線：縦線位置までを白、以降をグレーにする */
-.hpl-stage--has-marker::before {
+.hpl-stage.hpl-stage--has-marker::before {
   background: linear-gradient(
     to right,
     #fff calc(var(--marker-pos) * 100%),
