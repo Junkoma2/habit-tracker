@@ -229,3 +229,61 @@
   color: var(--color-primary);
   font-weight: 600;
 }
+
+/* マイルストンinfoボタン */
+.record-info-btn {
+  background: none;
+  border: none;
+  padding: 0 0 0 4px;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.record-info-btn:active {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* マイルストン説明モーダルコンテンツ */
+.milestone-info-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--color-text);
+  line-height: 1.6;
+}
+
+.milestone-info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--color-bg);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+
+.milestone-info-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.82rem;
+  color: var(--color-text-secondary);
+}
+
+.milestone-info-days {
+  font-weight: 700;
+  color: var(--color-primary);
+  min-width: 36px;
+  flex-shrink: 0;
+}
+
+.milestone-info-note {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+}
