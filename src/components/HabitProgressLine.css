@@ -49,7 +49,7 @@
   /* grid-template-columns はインラインで動的に設定 */
 }
 
-/* 左端より前に続く線（達成済み） */
+/* 左端より前に続く線（達成済み・端に向かってフェード） */
 .hpl-track--has-left-tail::before {
   content: '';
   position: absolute;
@@ -57,10 +57,10 @@
   left: 0;
   width: calc(50% / var(--col-count) - 6px);
   height: 2px;
-  background: #fff;
+  background: linear-gradient(to right, transparent, #fff);
 }
 
-/* 右端より先に続く線（未達成） */
+/* 右端より先に続く線（未達成・端に向かってフェード） */
 .hpl-track--has-right-tail::after {
   content: '';
   position: absolute;
@@ -68,7 +68,7 @@
   right: 0;
   width: calc(50% / var(--col-count) - 6px);
   height: 2px;
-  background: rgba(255, 255, 255, 0.3);
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.3), transparent);
 }
 
 .hpl-stage {
