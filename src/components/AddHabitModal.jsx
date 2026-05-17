@@ -14,7 +14,7 @@ const COLOR_NAMES = {
   '#6C5CE7': 'パープル',
 }
 
-export default function AddHabitModal({ onSave, onClose, initialHabit = null }) {
+export default function AddHabitModal({ onSave, onClose, initialHabit = null, colorCategories = {} }) {
   const isEdit = !!initialHabit
   const [name, setName] = useState(initialHabit?.name ?? '')
   const [color, setColor] = useState(initialHabit?.color ?? HABIT_COLORS[0])
@@ -42,7 +42,12 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null }) 
         </div>
 
         <div className="form-group">
-          <label className="form-label">カラー</label>
+          <label className="form-label">
+            カラー
+            {colorCategories[color] && (
+              <span className="color-name-hint">{colorCategories[color]}</span>
+            )}
+          </label>
           <div className="color-grid">
             {HABIT_COLORS.map((c) => (
               <button
@@ -51,7 +56,7 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null }) 
                 className={`color-swatch ${color === c ? 'selected' : ''}`}
                 style={{ backgroundColor: c }}
                 onClick={() => setColor(c)}
-                aria-label={`${COLOR_NAMES[c] || c}${color === c ? '（選択中）' : ''}`}
+                aria-label={`${colorCategories[c] || COLOR_NAMES[c] || c}${color === c ? '（選択中）' : ''}`}
                 aria-pressed={color === c}
               />
             ))}
