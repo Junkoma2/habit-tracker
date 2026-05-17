@@ -71,15 +71,17 @@
   background: #fff;
 }
 
-/* 先頭が達成済みで前にも達成済みがある場合、左端に省略を示す */
-.hpl-stage--has-prev::after {
-  content: '…';
+/* 今ここ縦線マーカー：達成済みと次の目標の間の線上に重ねる */
+.hpl-stage--has-marker::after {
+  content: '';
   position: absolute;
-  top: -1px;
-  left: -8px;
-  font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.5);
-  line-height: 1;
+  top: 0;
+  left: calc(-50% + 6px + (100% - 12px) * var(--marker-pos));
+  transform: translateX(-1px);
+  width: 2px;
+  height: 11px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 1px;
 }
 
 .hpl-node {
@@ -96,31 +98,6 @@
 .hpl-stage--reached .hpl-node {
   background: #fff;
   border-color: #fff;
-}
-
-/* 今ここノード: 白抜き＋ボーダーで未来と区別しつつ現在地を示す */
-.hpl-stage--current .hpl-node {
-  background: transparent;
-  border-color: #fff;
-  border-width: 2px;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
-}
-
-.hpl-stage--current.hpl-stage--reached .hpl-node {
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
-}
-
-.hpl-stage--current .hpl-stage-label {
-  color: #fff;
-  font-weight: 700;
-  font-size: 0.58rem;
-  line-height: 1.4;
-}
-
-/* 今ここへの接続線は白（達成済みと同扱い） */
-.hpl-stage--current:not(:first-child)::before {
-  background: #fff;
 }
 
 .hpl-stage-label {
