@@ -26,13 +26,16 @@ export default function DayDetailModal({
 
   return (
     <Modal onClose={onClose} title={formatDisplayDate(dateStr)}>
-      {dateLabel && (
-        <div className="day-badge">
+      <div className="day-badge-row">
+        {dateLabel && (
           <span className={`badge ${dateLabel === '今日' ? 'today' : 'yesterday'}`}>
             {dateLabel}
           </span>
-        </div>
-      )}
+        )}
+        {!isEditable && (
+          <span className="badge readonly-badge">閲覧のみ</span>
+        )}
+      </div>
 
       <div className="day-summary">
         <span className="summary-count">{completedCount}</span>
@@ -42,7 +45,7 @@ export default function DayDetailModal({
       {activeHabits.length === 0 ? (
         <p className="no-habits">習慣がまだ登録されていません</p>
       ) : (
-        <ul className="day-habit-list">
+        <ul className={`day-habit-list ${!isEditable ? 'is-readonly' : ''}`}>
           {activeHabits.map(habit => {
             const done = completedIds.includes(habit.id)
             return (
@@ -68,10 +71,6 @@ export default function DayDetailModal({
             )
           })}
         </ul>
-      )}
-
-      {!isEditable && (
-        <p className="edit-note">編集できるのは当日・前日のみです</p>
       )}
 
       <button className="day-close-btn" onClick={onClose}>
