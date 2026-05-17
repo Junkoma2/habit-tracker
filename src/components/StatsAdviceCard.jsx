@@ -3,7 +3,7 @@ function getAdvice(rate7) {
   if (rate7 === null) return null
   if (rate7 >= 80) return 'この7日間、安定したペースです。'
   if (rate7 >= 50) return 'この7日間は半分以上できています。'
-  return 'できた日を積み上げていきましょう。'
+  return '続けやすい日や時間帯を探してみるのもよいかもしれません。'
 }
 
 // statsStartDate がある場合、ラベルを実態に合わせて調整する

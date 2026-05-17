@@ -549,7 +549,7 @@ export default function App() {
                 {showWelcome ? (
                   <div className="welcome-card">
                     <p className="welcome-title">ようこそ！</p>
-                    <p className="welcome-body">まず最初の習慣を1つ追加してみましょう。記録した日がカレンダーに積み上がっていきます。</p>
+                    <p className="welcome-body">続けたい習慣をひとつ追加してみましょう。</p>
                   </div>
                 ) : (
                   <p className="empty-text">習慣を追加してみよう</p>

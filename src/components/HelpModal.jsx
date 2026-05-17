@@ -70,7 +70,7 @@ export default function HelpModal({ onClose }) {
           <h3 className="help-heading">はじめ方</h3>
           <p className="help-intro">
             まずは、続けたい習慣を1つ登録してみましょう。
-            このアプリは、「無理なく続けること」を大切にして作られています。
+            無理なく続けることを意識して作りました。
           </p>
         </section>
 
