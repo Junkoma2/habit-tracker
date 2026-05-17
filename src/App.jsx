@@ -614,6 +614,7 @@ export default function App() {
                     habit={habit}
                     completed={todayRecords.includes(habit.id)}
                     streak={calcCurrentStreakWithMode(habit.id, records, streakMode)}
+                    streakMode={streakMode}
                     onPress={(h) => toggleHabit(h.id, today)}
                     onLongPress={(h) => { dismissEditHint(); setModal({ type: 'longPress', habit: h }) }}
                   />
