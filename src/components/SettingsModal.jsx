@@ -28,7 +28,7 @@ function summarizeColorCategories(colorCategories) {
   return names.slice(0, 3).join(' / ') + (names.length > 3 ? ' …' : '')
 }
 
-export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onManageCategories, onClose, lastBackupDate, debugEnabled, onToggleDebug, statsStartDate, autoStatsStartDate, onStatsStartDateChange, colorCategories }) {
+export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onManageCategories, onClose, lastBackupDate, debugEnabled, onToggleDebug, statsStartDate, autoStatsStartDate, onStatsStartDateChange, colorCategories, streakMode, onStreakModeChange }) {
   const colorSummary = summarizeColorCategories(colorCategories)
 
   return (
@@ -75,6 +75,22 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
             </span>
           </span>
         </button>
+      </div>
+
+      <div className="streak-mode-section">
+        <p className="streak-mode-label">達成できなかった日の扱い</p>
+        <div className="streak-mode-options" role="group" aria-label="達成できなかった日の扱い">
+          {STREAK_MODES.map(mode => (
+            <button
+              key={mode.id}
+              className={`streak-mode-btn${streakMode === mode.id ? ' selected' : ''}`}
+              onClick={() => onStreakModeChange && onStreakModeChange(mode.id)}
+              aria-pressed={streakMode === mode.id}
+            >
+              {mode.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <hr className="settings-divider" />
