@@ -16,16 +16,23 @@ input, textarea, [contenteditable] {
   --app-safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --app-viewport-height: 100svh;
   --app-screen-height: var(--app-viewport-height);
+
+  /* ブランド/テーマ色: テーマ選択で変化する（SettingsModal.jsxのapplyTheme参照） */
+  --color-primary: #6366F1;        /* ヘッダー・アクセント */
+  --color-primary-light: #EEF2FF;  /* ハイライト背景 */
+  --color-today: #BAE6FD;          /* カレンダーの今日セル背景 */
+  --color-today-dark: #0EA5E9;     /* カレンダーの今日セル文字 */
+
+  /* セマンティック色: 意味を持つ固定色（テーマで変えない） */
+  --color-danger: #EF4444;         /* 削除・警告など危険操作 */
+  /* 注: 曜日色（日=赤系, 土=青系）はCalendar.css内で直接指定 */
+
+  /* 背景・サーフェス・テキスト: テーマ非依存 */
   --color-bg: #F0F2F5;
   --color-surface: #FFFFFF;
-  --color-primary: #6366F1;
-  --color-primary-light: #EEF2FF;
-  --color-today: #BAE6FD;
-  --color-today-dark: #0EA5E9;
   --color-text: #1E1B4B;
   --color-text-secondary: #6B7280;
   --color-border: #E5E7EB;
-  --color-danger: #EF4444;
   --radius: 16px;
   --radius-sm: 10px;
   --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
