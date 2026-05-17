@@ -90,7 +90,12 @@
 }
 
 .cal-cell:active {
-  opacity: 0.7;
+  background: var(--color-primary-light);
+}
+
+.cal-cell.today:active {
+  /* today背景に重ねて少し濃く */
+  opacity: 0.75;
 }
 
 .cal-cell.other-month {
