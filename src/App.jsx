@@ -27,6 +27,7 @@ import MonthPickerModal from './components/MonthPickerModal'
 import HabitTip from './components/HabitTip'
 import { getRandomTip } from './data/habitTips'
 import RecordView from './components/RecordView'
+import Calendar from './components/Calendar'
 import StatsView from './components/StatsView'
 import CategoryManageModal from './components/CategoryManageModal'
 import { useHabitsStorage, loadData } from './hooks/useHabitsStorage'
@@ -439,21 +440,21 @@ export default function App() {
           )}
         </button>
         <div className="header-actions">
-          {/* カレンダーへ移動 */}
+          {/* 実績モーダルを開く */}
           <button
             className="header-btn"
-            onClick={() => scrollToSection('record')}
-            aria-label="カレンダー"
-            title="カレンダー"
+            onClick={() => setModal({ type: 'record' })}
+            aria-label="実績"
+            title="実績"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" />
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
           </button>
-          {/* 分析（グラフ）へ移動 */}
+          {/* 分析モーダルを開く */}
           <button
             className="header-btn"
-            onClick={() => scrollToSection('stats')}
+            onClick={() => setModal({ type: 'analysis' })}
             aria-label="分析"
             title="分析"
           >
@@ -630,27 +631,48 @@ export default function App() {
               </div>
             )}
           </section>
-          {/* 実績セクション */}
+          {/* カレンダー（ホーム主役） */}
           <div id="section-record" className="section-group">
-            <RecordView
-              calendarDate={calendarDate}
-              onCalendarDateChange={setCalendarDate}
+            <Calendar
+              date={calendarDate}
+              onDateChange={setCalendarDate}
               habits={habits}
               records={records}
               today={today}
-              streakMode={streakMode}
               onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
               onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
             />
           </div>
-
-          {/* 分析セクション */}
-          <div id="section-stats" className="section-group">
-            <StatsView habits={habits} records={records} today={today} colorCategories={colorCategories} statsStartDate={effectiveStatsStartDate} />
-          </div>
           <HabitTip tip={currentTip} visible={showDeepTip} returning={deepTipReturning} />
         </div>
       </main>
+
+      {modal?.type === 'record' && (
+        <RecordView
+          calendarDate={calendarDate}
+          onCalendarDateChange={setCalendarDate}
+          habits={habits}
+          records={records}
+          today={today}
+          streakMode={streakMode}
+          onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
+          onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
+          asModal
+          onClose={closeModal}
+        />
+      )}
+
+      {modal?.type === 'analysis' && (
+        <StatsView
+          habits={habits}
+          records={records}
+          today={today}
+          colorCategories={colorCategories}
+          statsStartDate={effectiveStatsStartDate}
+          asModal
+          onClose={closeModal}
+        />
+      )}
 
       {modal?.type === 'monthPicker' && (
         <MonthPickerModal

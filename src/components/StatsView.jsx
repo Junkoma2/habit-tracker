@@ -4,6 +4,7 @@ import StatsAdviceCard from './StatsAdviceCard'
 import StatsWeekdayCard from './StatsWeekdayCard'
 import StatsCategoryCard from './StatsCategoryCard'
 import './StatsView.css'
+import Modal from './Modal'
 
 const DOW_LABELS = ['日', '月', '火', '水', '木', '金', '土']
 
@@ -81,7 +82,8 @@ function calcColorStats(habits, records, today, colorCategories, statsStartDate)
     .sort((a, b) => (b.rate ?? -1) - (a.rate ?? -1))
 }
 
-export default function StatsView({ habits, records, today, colorCategories = {}, statsStartDate = null }) {
+
+export default function StatsView({ habits, records, today, colorCategories = {}, statsStartDate = null, asModal = false, onClose }) {
   const stats7 = calcRateForRange(habits, records, today, 7, statsStartDate)
   const rate7 = stats7.rate
   const stats30 = calcRateForRange(habits, records, today, 30, statsStartDate)
@@ -90,11 +92,9 @@ export default function StatsView({ habits, records, today, colorCategories = {}
   const colorStats = calcColorStats(habits, records, today, colorCategories, statsStartDate)
   const hasNamedColors = Object.values(colorCategories).some(v => v?.trim())
 
-  if (habits.length === 0) {
-    return <p className="analysis-empty">習慣を追加すると達成率が表示されます。</p>
-  }
-
-  return (
+  const body = habits.length === 0 ? (
+    <p className="analysis-empty">習慣を追加すると達成率が表示されます。</p>
+  ) : (
     <>
       <StatsAdviceCard rate7={rate7} rate30={rate30} statsStartDate={statsStartDate} achieved7={stats7.achieved} total7={stats7.total} achieved30={stats30.achieved} total30={stats30.total} />
 
@@ -105,4 +105,13 @@ export default function StatsView({ habits, records, today, colorCategories = {}
       <StatsWeekdayCard weekdayRates={weekdayRates} />
     </>
   )
+
+  if (asModal) {
+    return (
+      <Modal title="分析" onClose={onClose}>
+        {body}
+      </Modal>
+    )
+  }
+  return body
 }
