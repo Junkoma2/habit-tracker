@@ -86,6 +86,16 @@
   text-align: right;
 }
 
+.analysis-weekday-row--today .analysis-weekday-label,
+.analysis-weekday-row--today .analysis-weekday-rate {
+  color: var(--color-primary);
+}
+
+.analysis-weekday-row--today .analysis-weekday-bar span {
+  background: var(--color-primary);
+  opacity: 1;
+}
+
 .analysis-weekday-bar {
   overflow: hidden;
   height: 8px;
