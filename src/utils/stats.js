@@ -9,7 +9,6 @@ export const MILESTONES = [
   { days: 7,   label: '1週間' },
   { days: 14,  label: '2週間' },
   { days: 30,  label: '1か月' },
-  { days: 60,  label: '2か月' },
   { days: 90,  label: '3か月' },
   { days: 180, label: '6か月' },
   { days: 365, label: '1年' },
@@ -18,21 +17,6 @@ export const MILESTONES = [
 // 次のマイルストンを返す（null = 全達成）
 export function getNextMilestone(streak) {
   return MILESTONES.find(m => streak < m.days) ?? null
-}
-
-// 後方互換: 旧 PHASES ベースのAPI（RecordViewの積み上がりグループ表示で使用）
-export const PHASES = [
-  { label: 'まず2週間続けてみよう', days: 14 },
-  { label: 'リズムができてきた', days: 30 },
-  { label: '日常に馴染んできた', days: 90 },
-  { label: '生活の一部', days: Infinity },
-]
-
-export function getPhase(streak) {
-  for (let i = 0; i < PHASES.length; i++) {
-    if (streak < PHASES[i].days) return { phase: PHASES[i], index: i }
-  }
-  return { phase: PHASES[PHASES.length - 1], index: PHASES.length - 1 }
 }
 
 export function calcCurrentStreak(habitId, records) {
@@ -118,24 +102,6 @@ export function calcStats(habitId, records) {
   const current = calcCurrentStreak(habitId, records)
   return { current, longest, total }
 }
-
-export function getHabitPhase(currentStreak) {
-  const { phase, index } = getPhase(currentStreak)
-  const next = index < PHASES.length - 1 ? PHASES[index + 1] : null
-  return {
-    label: phase.label,
-    next: next?.label ?? null,
-    daysToNext: next ? phase.days - currentStreak : null,
-    tip: _PHASE_TIPS[index] ?? '',
-  }
-}
-
-const _PHASE_TIPS = [
-  '今日1回できればOK。完璧より継続を。',
-  '同じ時間・場所でやると定着しやすくなります。',
-  '1日抜けても大丈夫。戻ってくることが大切です。',
-  'もう自然と続いています。この調子で。',
-]
 
 export function calcPeriodStats(habitId, records, today, createdAt, archivedAt) {
   const todayDate = parseLocalDate(today)
