@@ -52,11 +52,12 @@
 }
 
 .modal-handle {
-  width: 36px;
-  height: 4px;
-  border-radius: 2px;
+  width: 44px;
+  height: 5px;
+  border-radius: 3px;
   background: var(--color-border);
-  margin: 0 auto 16px;
+  margin: 4px auto 18px;
+  opacity: 0.7;
 }
 
 .modal-title {
