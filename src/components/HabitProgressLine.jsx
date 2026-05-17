@@ -3,12 +3,13 @@ import './HabitProgressLine.css'
 
 const DISPLAY_COUNT = 4
 
-// 表示ウィンドウをスライドさせ、達成が進むほど丸が右へ動いて見えるようにする
-// 最新達成を左から2番目（reachedIdx=0なら左端）に固定し、右に未達成を並べる
+// ウィンドウを段階的に固定し、達成が増えると左から右へ丸が塗りつぶされる
+// DISPLAY_COUNT-1 個ごとにウィンドウが切り替わる
 function getDisplayMilestones(streak) {
   const reachedIdx = MILESTONES.reduce((last, m, i) => (streak >= m.days ? i : last), -1)
 
-  let startIdx = reachedIdx <= 0 ? 0 : reachedIdx - 1
+  const windowNum = reachedIdx < 0 ? 0 : Math.floor(reachedIdx / (DISPLAY_COUNT - 1))
+  let startIdx = windowNum * (DISPLAY_COUNT - 1)
   let endIdx = Math.min(startIdx + DISPLAY_COUNT - 1, MILESTONES.length - 1)
   startIdx = Math.max(0, endIdx - DISPLAY_COUNT + 1)
 

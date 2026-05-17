@@ -71,7 +71,16 @@
   background: #fff;
 }
 
-/* 今ここ縦線マーカー：達成済みと次の目標の間の線上に重ねる */
+/* 今ここ縦線マーカーがある線：縦線位置までを白、以降をグレーにする */
+.hpl-stage--has-marker::before {
+  background: linear-gradient(
+    to right,
+    #fff calc(var(--marker-pos) * 100%),
+    rgba(255, 255, 255, 0.3) calc(var(--marker-pos) * 100%)
+  );
+}
+
+/* 今ここ縦線マーカー */
 .hpl-stage--has-marker::after {
   content: '';
   position: absolute;
