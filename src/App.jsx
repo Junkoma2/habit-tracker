@@ -717,6 +717,8 @@ export default function App() {
 
       {modal?.type === 'importFile' && (() => {
         const recordDates = Object.keys(modal.data.records).sort()
+        const hasColorCategories = modal.data.colorCategories && Object.keys(modal.data.colorCategories).length > 0
+        const colorText = hasColorCategories ? '\n色の名前: あり（復元されます）' : '\n色の名前: なし（現在の設定は変わりません）'
         const skippedText = modal.skippedUnknownRecords > 0
           ? `\n\n※ バックアップ内に存在しない習慣IDの記録 ${modal.skippedUnknownRecords}件は除外して復元します。`
           : ''
@@ -726,7 +728,7 @@ export default function App() {
         return (
           <ConfirmModal
             title="インポートの確認"
-            message={`「${modal.filename}」をインポートします。\n\n習慣: ${modal.data.habits.length}件\n記録日数: ${recordDates.length}日\n期間: ${rangeText}${skippedText}\n\n⚠ 現在のデータはすべて上書きされます。\nこの操作は取り消せません。`}
+            message={`「${modal.filename}」をインポートします。\n\n習慣: ${modal.data.habits.length}件\n記録日数: ${recordDates.length}日\n期間: ${rangeText}${colorText}${skippedText}\n\n⚠ 現在のデータはすべて上書きされます。\nこの操作は取り消せません。`}
             confirmLabel="インポート"
             danger={true}
             onConfirm={handleImportConfirm}
