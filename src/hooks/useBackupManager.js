@@ -2,7 +2,8 @@ import { useState, useCallback, useRef } from 'react'
 import { sanitizeImportData, validateImportData } from '../utils/validation'
 
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
-const BACKUP_DIR_NAME = 'habit-tracker-backups'
+const BACKUP_DIR_NAME = 'habit-tracker-backups'
+export const BACKUP_VERSION = 1
 
 /**
  * バックアップ/リストア処理を管理するフック。
@@ -23,6 +24,10 @@ export function useBackupManager({
   setColorCategories,
   setModal,
   setToast,
+  statsStartDate,
+  streakMode,
+  setStatsStartDate,
+  setStreakMode,
   modal,
 }) {
   const [lastBackupDate, setLastBackupDate] = useState(() => {
@@ -32,7 +37,14 @@ export function useBackupManager({
 
   const handleExport = useCallback(async () => {
     const sanitized = sanitizeImportData({ habits, records })
-    const json = JSON.stringify({ ...sanitized.data, colorCategories }, null, 2)
+    const backupData = {
+      version: BACKUP_VERSION,
+      ...sanitized.data,
+      colorCategories,
+      ...(statsStartDate ? { statsStartDate } : {}),
+      streakMode,
+    }
+    const json = JSON.stringify(backupData, null, 2)
     const blob = new Blob([json], { type: 'application/json' })
     const filename = `habit-tracker-${today}.json`
     const skippedText = sanitized.skippedUnknownRecords > 0
@@ -72,7 +84,7 @@ export function useBackupManager({
     URL.revokeObjectURL(url)
     markSaved()
     setToast(`バックアップを保存しました${skippedText}`)
-  }, [habits, records, today, colorCategories, setToast])
+  }, [habits, records, today, colorCategories, statsStartDate, streakMode, setToast])
 
   const handleImportClick = useCallback(() => {
     fileInputRef.current?.click()
@@ -118,9 +130,11 @@ export function useBackupManager({
     setHabits(modal.data.habits)
     setRecords(modal.data.records)
     if (modal.data.colorCategories) setColorCategories(modal.data.colorCategories)
+    if (modal.data.statsStartDate) setStatsStartDate(modal.data.statsStartDate)
+    if (modal.data.streakMode) setStreakMode(modal.data.streakMode)
     setModal(null)
     setToast(`復元しました（${habitCount}件・${dayCount}日分）`)
-  }, [modal, setHabits, setRecords, setColorCategories, setModal, setToast])
+  }, [modal, setHabits, setRecords, setColorCategories, setStatsStartDate, setStreakMode, setModal, setToast])
 
   return {
     lastBackupDate,
