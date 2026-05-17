@@ -42,7 +42,7 @@ export default function CategoryManageModal({ colorCategories, onUpdate, onClose
               type="text"
               value={draft[color] ?? ''}
               onChange={e => handleChange(color, e.target.value)}
-              placeholder="カテゴリ名（任意）"
+              placeholder="色の名前（任意）"
               maxLength={20}
             />
           </div>
