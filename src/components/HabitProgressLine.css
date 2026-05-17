@@ -45,7 +45,30 @@
 
 .hpl-track {
   display: grid;
+  position: relative;
   /* grid-template-columns はインラインで動的に設定 */
+}
+
+/* 左端より前に続く線（達成済み） */
+.hpl-track--has-left-tail::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: calc(50% / var(--col-count) - 6px);
+  height: 2px;
+  background: #fff;
+}
+
+/* 右端より先に続く線（未達成） */
+.hpl-track--has-right-tail::after {
+  content: '';
+  position: absolute;
+  top: 5px;
+  right: 0;
+  width: calc(50% / var(--col-count) - 6px);
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .hpl-stage {
