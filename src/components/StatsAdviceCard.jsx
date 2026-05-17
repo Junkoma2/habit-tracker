@@ -1,9 +1,9 @@
 // 達成率に基づく傾向コメント（#195: 評価ではなく支援寄りのトーン）
 function getAdvice(rate7) {
   if (rate7 === null) return null
-  if (rate7 >= 80) return '安定したペースで続けられています。'
-  if (rate7 >= 50) return '半分以上できています。今の調子を大切に。'
-  return '無理のないペースで続けることが、長続きにつながりやすいです。'
+  if (rate7 >= 80) return 'この7日間、安定したペースです。'
+  if (rate7 >= 50) return 'この7日間は半分以上できています。'
+  return 'できた日を積み上げていきましょう。'
 }
 
 // statsStartDate がある場合、ラベルを実態に合わせて調整する
