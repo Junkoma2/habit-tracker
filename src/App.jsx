@@ -632,7 +632,7 @@ export default function App() {
             )}
           </section>
           {/* カレンダー（ホーム主役） */}
-          <div id="section-record" className="section-group">
+          <section id="section-record" className="section">
             <Calendar
               date={calendarDate}
               onDateChange={setCalendarDate}
@@ -642,7 +642,7 @@ export default function App() {
               onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
               onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
             />
-          </div>
+          </section>
           <HabitTip tip={currentTip} visible={showDeepTip} returning={deepTipReturning} />
         </div>
       </main>
