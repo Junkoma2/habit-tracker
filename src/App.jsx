@@ -535,7 +535,7 @@ export default function App() {
 
             {activeHabits.length > 0 && !editMode && !showWelcome && showEditHint && (
               <div className="edit-hint">
-                <span>習慣は長押しで編集できます。</span>
+                <span>習慣を長押しすると今日・昨日の記録をまとめて変更できます。</span>
                 <button type="button" onClick={dismissEditHint}>閉じる</button>
               </div>
             )}
