@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Modal from './Modal'
 import HabitProgressLine from './HabitProgressLine'
 import { calcCurrentStreakWithMode, MILESTONES, getNextMilestone } from '../utils/stats'
@@ -44,6 +45,7 @@ export default function RecordView({
   asModal = false,
   onClose,
 }) {
+  const [showMilestoneInfo, setShowMilestoneInfo] = useState(false)
   const monthKey = formatMonthKey(calendarDate)
   const monthCount = countRecordsInMonth(records, monthKey)
   const totalCount = countTotalRecords(records)
@@ -64,6 +66,11 @@ export default function RecordView({
         <section className="section record-phase-highlight-section">
           <div className="section-header">
             <h2 className="section-title">習慣の進捗</h2>
+            <button
+              className="record-info-btn"
+              onClick={() => setShowMilestoneInfo(true)}
+              aria-label="マイルストンについて"
+            >ⓘ</button>
           </div>
           <div className="progress-line-list">
             {sortedHabits.map(({ habit, streak }) => (
@@ -71,6 +78,22 @@ export default function RecordView({
             ))}
           </div>
         </section>
+      )}
+
+      {showMilestoneInfo && (
+        <Modal title="マイルストンとは" onClose={() => setShowMilestoneInfo(false)}>
+          <div className="milestone-info-content">
+            <p>習慣は繰り返しによって少しずつ自然化すると言われています。</p>
+            <p>研究では平均66日前後で「自動化」が進んだという報告もありますが、個人差があります。</p>
+            <p>このアプリでは、小さな継続を段階的に感じられるよう、1日・1週間・1か月などの目安を設定しています。</p>
+            <ul className="milestone-info-list">
+              {MILESTONES.map(m => (
+                <li key={m.days}><span className="milestone-info-days">{m.days}日</span>{m.label}</li>
+              ))}
+            </ul>
+            <p className="milestone-info-note">続けるペースは人それぞれ。数字はあくまで目安です。</p>
+          </div>
+        </Modal>
       )}
 
       {/* 積み上がり */}
