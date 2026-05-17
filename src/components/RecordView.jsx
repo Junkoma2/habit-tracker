@@ -1,4 +1,5 @@
 import Calendar from './Calendar'
+import Modal from './Modal'
 import HabitProgressLine from './HabitProgressLine'
 import { calcCurrentStreakWithMode, MILESTONES, getNextMilestone } from '../utils/stats'
 import './RecordView.css'
@@ -41,6 +42,8 @@ export default function RecordView({
   streakMode = 'decrement',
   onDayClick,
   onMonthTitleClick,
+  asModal = false,
+  onClose,
 }) {
   const monthKey = formatMonthKey(calendarDate)
   const monthCount = countRecordsInMonth(records, monthKey)
@@ -55,10 +58,9 @@ export default function RecordView({
 
   const sortedHabits = [...habitStreakList].sort((a, b) => b.streak - a.streak)
 
-  return (
+  const body = (
     <>
       {/* #272: カレンダーを今日の習慣の直後（最上部）に配置 */}
-      {/* #278/#280: 実績タイトルをカード内に統一 */}
       <section className="section record-calendar-section">
         <div className="section-header">
           <h2 className="section-title">カレンダー</h2>
@@ -74,7 +76,7 @@ export default function RecordView({
         />
       </section>
 
-      {/* 習慣の進捗（#272: カレンダーの後に移動） */}
+      {/* 習慣の進捗 */}
       {activeHabits.length > 0 && (
         <section className="section record-phase-highlight-section">
           <div className="phase-highlight-heading">習慣の進捗</div>
@@ -86,10 +88,9 @@ export default function RecordView({
         </section>
       )}
 
-      {/* 積み上がり（#293: 現在日数 + 次のマイルストンで表示） */}
+      {/* 積み上がり */}
       <section className="section record-summary-section">
         <div className="section-header">
-          {/* #294: streakModeに応じてセクションタイトルを変更 */}
           <h2 className="section-title">{streakMode === 'reset' ? '連続日数' : '積み上がり'}</h2>
           <div className="record-mini-stats">
             <span>{monthCount}回 今月</span>
@@ -129,4 +130,13 @@ export default function RecordView({
       </section>
     </>
   )
+
+  if (asModal) {
+    return (
+      <Modal title="実績" onClose={onClose}>
+        {body}
+      </Modal>
+    )
+  }
+  return body
 }
