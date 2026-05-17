@@ -119,9 +119,9 @@ export default function RecordView({
   if (asModal) {
     return (
       <Modal title="実績" onClose={onClose}>
-        {body}
+        <div className="section-group">{body}</div>
       </Modal>
     )
   }
-  return body
+  return <div className="section-group">{body}</div>
 }
