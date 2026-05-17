@@ -8,7 +8,7 @@ export default function HabitTip({ tip, visible, returning }) {
   ].filter(Boolean).join(' ')
   return (
     <div className={cls} aria-live="polite" aria-atomic="true">
-      <p className="habit-tip-pull-heading">習慣化のヒント</p>
+      <p className="habit-tip-pull-heading">ひとこと</p>
       <p className="habit-tip-pull-body">{tip}</p>
     </div>
   )
