@@ -113,9 +113,9 @@ export default function StatsView({ habits, records, today, colorCategories = {}
   if (asModal) {
     return (
       <Modal title="分析" onClose={onClose}>
-        {body}
+        <div className="section-group">{body}</div>
       </Modal>
     )
   }
-  return body
+  return <div className="section-group">{body}</div>
 }
