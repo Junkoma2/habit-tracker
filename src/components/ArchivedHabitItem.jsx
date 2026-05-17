@@ -1,12 +1,23 @@
 import './ArchivedHabitItem.css'
 
+function formatArchivedDate(dateStr) {
+  if (!dateStr) return null
+  const [y, m, d] = dateStr.split('-').map(Number)
+  const today = new Date()
+  const thisYear = today.getFullYear()
+  if (y === thisYear) {
+    return `${m}月${d}日に終了`
+  }
+  return `${y}年${m}月${d}日に終了`
+}
+
 export default function ArchivedHabitItem({ habit, onRestore, onDelete }) {
   return (
     <div className="archived-habit-item">
       <span className="archived-habit-dot" style={{ backgroundColor: habit.color }} />
       <span className="archived-habit-name">{habit.name}</span>
       {habit.archivedAt && (
-        <span className="archived-habit-date">{habit.archivedAt}</span>
+        <span className="archived-habit-date">{formatArchivedDate(habit.archivedAt)}</span>
       )}
       <button
         className="archived-action restore"
