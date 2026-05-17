@@ -81,7 +81,7 @@ export default function RecordView({
       )}
 
       {showMilestoneInfo && (
-        <Modal title="マイルストンとは" onClose={() => setShowMilestoneInfo(false)}>
+        <Modal title="継続の目安について" onClose={() => setShowMilestoneInfo(false)}>
           <div className="milestone-info-content">
             <p>習慣は繰り返しによって少しずつ自然化すると言われています。</p>
             <p>研究では平均66日前後で「自動化」が進んだという報告もありますが、個人差があります。</p>
