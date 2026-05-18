@@ -80,10 +80,10 @@ export default function RecordView({
         </section>
       )}
 
-      {/* 積み上がり */}
+      {/* 継続ペース */}
       <section className="section record-summary-section">
         <div className="section-header">
-          <h2 className="section-title">{streakMode === 'reset' ? '連続日数' : '積み上がり'}</h2>
+          <h2 className="section-title">{streakMode === 'reset' ? '連続日数' : '週何回ペースで続いている'}</h2>
           <div className="record-mini-stats">
             <span>{monthCount}回 今月</span>
             <span>累計 {totalCount}回</span>
