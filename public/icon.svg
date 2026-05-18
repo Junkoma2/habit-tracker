@@ -1,11 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="112" fill="#6366F1"/>
-  <rect x="112" y="136" width="288" height="48" rx="24" fill="white" opacity="0.3"/>
-  <rect x="112" y="232" width="288" height="48" rx="24" fill="white" opacity="0.3"/>
-  <rect x="112" y="328" width="288" height="48" rx="24" fill="white" opacity="0.3"/>
-  <circle cx="152" cy="160" r="22" fill="white"/>
-  <circle cx="152" cy="256" r="22" fill="white"/>
-  <circle cx="152" cy="352" r="22" fill="#FECA57"/>
-  <path d="M138 256 L148 268 L170 244" stroke="#6366F1" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <path d="M138 160 L148 172 L170 148" stroke="#6366F1" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <defs>
+    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="412" y1="346" x2="412" y2="166">
+      <stop offset="0%" stop-color="#1E1B8B"/>
+      <stop offset="100%" stop-color="#A5B4FC"/>
+    </linearGradient>
+  </defs>
+  <path d="M 412 346 A 180 180 0 1 1 412 166"
+        fill="none"
+        stroke="url(#g)"
+        stroke-width="36"
+        stroke-linecap="round"/>
+  <circle cx="412" cy="346" r="22" fill="#1E1B8B"/>
 </svg>
