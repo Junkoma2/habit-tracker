@@ -100,6 +100,7 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
             </button>
           ))}
         </div>
+        {(() => { const m = STREAK_MODES.find(m => m.id === streakMode); return m ? <p className="streak-mode-desc">{m.desc}</p> : null })()}
       </div>
 
       <hr className="settings-divider" />

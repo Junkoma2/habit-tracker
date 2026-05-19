@@ -5,9 +5,9 @@ const SETTINGS_KEY = 'habit-tracker-settings'
 
 // 未達成日の扱いモード (#294)
 export const STREAK_MODES = [
-  { id: 'reset',       label: 'リセットする',    metricLabel: '連続日数' },
-  { id: 'decrement',   label: '1日分だけ戻す',   metricLabel: '週何回ペースで続いている' },
-  { id: 'accumulate',  label: '減らさない',       metricLabel: '週何回ペースで続いている' },
+  { id: 'reset',       label: 'リセットする',    metricLabel: '連続日数',                desc: '未達成の翌日から連続日数が0に戻ります' },
+  { id: 'decrement',   label: '1日分だけ戻す',   metricLabel: '週何回ペースで続いている', desc: '未達成の日は連続日数が1減ります' },
+  { id: 'accumulate',  label: '減らさない',       metricLabel: '週何回ペースで続いている', desc: '未達成の日があっても連続日数は変わりません' },
 ]
 export const DEFAULT_STREAK_MODE = 'decrement'
 
