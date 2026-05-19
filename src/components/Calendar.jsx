@@ -95,10 +95,10 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
                 dow === 6 ? 'sat' : '',
               ].filter(Boolean).join(' ')}
               role="button"
-              tabIndex={other ? -1 : 0}
+              tabIndex={0}
               aria-label={label}
-              onClick={() => onDayClick(dateStr)}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onDayClick(dateStr) } }}
+              onClick={() => { if (other) onDateChange(new Date(y, m, 1)); onDayClick(dateStr) }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (other) onDateChange(new Date(y, m, 1)); onDayClick(dateStr) } }}
             >
               <span className="cal-day-num">{d}</span>
               <div className="cal-dots">

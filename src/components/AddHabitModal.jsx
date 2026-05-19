@@ -18,11 +18,13 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
   const isEdit = !!initialHabit
   const [name, setName] = useState(initialHabit?.name ?? '')
   const [color, setColor] = useState(initialHabit?.color ?? HABIT_COLORS[0])
+  const [showNameError, setShowNameError] = useState(false)
 
   const handleSubmit = (e) => {
     e.preventDefault()
     const trimmed = name.trim()
-    if (!trimmed) return
+    if (!trimmed) { setShowNameError(true); return }
+    setShowNameError(false)
     onSave({ name: trimmed, color })
   }
 
@@ -36,10 +38,11 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
             type="text"
             placeholder="例：ランニング、読書..."
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => { setName(e.target.value); if (showNameError) setShowNameError(false) }}
             maxLength={20}
             autoFocus
           />
+          {showNameError && <p className="form-error">名前を入力してください</p>}
         </div>
 
         <div className="form-group">
@@ -84,7 +87,6 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
         <button
           type="submit"
           className="submit-btn"
-          disabled={!name.trim()}
         >
           {isEdit ? '保存する' : '追加する'}
         </button>
