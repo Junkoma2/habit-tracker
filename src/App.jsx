@@ -550,23 +550,25 @@ export default function App() {
                 )}
               </>
             ) : (
-              <div className="habits-grid">
-                {activeHabits.map(habit => (
-                  <HabitButton
-                    key={habit.id}
-                    habit={habit}
-                    completed={todayRecords.includes(habit.id)}
-                    streak={calcCurrentStreakWithMode(habit.id, records, streakMode)}
-                    streakMode={streakMode}
-                    onPress={(h) => toggleHabit(h.id, today)}
-                    onLongPress={(h) => { dismissEditHint(); setModal({ type: 'longPress', habit: h }) }}
-                  />
-                ))}
+              <>
+                <div className="habits-grid">
+                  {activeHabits.map(habit => (
+                    <HabitButton
+                      key={habit.id}
+                      habit={habit}
+                      completed={todayRecords.includes(habit.id)}
+                      streak={calcCurrentStreakWithMode(habit.id, records, streakMode)}
+                      streakMode={streakMode}
+                      onPress={(h) => toggleHabit(h.id, today)}
+                      onLongPress={(h) => { dismissEditHint(); setModal({ type: 'longPress', habit: h }) }}
+                    />
+                  ))}
+                </div>
                 <button className="add-habit-btn" onClick={() => setModal({ type: 'add' })}>
                   <span className="add-icon">＋</span>
-                  <span>追加</span>
+                  <span>習慣を追加</span>
                 </button>
-              </div>
+              </>
             )}
           </section>
           {/* カレンダー（ホーム主役） */}
