@@ -473,66 +473,6 @@
   }
 }
 
-.viewport-debug-enabled {
-  background: #ff00ff !important;
-}
-
-.viewport-debug-enabled body {
-  background: #00ffff !important;
-}
-
-.viewport-debug-enabled #root {
-  background: #ffff00 !important;
-}
-
-.viewport-debug-fixed-bar {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 9999;
-  height: 10px;
-  pointer-events: none;
-  background: #ff1744;
-}
-
-.viewport-debug-shell-bar {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 9998;
-  height: 10px;
-  pointer-events: none;
-  background: #00e676;
-}
-
-.viewport-debug-safe-probe {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  width: 0;
-  height: var(--app-safe-area-bottom);
-  pointer-events: none;
-  visibility: hidden;
-}
-
-.viewport-debug-panel {
-  position: fixed;
-  right: 8px;
-  bottom: 14px;
-  z-index: 9999;
-  padding: 4px 6px;
-  border-radius: 4px;
-  pointer-events: none;
-  background: rgba(0, 0, 0, 0.75);
-  color: #fff;
-  font-size: 10px;
-  line-height: 1.2;
-  white-space: pre;
-}
-
-
 #section-record,
 #section-stats {
   scroll-margin-top: 8px;

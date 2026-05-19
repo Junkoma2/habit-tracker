@@ -44,26 +44,7 @@ const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
 const ONBOARDING_KEY = 'habit-tracker-onboarding-done'
 const BACKUP_DIR_NAME = 'habit-tracker-backups'
 const EDIT_HINT_KEY = 'habit-tracker-edit-hint-seen'
-const DEBUG_VIEWPORT_KEY = 'habit-tracker-debug-viewport'
-
 export default function App() {
-  // ?debugViewport アクセス時に localStorage にフラグを保存してリダイレクト
-  if (new URLSearchParams(window.location.search).has('debugViewport')) {
-    try { localStorage.setItem(DEBUG_VIEWPORT_KEY, '1') } catch {}
-    const url = new URL(window.location.href)
-    url.searchParams.delete('debugViewport')
-    window.history.replaceState(null, '', url.toString())
-  }
-  const [viewportDebug, setViewportDebug] = useState(() => {
-    try { return localStorage.getItem(DEBUG_VIEWPORT_KEY) === '1' } catch { return false }
-  })
-  const toggleViewportDebug = useCallback(() => {
-    setViewportDebug(prev => {
-      const next = !prev
-      try { next ? localStorage.setItem(DEBUG_VIEWPORT_KEY, '1') : localStorage.removeItem(DEBUG_VIEWPORT_KEY) } catch {}
-      return next
-    })
-  }, [])
   const isStandalone =
     window.matchMedia('(display-mode: standalone)').matches ||
     window.navigator.standalone === true
@@ -97,10 +78,8 @@ export default function App() {
   const [editMode, setEditMode] = useState(false)
   const { modal, setModal, closeModal } = useModalState()
   const [toast, setToast] = useState(null)
-  const [viewportDebugInfo, setViewportDebugInfo] = useState('')
   const mainRef = useRef(null)
   const headerRef = useRef(null)
-  const safeAreaProbeRef = useRef(null)
   const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
   const stableHandlersRef = useRef(null)
 
@@ -280,38 +259,9 @@ export default function App() {
   }, [])
 
   useEffect(() => {
-    const updateDebugInfo = (visualHeight, height) => {
-      const appEl = document.querySelector('.app')
-      const appRect = appEl?.getBoundingClientRect()
-      const appMainEl = mainRef.current
-      const lastSection = appMainEl?.lastElementChild
-      const lastSectionBottom = lastSection?.getBoundingClientRect().bottom ?? 0
-      const styles = getComputedStyle(document.documentElement)
-      const displayStandalone = window.matchMedia('(display-mode: standalone)').matches
-      const safeBottom = safeAreaProbeRef.current?.getBoundingClientRect().height || 0
-      const scrollTop = appMainEl?.scrollTop ?? 0
-      const scrollHeight = appMainEl?.scrollHeight ?? 0
-      const clientHeight = appMainEl?.clientHeight ?? 0
-      const maxScrollTop = scrollHeight - clientHeight
-      setViewportDebugInfo(
-        [
-          `mode:${displayStandalone ? 'standalone' : 'browser'} nav:${window.navigator.standalone === true ? 'ios-sa' : 'no'}`,
-          `ih:${window.innerHeight} vv:${Math.round(visualHeight)} stable:${Math.round(height)}`,
-          `dch:${document.documentElement.clientHeight}`,
-          `app:${Math.round(appRect?.height || 0)}`,
-          `main-ch:${clientHeight} main-sh:${scrollHeight}`,
-          `scrollTop:${Math.round(scrollTop)} max:${Math.round(maxScrollTop)}`,
-          `lastEl-bottom:${Math.round(lastSectionBottom)}`,
-          `safe:${Math.round(safeBottom)}px raw:${styles.getPropertyValue('--app-safe-area-bottom').trim()}`,
-          `vh-css:${styles.getPropertyValue('--app-viewport-height').trim()}`,
-        ].join('\n')
-      )
-    }
-
     const setViewportHeight = () => {
       const visualViewport = window.visualViewport
       const currentWidth = Math.round(visualViewport?.width || window.innerWidth)
-      const visualHeight = visualViewport?.height || window.innerHeight
       const inputFocused = document.activeElement?.matches?.('input, textarea, [contenteditable="true"]')
 
       let height
@@ -324,23 +274,6 @@ export default function App() {
       }
 
       document.documentElement.style.setProperty('--app-viewport-height', `${Math.round(height)}px`)
-      if (viewportDebug) {
-        updateDebugInfo(visualHeight, height)
-      }
-    }
-
-    // スクロール時にdebug値を再計算（throttle 150ms）
-    let scrollThrottleTimer = null
-    const handleMainScroll = () => {
-      if (!viewportDebug) return
-      if (scrollThrottleTimer !== null) return
-      scrollThrottleTimer = window.setTimeout(() => {
-        scrollThrottleTimer = null
-        const visualViewport = window.visualViewport
-        const visualHeight = visualViewport?.height || window.innerHeight
-        const height = stableViewportRef.current.height || window.innerHeight
-        updateDebugInfo(visualHeight, height)
-      }, 150)
     }
 
     const refreshTimers = new Set()
@@ -361,7 +294,6 @@ export default function App() {
       }
     }
 
-    document.documentElement.classList.toggle('viewport-debug-enabled', viewportDebug)
     refreshViewport()
     window.visualViewport?.addEventListener('resize', setViewportHeight)
     window.visualViewport?.addEventListener('scroll', setViewportHeight)
@@ -369,24 +301,17 @@ export default function App() {
     document.addEventListener('visibilitychange', handleVisibilityChange)
     window.addEventListener('pageshow', refreshViewport)
     window.addEventListener('focus', refreshViewport)
-    const mainEl = mainRef.current
-    if (viewportDebug && mainEl) {
-      mainEl.addEventListener('scroll', handleMainScroll)
-    }
 
     return () => {
-      document.documentElement.classList.remove('viewport-debug-enabled')
       refreshTimers.forEach((timer) => window.clearTimeout(timer))
-      if (scrollThrottleTimer !== null) window.clearTimeout(scrollThrottleTimer)
       window.visualViewport?.removeEventListener('resize', setViewportHeight)
       window.visualViewport?.removeEventListener('scroll', setViewportHeight)
       window.removeEventListener('resize', setViewportHeight)
       document.removeEventListener('visibilitychange', handleVisibilityChange)
       window.removeEventListener('pageshow', refreshViewport)
       window.removeEventListener('focus', refreshViewport)
-      if (mainEl) mainEl.removeEventListener('scroll', handleMainScroll)
     }
-  }, [viewportDebug])
+  }, [])
 
   const handleColorCategoriesUpdate = useCallback((updated) => {
     setColorCategories(updated)
@@ -787,8 +712,6 @@ export default function App() {
           statsStartDate={statsStartDate}
           autoStatsStartDate={oldestRecordDate}
           onStatsStartDateChange={setStatsStartDate}
-          debugEnabled={viewportDebug}
-          onToggleDebug={toggleViewportDebug}
           streakMode={streakMode}
           onStreakModeChange={setStreakMode}
         />
@@ -842,14 +765,6 @@ export default function App() {
       )}
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
 
-      {viewportDebug && (
-        <>
-          <div ref={safeAreaProbeRef} className="viewport-debug-safe-probe" />
-          <div className="viewport-debug-shell-bar" />
-          <div className="viewport-debug-fixed-bar" />
-          <div className="viewport-debug-panel">{viewportDebugInfo}</div>
-        </>
-      )}
     </div>
   )
 }
