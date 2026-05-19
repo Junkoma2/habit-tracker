@@ -39,6 +39,11 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
 
   const goToPrev = () => onDateChange(new Date(year, month - 1, 1))
   const goToNext = () => onDateChange(new Date(year, month + 1, 1))
+  const goToToday = () => onDateChange(new Date())
+
+  const todayYear = Number(today.slice(0, 4))
+  const todayMonth = Number(today.slice(5, 7)) - 1
+  const isCurrentMonth = year === todayYear && month === todayMonth
 
   return (
     <div className="calendar">
@@ -55,6 +60,15 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
               <polyline points="6 9 12 15 18 9" />
             </svg>
           </button>
+          {!isCurrentMonth && (
+            <button
+              className="cal-today-btn"
+              onClick={goToToday}
+              aria-label="今月へ戻る"
+            >
+              今月
+            </button>
+          )}
         </div>
         <button className="cal-nav-btn" onClick={goToNext} aria-label="次の月">›</button>
       </div>
