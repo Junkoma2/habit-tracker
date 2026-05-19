@@ -103,12 +103,22 @@ export default function RecordView({
                   <div className="streak-summary-right">
                     {streak > 0 ? (
                       <>
-                        <span className="streak-summary-days">{streak}日継続中</span>
-                        {next ? (
-                          <span className="streak-summary-next">次は{next.label}</span>
-                        ) : currentLabel ? (
-                          <span className="streak-summary-next streak-summary-next--done">{currentLabel} 達成</span>
-                        ) : null}
+                        {streakMode === 'reset' && (
+                          <>
+                            <span className="streak-summary-days">{streak}日継続中</span>
+                            {next ? (
+                              <span className="streak-summary-next">次は{next.label}</span>
+                            ) : currentLabel ? (
+                              <span className="streak-summary-next streak-summary-next--done">{currentLabel} 達成</span>
+                            ) : null}
+                          </>
+                        )}
+                        {streakMode === 'decrement' && (
+                          <span className="streak-summary-days">スコア {streak}</span>
+                        )}
+                        {streakMode === 'accumulate' && (
+                          <span className="streak-summary-days">累計 {streak}日</span>
+                        )}
                       </>
                     ) : (
                       <span className="streak-summary-days">まだ記録なし</span>
