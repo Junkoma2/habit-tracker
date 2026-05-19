@@ -63,6 +63,9 @@ export default function App() {
     dismissWelcome()
     setToast('「' + name + '」を追加しました')
   }, [dismissWelcome])
+  const handleUpdateHabit = useCallback((name) => {
+    setToast('「' + name + '」を更新しました')
+  }, [])
   const dismissEditHint = useCallback(() => {
     try { localStorage.setItem(EDIT_HINT_KEY, '1') } catch {}
     setShowEditHint(false)
@@ -176,6 +179,7 @@ export default function App() {
     setRecords,
     setModal,
     onAddHabit: handleAddHabit,
+    onUpdateHabit: handleUpdateHabit,
   })
 
   const {
