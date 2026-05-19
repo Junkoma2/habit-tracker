@@ -242,10 +242,8 @@
   transform: translateX(18px);
 }
 
-/* #442: ストリークモード補足説明 */
-.streak-mode-desc {
-  margin-top: 8px;
-  font-size: 0.75rem;
-  color: var(--color-text-secondary);
-  line-height: 1.5;
+/* #458: バックアップ未経験ユーザーへの促進文言 */
+.no-backup-hint {
+  color: var(--color-primary);
+  font-weight: 500;
 }
