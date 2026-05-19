@@ -152,3 +152,11 @@
 .cal-count.all {
   color: var(--color-primary);
 }
+
+.cal-dot-more {
+  font-size: 0.5rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  line-height: 1;
+  flex-shrink: 0;
+}
