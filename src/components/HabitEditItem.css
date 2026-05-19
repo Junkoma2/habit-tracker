@@ -1,7 +1,7 @@
 .habit-edit-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   padding: 11px 10px;
   background: #fff;
   border: 1.5px solid var(--color-border);
@@ -58,17 +58,25 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
 
 .habit-edit-action {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
+  gap: 3px;
+  padding: 5px 8px;
   height: 34px;
   border-radius: 8px;
   flex-shrink: 0;
+  font-size: 0.78rem;
+  font-weight: 500;
   transition: background 0.12s, color 0.12s;
+}
+
+.habit-edit-action-label {
+  line-height: 1;
 }
 
 .habit-edit-action.edit {
