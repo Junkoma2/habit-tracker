@@ -73,6 +73,10 @@ export default function DayDetailModal({
         </ul>
       )}
 
+      {!isEditable && activeHabits.length > 0 && (
+        <p className="edit-note">記録を変更できるのは今日と昨日のみです</p>
+      )}
+
       <button className="day-close-btn" onClick={onClose}>
         閉じる
       </button>
