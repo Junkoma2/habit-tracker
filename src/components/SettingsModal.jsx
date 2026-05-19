@@ -28,7 +28,7 @@ function summarizeColorCategories(colorCategories) {
   return names.slice(0, 3).join(' / ') + (names.length > 3 ? ' …' : '')
 }
 
-export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onManageCategories, onClose, lastBackupDate, debugEnabled, onToggleDebug, statsStartDate, autoStatsStartDate, onStatsStartDateChange, colorCategories, streakMode, onStreakModeChange }) {
+export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onManageCategories, onClose, lastBackupDate, statsStartDate, autoStatsStartDate, onStatsStartDateChange, colorCategories, streakMode, onStreakModeChange }) {
   const colorSummary = summarizeColorCategories(colorCategories)
 
   return (
@@ -134,30 +134,6 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
         </button>
       </div>
 
-      {onToggleDebug && (
-        <>
-          <hr className="settings-divider" />
-          <p className="section-title">開発者</p>
-          {/* #296: ON/OFF文言からトグルスイッチUIへ */}
-          <div className="debug-toggle-row">
-            <div className="debug-toggle-label">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="3" /><path d="M19.07 4.93l-1.41 1.41M5.34 5.34l1.41 1.41M21 12h-2M5 12H3M19.07 19.07l-1.41-1.41M5.34 18.66l1.41-1.41M12 21v-2M12 5V3" />
-              </svg>
-              <span>viewport デバッグ</span>
-            </div>
-            <button
-              className={`toggle-switch${debugEnabled ? ' toggle-switch--on' : ''}`}
-              role="switch"
-              aria-checked={debugEnabled}
-              aria-label="viewport デバッグ"
-              onClick={onToggleDebug}
-            >
-              <span className="toggle-switch-thumb" />
-            </button>
-          </div>
-        </>
-      )}
     </Modal>
   )
 }
