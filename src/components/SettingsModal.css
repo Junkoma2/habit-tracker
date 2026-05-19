@@ -209,24 +209,6 @@
   max-width: 200px;
 }
 
-/* #296: デバッグトグル行 */
-.debug-toggle-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 10px 0;
-}
-
-.debug-toggle-label {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--color-text);
-}
-
 /* トグルスイッチ */
 .toggle-switch {
   width: 44px;
