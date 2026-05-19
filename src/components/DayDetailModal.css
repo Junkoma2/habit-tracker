@@ -156,3 +156,10 @@
 .day-close-btn:active {
   opacity: 0.6;
 }
+
+.readonly-note {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+  margin: -4px 0 12px;
+}
