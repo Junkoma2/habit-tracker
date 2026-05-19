@@ -63,7 +63,7 @@ export default function HabitButton({ habit, completed, streak, streakMode = 'de
     <button
       className={`habit-btn${completed ? ' completed' : ''}${popping ? ' pop' : ''}`}
       style={{ '--color': habit.color }}
-      aria-label={`${habit.name}${completed ? '（達成済み）' : ''}`}
+      aria-label={`${habit.name}${completed ? '（達成済み）' : ''}${streak > 1 ? '、' + streak + streakUnit : ''}`}
       aria-pressed={completed}
       onClick={handleClick}
       onPointerDown={handlePointerDown}
