@@ -77,7 +77,7 @@ export default function HabitButton({ habit, completed, streak, streakMode = 'de
         style={{ backgroundColor: completed ? '#fff' : habit.color }}
       />
       <span className="habit-name">{habit.name}</span>
-      {streak > 1 && <span className="habit-streak">{streak}{streakUnit}</span>}
+      {streak > 0 && <span className="habit-streak">{streak}{streakUnit}</span>}
       {completed && <span className="habit-check">✓</span>}
     </button>
   )

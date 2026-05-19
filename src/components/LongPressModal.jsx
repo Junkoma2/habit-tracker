@@ -17,7 +17,7 @@ export default function LongPressModal({
   ]
 
   return (
-    <Modal onClose={onClose} title={`「${habit.name}」の記録`}>
+    <Modal onClose={onClose} title={`「${habit.name}」の記録・編集`}>
       <div className="lp-days">
         {days.map(({ dateStr, label, completed }) => {
           const unavailable = habit.createdAt && dateStr < habit.createdAt
