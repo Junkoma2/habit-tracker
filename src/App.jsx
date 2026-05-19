@@ -373,9 +373,10 @@ export default function App() {
             aria-label="実績"
             title="実績"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
             </svg>
+            <span className="header-btn-label" aria-hidden="true">実績</span>
           </button>
           {/* 分析モーダルを開く */}
           <button
@@ -384,9 +385,10 @@ export default function App() {
             aria-label="分析"
             title="分析"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" />
             </svg>
+            <span className="header-btn-label" aria-hidden="true">分析</span>
           </button>
           <button
             className="header-btn"
