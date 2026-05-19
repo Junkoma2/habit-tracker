@@ -153,10 +153,17 @@
   color: var(--color-primary);
 }
 
-.cal-dot-more {
-  font-size: 0.5rem;
+.cal-today-btn {
+  font-size: 0.72rem;
   font-weight: 700;
-  color: var(--color-text-secondary);
-  line-height: 1;
-  flex-shrink: 0;
+  color: var(--color-primary);
+  background: var(--color-primary-light);
+  padding: 3px 8px;
+  border-radius: 10px;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+}
+
+.cal-today-btn:active {
+  opacity: 0.6;
 }
