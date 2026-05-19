@@ -9,6 +9,22 @@ export function useModalClose() {
   return useContext(ModalCloseContext)
 }
 
+// モーダル内でフォーカス可能な要素を返す
+const FOCUSABLE_SELECTORS = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(', ')
+
+function getFocusableElements(container) {
+  return Array.from(container.querySelectorAll(FOCUSABLE_SELECTORS)).filter(
+    (el) => !el.closest('[hidden]') && !el.closest('[aria-hidden="true"]')
+  )
+}
+
 /**
  * 共通モーダルベースコンポーネント。
  *
@@ -20,6 +36,7 @@ export function useModalClose() {
  * - animation: slideUp / slideDown + backdrop fade
  * - drag-to-close: 下スワイプで閉じる（scrollTop === 0 のときのみ）
  * - focus: アニメーション完了後に sheetRef へ focus（キーボード対応）
+ * - focus-trap: Tabキーのフォーカスをモーダル内に限定
  * - iOS PWA: modal-open クラスで背後のスクロールをロック、テーマカラーを暗くする
  * - reduced-motion: prefers-reduced-motion 時はアニメーションをスキップ
  *
@@ -33,6 +50,21 @@ export default function Modal({ onClose, children, title }) {
   const dragYRef = useRef(0)
   const draggingRef = useRef(false)
   const closeTimerRef = useRef(null)
+  // requestClose を useEffect 内で安定参照するための ref
+  const requestCloseRef = useRef(null)
+
+  const requestClose = useCallback(() => {
+    if (closing) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      onClose()
+      return
+    }
+    setClosing(true)
+    closeTimerRef.current = setTimeout(onClose, CLOSE_DURATION)
+  }, [closing, onClose])
+
+  // ref を最新の requestClose で常に更新
+  requestCloseRef.current = requestClose
 
   // アニメーション完了後にフォーカスを移動（重複effectを解消）
   useEffect(() => {
@@ -62,15 +94,36 @@ export default function Modal({ onClose, children, title }) {
     return () => clearTimeout(closeTimerRef.current)
   }, [])
 
-  const requestClose = useCallback(() => {
-    if (closing) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      onClose()
-      return
+  // フォーカストラップ: Tabキーをモーダル内でループさせる
+  useEffect(() => {
+    const sheet = sheetRef.current
+    if (!sheet) return
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault()
+        requestCloseRef.current()
+        return
+      }
+      if (e.key !== 'Tab') return
+      const focusable = getFocusableElements(sheet)
+      if (focusable.length === 0) return
+      const first = focusable[0]
+      const last = focusable[focusable.length - 1]
+      if (e.shiftKey) {
+        if (document.activeElement === first || document.activeElement === sheet) {
+          e.preventDefault()
+          last.focus()
+        }
+      } else {
+        if (document.activeElement === last || document.activeElement === sheet) {
+          e.preventDefault()
+          first.focus()
+        }
+      }
     }
-    setClosing(true)
-    closeTimerRef.current = setTimeout(onClose, CLOSE_DURATION)
-  }, [closing, onClose])
+    sheet.addEventListener('keydown', handleKeyDown)
+    return () => sheet.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   // drag-to-close: scrollTop が 0 のときのみ下スワイプで閉じる
   const handleTouchStart = (e) => {
