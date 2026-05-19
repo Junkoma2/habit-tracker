@@ -1,5 +1,11 @@
 import Modal from './Modal'
 import { STREAK_MODES } from '../hooks/useHabitsStorage'
+
+const STREAK_MODE_DESCRIPTIONS = {
+  reset:      '休むとゼロに戻る',
+  decrement:  '少しだけ戻る',
+  accumulate: '変わらず保たれる',
+}
 import './SettingsModal.css'
 
 export const THEMES = [
@@ -88,6 +94,9 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
               aria-pressed={streakMode === mode.id}
             >
               {mode.label}
+              {STREAK_MODE_DESCRIPTIONS[mode.id] && (
+                <span className="streak-mode-desc">{STREAK_MODE_DESCRIPTIONS[mode.id]}</span>
+              )}
             </button>
           ))}
         </div>

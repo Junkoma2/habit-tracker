@@ -38,6 +38,7 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={20}
+            autoFocus
           />
         </div>
 

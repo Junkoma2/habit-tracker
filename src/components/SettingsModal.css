@@ -241,3 +241,22 @@
 .toggle-switch--on .toggle-switch-thumb {
   transform: translateX(18px);
 }
+
+/* #425: streakMode選択肢の補足説明 */
+.streak-mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.streak-mode-desc {
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+}
+
+.streak-mode-btn.selected .streak-mode-desc {
+  color: var(--color-primary);
+}
