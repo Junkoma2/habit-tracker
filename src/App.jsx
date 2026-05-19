@@ -64,8 +64,10 @@ export default function App() {
     setShowEditHint(false)
   }, [])
 
-  const { habits, records, colorCategories, statsStartDate, streakMode, setHabits, setRecords, setColorCategories, setStatsStartDate, setStreakMode } = useHabitsStorage()
-  const { themeId, handleThemeSelect } = useTheme()
+  const [toast, setToast] = useState(null)
+  const onSaveError = useCallback((msg) => setToast(msg), [])
+  const { habits, records, colorCategories, statsStartDate, streakMode, setHabits, setRecords, setColorCategories, setStatsStartDate, setStreakMode } = useHabitsStorage({ onSaveError })
+  const { themeId, handleThemeSelect } = useTheme({ onSaveError })
 
   // 記録の中で最も古い日付（未設定時の集計開始日フォールバック）
   const oldestRecordDate = useMemo(() => {
@@ -77,7 +79,6 @@ export default function App() {
   const [calendarDate, setCalendarDate] = useState(() => new Date())
   const [editMode, setEditMode] = useState(false)
   const { modal, setModal, closeModal } = useModalState()
-  const [toast, setToast] = useState(null)
   const mainRef = useRef(null)
   const headerRef = useRef(null)
   const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
