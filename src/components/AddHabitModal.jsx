@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import Modal from './Modal'
 import { HABIT_COLORS } from '../utils/date'
 import './AddHabitModal.css'
@@ -18,7 +18,16 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
   const isEdit = !!initialHabit
   const [name, setName] = useState(initialHabit?.name ?? '')
   const [color, setColor] = useState(initialHabit?.color ?? HABIT_COLORS[0])
-  const [showNameError, setShowNameError] = useState(false)
+  const nameInputRef = useRef(null)
+
+  // モーダルを開いたとき名前欄にフォーカスする
+  // autoFocus属性はiOS Safariで動作しないため useEffect + ref で実装
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      nameInputRef.current?.focus()
+    }, 50)
+    return () => clearTimeout(timer)
+  }, [])
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -34,6 +43,7 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
         <div className="form-group">
           <label className="form-label">名前</label>
           <input
+            ref={nameInputRef}
             className="form-input"
             type="text"
             placeholder="例：ランニング、読書..."
