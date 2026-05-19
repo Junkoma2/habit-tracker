@@ -76,13 +76,11 @@
   opacity: 0.9;
 }
 
-/* 連続日数: ✓ マーク（右上）と干渉しないよう左下に配置 */
+/* 連続日数: 習慣名の下にフローで配置し、達成チェック（右上絶対）と干渉しない */
 .habit-streak {
-  position: absolute;
-  bottom: 5px;
-  left: 7px;
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 700;
   opacity: 0.85;
   line-height: 1;
+  margin-top: -2px;
 }
