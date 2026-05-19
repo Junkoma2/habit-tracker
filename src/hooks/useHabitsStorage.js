@@ -50,7 +50,7 @@ function loadSettings() {
 const _initial = loadData()
 const _initialSettings = loadSettings()
 
-export function useHabitsStorage() {
+export function useHabitsStorage({ onSaveError } = {}) {
   const [habits, setHabits] = useState(_initial.habits)
   const [records, setRecords] = useState(_initial.records)
   const [colorCategories, setColorCategories] = useState(_initial.colorCategories)
@@ -60,15 +60,23 @@ export function useHabitsStorage() {
   const [streakMode, setStreakMode] = useState(_initialSettings.streakMode ?? DEFAULT_STREAK_MODE)
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ habits, records, colorCategories }))
-  }, [habits, records, colorCategories])
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ habits, records, colorCategories }))
+    } catch {
+      onSaveError?.('データの保存に失敗しました。ストレージの空き容量が不足しています。')
+    }
+  }, [habits, records, colorCategories, onSaveError])
 
   useEffect(() => {
-    const settings = {}
-    if (statsStartDate) settings.statsStartDate = statsStartDate
-    settings.streakMode = streakMode
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
-  }, [statsStartDate, streakMode])
+    try {
+      const settings = {}
+      if (statsStartDate) settings.statsStartDate = statsStartDate
+      settings.streakMode = streakMode
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
+    } catch {
+      onSaveError?.('設定の保存に失敗しました。ストレージの空き容量が不足しています。')
+    }
+  }, [statsStartDate, streakMode, onSaveError])
 
   return { habits, records, colorCategories, statsStartDate, streakMode, setHabits, setRecords, setColorCategories, setStatsStartDate, setStreakMode }
 }

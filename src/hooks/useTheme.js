@@ -11,7 +11,7 @@ function loadTheme() {
   return THEMES[0]
 }
 
-export function useTheme() {
+export function useTheme({ onSaveError } = {}) {
   const [themeId, setThemeId] = useState(() => {
     const t = loadTheme()
     applyTheme(t)
@@ -21,8 +21,12 @@ export function useTheme() {
   const handleThemeSelect = useCallback((theme) => {
     applyTheme(theme)
     setThemeId(theme.id)
-    localStorage.setItem(THEME_STORAGE_KEY, theme.id)
-  }, [])
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, theme.id)
+    } catch {
+      onSaveError?.('テーマの保存に失敗しました。ストレージの空き容量が不足しています。')
+    }
+  }, [onSaveError])
 
   return { themeId, handleThemeSelect }
 }
