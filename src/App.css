@@ -440,7 +440,7 @@
 
 .edit-hint {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 10px;
   margin: -2px 0 12px;
@@ -455,8 +455,7 @@
 .edit-hint span {
   min-width: 0;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.45;
 }
 
 .edit-hint button {
