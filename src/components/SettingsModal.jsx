@@ -133,7 +133,10 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
           </svg>
           <span className="data-mgmt-btn-text">
             バックアップを保存
-            {lastBackupDate && <span className="last-backup-date">最終: {lastBackupDate}</span>}
+            {lastBackupDate
+              ? <span className="last-backup-date">最終: {lastBackupDate}</span>
+              : <span className="last-backup-date no-backup-hint">まだバックアップがありません</span>
+            }
           </span>
         </button>
         <button className="data-mgmt-btn" onClick={onImport}>
