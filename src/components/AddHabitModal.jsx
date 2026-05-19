@@ -29,7 +29,7 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
   }
 
   return (
-    <Modal onClose={onClose} title={isEdit ? '習慣を編集' : '習慣を追加'}>
+    <Modal onClose={onClose} title={isEdit ? `「${initialHabit.name}」を編集` : "習慣を追加"}>
       <form onSubmit={handleSubmit} className="add-form">
         <div className="form-group">
           <label className="form-label">名前</label>
