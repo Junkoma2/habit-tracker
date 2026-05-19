@@ -147,6 +147,10 @@
   font-size: 0.95rem;
   font-weight: 600;
   transition: opacity 0.15s;
+  position: sticky;
+  bottom: 0;
+  /* スクロール時にコンテンツがボタンの背後に重ならないようにする */
+  box-shadow: 0 -10px 14px 6px var(--color-bg);
 }
 
 .day-close-btn:active {
