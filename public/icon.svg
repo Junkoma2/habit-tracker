@@ -1,14 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <defs>
-    <linearGradient id="g" gradientUnits="userSpaceOnUse" x1="383" y1="383" x2="383" y2="129">
-      <stop offset="0%" stop-color="#1E1B8B"/>
-      <stop offset="100%" stop-color="#A5B4FC"/>
+    <linearGradient id="g1" gradientUnits="userSpaceOnUse" x1="284" y1="98" x2="395" y2="336">
+      <stop offset="0%" stop-color="#A5B4FC"/>
+      <stop offset="100%" stop-color="#818CF8"/>
+    </linearGradient>
+    <linearGradient id="g2" gradientUnits="userSpaceOnUse" x1="228" y1="629" x2="228" y2="98">
+      <stop offset="0%" stop-color="#A5B4FC"/>
+      <stop offset="100%" stop-color="#1E1B8B"/>
     </linearGradient>
   </defs>
-  <path d="M 383 383 A 180 180 0 1 1 383 129"
-        fill="none"
-        stroke="url(#g)"
-        stroke-width="36"
-        stroke-linecap="round"/>
-  <circle cx="383" cy="383" r="22" fill="#1E1B8B"/>
+  <!-- 弧１: 12時右(284,98)[280°] → 4時(395,336)[30°], 時計回り 110° -->
+  <path d="M 284 98 A 160 160 0 0 1 395 336"
+        fill="none" stroke="url(#g1)" stroke-width="22" stroke-linecap="round"/>
+  <!-- 弧２: 5時(336,395)[60°] → 12時左(228,98)[260°], 時計回り 200° -->
+  <path d="M 336 395 A 160 160 0 1 1 228 98"
+        fill="none" stroke="url(#g2)" stroke-width="22" stroke-linecap="round"/>
+  <!-- 円: 4時と5時の間 (369,369) -->
+  <circle cx="369" cy="369" r="18" fill="#1E1B8B"/>
 </svg>
