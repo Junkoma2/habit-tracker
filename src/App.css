@@ -156,14 +156,24 @@
 
 .header-btn {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 1px;
   width: 40px;
   height: 40px;
   color: rgba(255, 255, 255, 0.85);
   padding: 0;
   border-radius: 8px;
   transition: background 0.15s, color 0.15s;
+}
+
+.header-btn-label {
+  font-size: 7px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  opacity: 0.8;
 }
 
 .header-btn svg {
