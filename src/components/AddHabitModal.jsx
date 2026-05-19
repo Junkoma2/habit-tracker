@@ -3,6 +3,8 @@ import Modal from './Modal'
 import { HABIT_COLORS } from '../utils/date'
 import './AddHabitModal.css'
 
+const MAX_NAME_LENGTH = 20
+
 const COLOR_NAMES = {
   '#FF6B6B': 'レッド',
   '#FF9F43': 'オレンジ',
@@ -37,22 +39,36 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
     onSave({ name: trimmed, color })
   }
 
+  const remaining = MAX_NAME_LENGTH - name.length
+  const isAtLimit = remaining === 0
+  const isNearLimit = remaining <= 5
+
   return (
     <Modal onClose={onClose} title={isEdit ? `「${initialHabit.name}」を編集` : '習慣を追加'}>
       <form onSubmit={handleSubmit} className="add-form">
         <div className="form-group">
-          <label className="form-label">名前</label>
+          <div className="form-label-row">
+            <label className="form-label" htmlFor="habit-name-input">名前</label>
+            <span
+              className={`char-counter${isAtLimit ? ' at-limit' : isNearLimit ? ' near-limit' : ''}`}
+              aria-live="polite"
+              aria-label={`残り${remaining}文字`}
+            >
+              {name.length}/{MAX_NAME_LENGTH}
+            </span>
+          </div>
           <input
-            ref={nameInputRef}
+            id="habit-name-input"
             className="form-input"
             type="text"
             placeholder="例：ランニング、読書..."
             value={name}
-            onChange={(e) => { setName(e.target.value); if (showNameError) setShowNameError(false) }}
-            maxLength={20}
-            autoFocus
+            onChange={(e) => setName(e.target.value)}
+            maxLength={MAX_NAME_LENGTH}
           />
-          {showNameError && <p className="form-error">名前を入力してください</p>}
+          {!name.trim() && name.length === 0 && (
+            <p className="field-hint">名前を入力してから追加できます</p>
+          )}
         </div>
 
         <div className="form-group">
