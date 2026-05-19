@@ -9,7 +9,7 @@ import { arrayMove } from '@dnd-kit/sortable'
  * - 記録の切り替え（toggle）とundo
  * - ドラッグによる並び替え
  */
-export function useHabitActions({ records, today, setHabits, setRecords, setModal, onAddHabit }) {
+export function useHabitActions({ records, today, setHabits, setRecords, setModal, onAddHabit, onUndoComplete }) {
   const [undoAction, setUndoAction] = useState(null)
   const undoTimerRef = useRef(null)
 
@@ -42,7 +42,8 @@ export function useHabitActions({ records, today, setHabits, setRecords, setModa
       return { ...prev, [dateStr]: [...dr, habitId] }
     })
     setUndoAction(null)
-  }, [undoAction, setRecords])
+    onUndoComplete?.()
+  }, [undoAction, setRecords, onUndoComplete])
 
   const addHabit = useCallback(({ name, color }) => {
     const id = `h_${Date.now()}`

@@ -172,6 +172,7 @@ export default function App() {
     setRecords,
     setModal,
     onAddHabit: dismissWelcome,
+    onUndoComplete: () => setToast('元に戻しました'),
   })
 
   const {
