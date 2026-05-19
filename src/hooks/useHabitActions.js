@@ -49,7 +49,7 @@ export function useHabitActions({ records, today, setHabits, setRecords, setModa
     const id = `h_${Date.now()}`
     setHabits(prev => [...prev, { id, name, color, createdAt: today }])
     setModal(null)
-    onAddHabit?.()
+    onAddHabit?.(name)
   }, [today, setHabits, setModal, onAddHabit])
 
   // updateHabit は modal.habit.id が必要なため、habitId を明示的に引数として受け取る

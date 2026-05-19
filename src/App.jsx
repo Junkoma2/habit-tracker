@@ -59,6 +59,10 @@ export default function App() {
     try { localStorage.setItem(ONBOARDING_KEY, '1') } catch {}
     setShowWelcome(false)
   }, [])
+  const handleAddHabit = useCallback((name) => {
+    dismissWelcome()
+    setToast('「' + name + '」を追加しました')
+  }, [dismissWelcome])
   const dismissEditHint = useCallback(() => {
     try { localStorage.setItem(EDIT_HINT_KEY, '1') } catch {}
     setShowEditHint(false)
@@ -171,8 +175,7 @@ export default function App() {
     setHabits,
     setRecords,
     setModal,
-    onAddHabit: dismissWelcome,
-    onUndoComplete: () => setToast('元に戻しました'),
+    onAddHabit: handleAddHabit,
   })
 
   const {
