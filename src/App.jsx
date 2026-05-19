@@ -178,8 +178,10 @@ export default function App() {
     setHabits,
     setRecords,
     setModal,
-    onAddHabit: handleAddHabit,
-    onUpdateHabit: handleUpdateHabit,
+    onAddHabit: dismissWelcome,
+    onAddComplete: (name) => setToast(`${name} を追加しました`),
+    onUpdateComplete: (name) => setToast(`${name} を更新しました`),
+    onUndoComplete: () => setToast("元に戻しました"),
   })
 
   const {

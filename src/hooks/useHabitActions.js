@@ -9,7 +9,7 @@ import { arrayMove } from '@dnd-kit/sortable'
  * - 記録の切り替え（toggle）とundo
  * - ドラッグによる並び替え
  */
-export function useHabitActions({ records, today, setHabits, setRecords, setModal, onAddHabit, onUpdateHabit }) {
+export function useHabitActions({ records, today, setHabits, setRecords, setModal, onAddHabit, onAddComplete, onUpdateComplete, onUndoComplete }) {
   const [undoAction, setUndoAction] = useState(null)
   const undoTimerRef = useRef(null)
 
@@ -49,8 +49,9 @@ export function useHabitActions({ records, today, setHabits, setRecords, setModa
     const id = `h_${Date.now()}`
     setHabits(prev => [...prev, { id, name, color, createdAt: today }])
     setModal(null)
-    onAddHabit?.(name)
-  }, [today, setHabits, setModal, onAddHabit])
+    onAddHabit?.()
+    onAddComplete?.(name)
+  }, [today, setHabits, setModal, onAddHabit, onAddComplete])
 
   // updateHabit は modal.habit.id が必要なため、habitId を明示的に引数として受け取る
   const updateHabit = useCallback(({ name, color, habitId }) => {
@@ -59,7 +60,8 @@ export function useHabitActions({ records, today, setHabits, setRecords, setModa
     )
     onUpdateHabit?.(name)
     setModal(null)
-  }, [setHabits, setModal, onUpdateHabit])
+    onUpdateComplete?.(name)
+  }, [setHabits, setModal, onUpdateComplete])
 
   const deleteHabit = useCallback((habitId) => {
     setHabits(prev => prev.filter(h => h.id !== habitId))
