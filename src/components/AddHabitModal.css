@@ -42,6 +42,12 @@
   border-color: var(--color-primary);
 }
 
+.form-error {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #e53e3e;
+}
+
 .color-grid {
   display: flex;
   gap: 10px;
