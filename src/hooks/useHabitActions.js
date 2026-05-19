@@ -58,7 +58,6 @@ export function useHabitActions({ records, today, setHabits, setRecords, setModa
     setHabits(prev =>
       prev.map(h => h.id === habitId ? { ...h, name, color } : h)
     )
-    onUpdateHabit?.(name)
     setModal(null)
     onUpdateComplete?.(name)
   }, [setHabits, setModal, onUpdateComplete])
