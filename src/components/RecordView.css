@@ -283,6 +283,10 @@
   flex-shrink: 0;
 }
 
+.milestone-info-desc {
+  color: var(--color-text-secondary);
+}
+
 .milestone-info-note {
   font-size: 0.78rem;
   color: var(--color-text-secondary);

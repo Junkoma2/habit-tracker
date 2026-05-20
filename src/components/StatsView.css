@@ -70,20 +70,28 @@
 
 .analysis-weekday-row {
   display: grid;
-  grid-template-columns: 24px 1fr 40px;
+  grid-template-columns: 24px minmax(0, 7rem) 1fr 40px;
   align-items: center;
   gap: 8px;
 }
 
-.analysis-weekday-label,
-.analysis-weekday-rate {
+.analysis-weekday-label {
+  grid-column: 1;
   color: var(--color-text-secondary);
   font-size: 0.76rem;
   font-weight: 800;
 }
 
+.analysis-weekday-bar {
+  grid-column: 3;
+}
+
 .analysis-weekday-rate {
+  grid-column: 4;
   text-align: right;
+  color: var(--color-text-secondary);
+  font-size: 0.76rem;
+  font-weight: 800;
 }
 
 .analysis-weekday-row--today .analysis-weekday-label,

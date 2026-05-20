@@ -4,14 +4,14 @@ const MS_PER_DAY = 86400000
 
 // 共通マイルストン定義（#273: 全画面で同じ定義を使う）
 export const MILESTONES = [
-  { days: 1,   label: '1日目' },
-  { days: 4,   label: '4日目' },
-  { days: 7,   label: '1週間' },
-  { days: 14,  label: '2週間' },
-  { days: 30,  label: '1か月' },
-  { days: 90,  label: '3か月' },
-  { days: 180, label: '6か月' },
-  { days: 365, label: '1年' },
+  { days: 1,   label: '1日目',  desc: '最初の一歩。ここから習慣が始まる。' },
+  { days: 4,   label: '4日目',  desc: '3日坊主を越えた。続ける意志の証。' },
+  { days: 7,   label: '1週間',  desc: '週のリズムに乗り始める頃。' },
+  { days: 14,  label: '2週間',  desc: '繰り返しが体に馴染み始める段階。' },
+  { days: 30,  label: '1か月',  desc: 'ルーティンとして定着してくる。' },
+  { days: 90,  label: '3か月',  desc: '生活の一部として根づいてくる。' },
+  { days: 180, label: '6か月',  desc: 'やらないと気持ち悪いくらいに染み込む。' },
+  { days: 365, label: '1年',    desc: '習慣が自分らしさの一部になっている。' },
 ]
 
 // 次のマイルストンを返す（null = 全達成）
@@ -41,7 +41,7 @@ export function calcCurrentStreak(habitId, records) {
   }
   return count
 }
-
+
 // #294: 未達成日の扱いモードに応じた積み上がりを計算
 // mode: 'reset' (連続), 'decrement' (1日減算), 'accumulate' (減らさない)
 export function calcCurrentStreakWithMode(habitId, records, mode = 'decrement') {

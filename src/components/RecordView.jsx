@@ -39,7 +39,6 @@ export default function RecordView({
   habits,
   records,
   today,
-  streakMode = 'decrement',
   onDayClick,
   onMonthTitleClick,
   asModal = false,
@@ -53,7 +52,7 @@ export default function RecordView({
   const activeHabits = habits.filter(h => !h.archivedAt)
 
   const habitStreakList = activeHabits.map(habit => {
-    const streak = calcCurrentStreakWithMode(habit.id, records, streakMode)
+    const streak = calcCurrentStreakWithMode(habit.id, records, 'accumulate')
     return { habit, streak }
   })
 
@@ -83,7 +82,7 @@ export default function RecordView({
       {/* 継続ペース */}
       <section className="section record-summary-section">
         <div className="section-header">
-          <h2 className="section-title">{streakMode === 'reset' ? '連続日数' : '継続ペース'}</h2>
+          <h2 className="section-title">継続の記録</h2>
           <div className="record-mini-stats">
             <span>{monthCount}回 今月</span>
             <span>累計 {totalCount}回</span>
@@ -103,21 +102,9 @@ export default function RecordView({
                   <div className="streak-summary-right">
                     {streak > 0 ? (
                       <>
-                        {streakMode === 'reset' && (
-                          <>
-                            <span className="streak-summary-days">{streak}日継続中</span>
-                            {next ? (
-                              <span className="streak-summary-next">次は{next.label}</span>
-                            ) : currentLabel ? (
-                              <span className="streak-summary-next streak-summary-next--done">{currentLabel} 達成</span>
-                            ) : null}
-                          </>
-                        )}
-                        {streakMode === 'decrement' && (
-                          <span className="streak-summary-days">スコア {streak}</span>
-                        )}
-                        {streakMode === 'accumulate' && (
-                          <span className="streak-summary-days">累計 {streak}日</span>
+                        <span className="streak-summary-days">累計 {streak}日</span>
+                        {next && (
+                          <span className="streak-summary-next">次は{next.label}</span>
                         )}
                       </>
                     ) : (
@@ -136,12 +123,13 @@ export default function RecordView({
   const milestoneInfoModal = showMilestoneInfo && (
     <Modal title="継続の目安について" onClose={() => setShowMilestoneInfo(false)}>
       <div className="milestone-info-content">
-        <p>習慣は繰り返しによって少しずつ自然化すると言われています。</p>
-        <p>研究では平均66日前後で「自動化」が進んだという報告もありますが、個人差があります。</p>
-        <p>このアプリでは、小さな継続を段階的に感じられるよう、1日・1週間・1か月などの目安を設定しています。</p>
+        <p>累計の達成日数が増えるにつれ、習慣は少しずつ自分の一部になっていきます。</p>
         <ul className="milestone-info-list">
           {MILESTONES.map(m => (
-            <li key={m.days}><span className="milestone-info-days">{m.days}日</span>{m.label}</li>
+            <li key={m.days}>
+              <span className="milestone-info-days">{m.days}日</span>
+              <span className="milestone-info-desc">{m.desc}</span>
+            </li>
           ))}
         </ul>
         <p className="milestone-info-note">続けるペースは人それぞれ。数字はあくまで目安です。</p>

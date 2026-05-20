@@ -3,14 +3,7 @@ import './HabitButton.css'
 
 const LONG_PRESS_DELAY = 500
 
-// streakModeに応じたストリーク表示ラベル
-function getStreakLabel(streak, streakMode) {
-  if (streakMode === 'reset') return streak + '日連続'
-  if (streakMode === 'accumulate') return streak + '日'
-  return streak + 'pt'
-}
-
-export default function HabitButton({ habit, completed, streak, streakMode = 'decrement', onPress, onLongPress }) {
+export default function HabitButton({ habit, completed, streak, onPress, onLongPress }) {
   const timerRef = useRef(null)
   const isLongPressRef = useRef(false)
   const startPosRef = useRef(null)
@@ -62,7 +55,7 @@ export default function HabitButton({ habit, completed, streak, streakMode = 'de
     <button
       className={`habit-btn${completed ? ' completed' : ''}${popping ? ' pop' : ''}`}
       style={{ '--color': habit.color }}
-      aria-label={`${habit.name}${completed ? '（達成済み）' : ''}${streak > 1 ? '、' + getStreakLabel(streak, streakMode) : ''}`}
+      aria-label={`${habit.name}${completed ? '（達成済み）' : ''}${streak > 1 ? `、${streak}日` : ''}`}
       aria-pressed={completed}
       onClick={handleClick}
       onPointerDown={handlePointerDown}
@@ -76,7 +69,7 @@ export default function HabitButton({ habit, completed, streak, streakMode = 'de
         style={{ backgroundColor: completed ? '#fff' : habit.color }}
       />
       <span className="habit-name">{habit.name}</span>
-      {streak > 1 && <span className="habit-streak">{getStreakLabel(streak, streakMode)}</span>}
+      {streak > 1 && <span className="habit-streak">{streak}日</span>}
       {completed && <span className="habit-check">✓</span>}
     </button>
   )
