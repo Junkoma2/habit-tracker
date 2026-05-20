@@ -1,11 +1,4 @@
 import Modal from './Modal'
-import { STREAK_MODES } from '../hooks/useHabitsStorage'
-
-const STREAK_MODE_DESCRIPTIONS = {
-  reset:      '休むとゼロに戻る',
-  decrement:  '少しだけ戻る',
-  accumulate: '変わらず保たれる',
-}
 import './SettingsModal.css'
 
 export const THEMES = [
@@ -34,7 +27,7 @@ function summarizeColorCategories(colorCategories) {
   return names.slice(0, 3).join(' / ') + (names.length > 3 ? ' …' : '')
 }
 
-export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onManageCategories, onClose, lastBackupDate, statsStartDate, autoStatsStartDate, onStatsStartDateChange, colorCategories, streakMode, onStreakModeChange }) {
+export default function SettingsModal({ currentThemeId, onSelectTheme, onExport, onImport, onManageCategories, onClose, lastBackupDate, statsStartDate, autoStatsStartDate, onStatsStartDateChange, colorCategories }) {
   const colorSummary = summarizeColorCategories(colorCategories)
 
   return (
@@ -83,25 +76,6 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
         </button>
       </div>
 
-      <div className="streak-mode-section">
-        <p className="streak-mode-label">達成できなかった日の扱い</p>
-        <div className="streak-mode-options" role="group" aria-label="達成できなかった日の扱い">
-          {STREAK_MODES.map(mode => (
-            <button
-              key={mode.id}
-              className={`streak-mode-btn${streakMode === mode.id ? ' selected' : ''}`}
-              onClick={() => onStreakModeChange && onStreakModeChange(mode.id)}
-              aria-pressed={streakMode === mode.id}
-            >
-              {mode.label}
-              {STREAK_MODE_DESCRIPTIONS[mode.id] && (
-                <span className="streak-mode-desc">{STREAK_MODE_DESCRIPTIONS[mode.id]}</span>
-              )}
-            </button>
-          ))}
-        </div>
-        {(() => { const m = STREAK_MODES.find(m => m.id === streakMode); return m ? <p className="streak-mode-desc">{m.desc}</p> : null })()}
-      </div>
 
       <hr className="settings-divider" />
 

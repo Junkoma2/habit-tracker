@@ -200,8 +200,8 @@ export default function App() {
     setRecords,
     setColorCategories,
     statsStartDate,
-    streakMode,
     setStatsStartDate,
+    streakMode,
     setStreakMode,
     setModal,
     setToast,
@@ -559,8 +559,7 @@ export default function App() {
                       key={habit.id}
                       habit={habit}
                       completed={todayRecords.includes(habit.id)}
-                      streak={calcCurrentStreakWithMode(habit.id, records, streakMode)}
-                      streakMode={streakMode}
+                      streak={calcCurrentStreakWithMode(habit.id, records, 'accumulate')}
                       onPress={(h) => toggleHabit(h.id, today)}
                       onLongPress={(h) => { dismissEditHint(); setModal({ type: 'longPress', habit: h }) }}
                     />
@@ -596,7 +595,6 @@ export default function App() {
           habits={habits}
           records={records}
           today={today}
-          streakMode={streakMode}
           onDayClick={(dateStr) => setModal({ type: 'day', dateStr })}
           onMonthTitleClick={() => setModal({ type: 'monthPicker' })}
           asModal
@@ -729,8 +727,6 @@ export default function App() {
           statsStartDate={statsStartDate}
           autoStatsStartDate={oldestRecordDate}
           onStatsStartDateChange={setStatsStartDate}
-          streakMode={streakMode}
-          onStreakModeChange={setStreakMode}
         />
       )}
 

@@ -2,7 +2,7 @@ export default function StatsCategoryCard({ colorStats }) {
   return (
     <section className="section">
       <div className="section-header">
-        <h2 className="section-title">色別達成率</h2>
+        <h2 className="section-title">カテゴリ別達成率</h2>
         <small className="section-sub">直近30日</small>
       </div>
       {colorStats.length === 0 ? (

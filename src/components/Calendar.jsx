@@ -116,15 +116,15 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
             >
               <span className="cal-day-num">{d}</span>
               <div className="cal-dots">
-                {completedHabits.slice(0, 5).map(h => (
+                {completedHabits.slice(0, 10).map(h => (
                   <span
                     key={h.id}
                     className="cal-dot"
                     style={{ backgroundColor: h.color }}
                   />
                 ))}
-                {completedHabits.length > 5 && (
-                  <span className="cal-dot-more">+{completedHabits.length - 5}</span>
+                {completedHabits.length > 10 && (
+                  <span className="cal-dot-more">+{completedHabits.length - 10}</span>
                 )}
               </div>
               {total > 0 && count > 0 && (

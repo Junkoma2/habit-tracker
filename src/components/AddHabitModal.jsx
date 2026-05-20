@@ -20,6 +20,7 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
   const isEdit = !!initialHabit
   const [name, setName] = useState(initialHabit?.name ?? '')
   const [color, setColor] = useState(initialHabit?.color ?? HABIT_COLORS[0])
+  const [showNameError, setShowNameError] = useState(false)
   const nameInputRef = useRef(null)
 
   // モーダルを開いたとき名前欄にフォーカスする
