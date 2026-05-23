@@ -105,6 +105,7 @@ export default function Calendar({ date, onDateChange, habits, records, today, o
                 'cal-cell',
                 other ? 'other-month' : '',
                 isToday ? 'today' : '',
+                allDone ? 'all-done' : '',
                 dow === 0 ? 'sun' : '',
                 dow === 6 ? 'sat' : '',
               ].filter(Boolean).join(' ')}
