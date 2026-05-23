@@ -115,6 +115,15 @@
   font-weight: 700;
 }
 
+/* #464: 全習慣達成日の軽い視覚強調 */
+.cal-cell.all-done:not(.today) {
+  background: var(--color-primary-light);
+}
+
+.cal-cell.all-done.other-month {
+  background: none;
+}
+
 .cal-cell.sun .cal-day-num { color: #EF4444; }
 .cal-cell.sat .cal-day-num { color: #3B82F6; }
 
