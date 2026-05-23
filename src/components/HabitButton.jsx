@@ -8,6 +8,7 @@ export default function HabitButton({ habit, completed, streak, onPress, onLongP
   const isLongPressRef = useRef(false)
   const startPosRef = useRef(null)
   const [popping, setPopping] = useState(false)
+  const [unpopping, setUnpopping] = useState(false)
 
   const handlePointerDown = useCallback((e) => {
     isLongPressRef.current = false
@@ -45,6 +46,9 @@ export default function HabitButton({ habit, completed, streak, onPress, onLongP
         setPopping(true)
         if (navigator.vibrate) navigator.vibrate(30)
         setTimeout(() => setPopping(false), 300)
+      } else {
+        setUnpopping(true)
+        setTimeout(() => setUnpopping(false), 250)
       }
       onPress(habit)
     }
@@ -53,7 +57,7 @@ export default function HabitButton({ habit, completed, streak, onPress, onLongP
 
   return (
     <button
-      className={`habit-btn${completed ? ' completed' : ''}${popping ? ' pop' : ''}`}
+      className={`habit-btn${completed ? ' completed' : ''}${popping ? ' pop' : ''}${unpopping ? ' unpop' : ''}`}
       style={{ '--color': habit.color }}
       aria-label={`${habit.name}${completed ? '（達成済み）' : ''}${streak > 1 ? `、${streak}日` : ''}`}
       aria-pressed={completed}
