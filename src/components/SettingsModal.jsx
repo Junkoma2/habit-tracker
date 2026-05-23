@@ -68,9 +68,9 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
           </svg>
           {/* #295: 設定済み色名の要約を入口で表示 */}
           <span className="data-mgmt-btn-text">
-            色の名前を設定
+            習慣を色でグループ分けする
             <span className="color-summary">
-              {colorSummary ?? '未設定'}
+              {colorSummary ?? '色ごとに名前をつけてグループ化できます'}
             </span>
           </span>
         </button>
