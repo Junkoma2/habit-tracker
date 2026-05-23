@@ -70,7 +70,7 @@
 
 .analysis-weekday-row {
   display: grid;
-  grid-template-columns: 24px minmax(0, 7rem) 1fr 40px;
+  grid-template-columns: minmax(0, 3rem) 1fr 40px;
   align-items: center;
   gap: 8px;
 }
@@ -83,11 +83,11 @@
 }
 
 .analysis-weekday-bar {
-  grid-column: 3;
+  grid-column: 2;
 }
 
 .analysis-weekday-rate {
-  grid-column: 4;
+  grid-column: 3;
   text-align: right;
   color: var(--color-text-secondary);
   font-size: 0.76rem;
