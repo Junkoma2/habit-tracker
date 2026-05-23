@@ -771,10 +771,12 @@ export default function App() {
       )}
 
       {undoAction && (
-        <div className="undo-toast">
-          <span className="undo-message">達成を取り消しました</span>
-          <button className="undo-btn" onClick={handleUndo}>元に戻す</button>
-        </div>
+        <Toast
+          message="達成を取り消しました"
+          action="元に戻す"
+          onAction={handleUndo}
+          onDismiss={() => {}}
+        />
       )}
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
 
