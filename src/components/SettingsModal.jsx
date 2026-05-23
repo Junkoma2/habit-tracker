@@ -82,14 +82,26 @@ export default function SettingsModal({ currentThemeId, onSelectTheme, onExport,
       <p className="section-title">分析</p>
       <div className="stats-start-date-row">
         <label className="stats-start-date-label" htmlFor="stats-start-date">集計開始日</label>
-        <input
-          id="stats-start-date"
-          type="date"
-          className="stats-start-date-input"
-          value={statsStartDate ?? ''}
-          onChange={e => onStatsStartDateChange(e.target.value || null)}
-          aria-describedby="stats-start-date-hint"
-        />
+        <div className="stats-start-date-controls">
+          <input
+            id="stats-start-date"
+            type="date"
+            className="stats-start-date-input"
+            value={statsStartDate ?? ''}
+            onChange={e => onStatsStartDateChange(e.target.value || null)}
+            aria-describedby="stats-start-date-hint"
+          />
+          {statsStartDate && (
+            <button
+              type="button"
+              className="stats-start-date-reset"
+              onClick={() => onStatsStartDateChange(null)}
+              aria-label="集計開始日をリセット"
+            >
+              自動に戻す
+            </button>
+          )}
+        </div>
       </div>
       <p className="stats-start-date-hint" id="stats-start-date-hint">
         {!statsStartDate && autoStatsStartDate

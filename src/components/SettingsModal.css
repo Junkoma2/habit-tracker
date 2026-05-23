@@ -153,6 +153,32 @@
   border-color: var(--color-primary);
 }
 
+.stats-start-date-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.stats-start-date-reset {
+  padding: 0 10px;
+  height: 36px;
+  min-height: 44px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.stats-start-date-reset:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
 .stats-start-date-hint {
   font-size: 0.75rem;
   color: var(--color-text-secondary);
