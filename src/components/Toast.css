@@ -24,3 +24,24 @@
     animation: none;
   }
 }
+
+/* アクション付きトースト（undo等） */
+.toast--action {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 80px);
+}
+
+.toast-action-btn {
+  background: none;
+  border: none;
+  color: var(--color-today, #38bdf8);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
