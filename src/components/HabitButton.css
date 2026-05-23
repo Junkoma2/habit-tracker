@@ -84,3 +84,19 @@
   line-height: 1;
   margin-top: -2px;
 }
+
+@keyframes habit-unpop {
+  0%   { opacity: 1; transform: scale(1); }
+  30%  { opacity: 0.7; transform: scale(0.96); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.habit-btn.unpop {
+  animation: habit-unpop 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .habit-btn.unpop {
+    animation: none;
+  }
+}
