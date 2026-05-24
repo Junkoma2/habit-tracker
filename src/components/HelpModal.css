@@ -138,12 +138,17 @@
   margin-top: 4px;
 }
 
-.help-about-link a {
+.help-about-btn {
   font-size: 0.82rem;
   color: var(--color-primary);
-  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-.help-about-link a:active {
+.help-about-btn:active {
   opacity: 0.7;
 }
