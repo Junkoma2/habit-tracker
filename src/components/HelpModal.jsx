@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import Modal, { useModalClose } from './Modal'
+import AboutModal from './AboutModal'
 import './HelpModal.css'
 
 const STEPS = [
@@ -63,6 +65,12 @@ function HelpTags({ tags }) {
 }
 
 export default function HelpModal({ onClose }) {
+  const [showAbout, setShowAbout] = useState(false)
+
+  if (showAbout) {
+    return <AboutModal onClose={() => setShowAbout(false)} />
+  }
+
   return (
     <Modal onClose={onClose} title="使い方">
       <div className="help-content">
@@ -106,7 +114,9 @@ export default function HelpModal({ onClose }) {
         </section>
       </div>
 
-      <p className="help-about-link"><a href="./docs/design.html" target="_blank" rel="noopener">このアプリについて →</a></p>
+      <p className="help-about-link">
+        <button className="help-about-btn" onClick={() => setShowAbout(true)}>このアプリについて</button>
+      </p>
       <p className="help-version">バージョン {__APP_VERSION__}</p>
       <HelpCloseButton />
     </Modal>
