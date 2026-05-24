@@ -1,6 +1,4 @@
-import { useState } from 'react'
 import Modal, { useModalClose } from './Modal'
-import AboutModal from './AboutModal'
 import './HelpModal.css'
 
 const STEPS = [
@@ -65,12 +63,6 @@ function HelpTags({ tags }) {
 }
 
 export default function HelpModal({ onClose }) {
-  const [showAbout, setShowAbout] = useState(false)
-
-  if (showAbout) {
-    return <AboutModal onClose={() => setShowAbout(false)} />
-  }
-
   return (
     <Modal onClose={onClose} title="使い方">
       <div className="help-content">
@@ -115,7 +107,7 @@ export default function HelpModal({ onClose }) {
       </div>
 
       <p className="help-about-link">
-        <button className="help-about-btn" onClick={() => setShowAbout(true)}>このアプリについて</button>
+        <button className="help-about-btn" onClick={() => window.open('https://junkoma2.github.io/app-hub/about.html#habit-tracker', '_blank', 'noopener')}>このアプリについて</button>
       </p>
       <p className="help-version">バージョン {__APP_VERSION__}</p>
       <HelpCloseButton />
