@@ -106,9 +106,6 @@ export default function HelpModal({ onClose }) {
         </section>
       </div>
 
-      <p className="help-about-link">
-        <button className="help-about-btn" onClick={() => window.open('https://junkoma2.github.io/app-hub/about.html#habit-tracker', '_blank', 'noopener')}>このアプリについて</button>
-      </p>
       <p className="help-version">バージョン {__APP_VERSION__}</p>
       <HelpCloseButton />
     </Modal>
