@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>habit-tracker 設計ドキュメント</title>
+  <title>habit-tracker について</title>
   <style>
     :root {
       font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", system-ui, sans-serif;
@@ -13,245 +13,134 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      padding: 40px 20px;
+      padding: 40px 20px 60px;
       background: #F0F2F5;
     }
     .doc-shell {
-      max-width: 800px;
+      max-width: 680px;
       margin: 0 auto;
     }
     h1 {
       font-size: 26px;
       font-weight: 700;
-      margin: 0 0 8px;
+      margin: 0 0 6px;
       color: #1E1B4B;
     }
     .doc-subtitle {
       font-size: 14px;
       color: #6B7280;
       margin: 0 0 40px;
+      line-height: 1.6;
     }
     h2 {
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 700;
-      margin: 0 0 12px;
+      margin: 0 0 14px;
       padding-bottom: 8px;
       border-bottom: 2px solid #6366F1;
       color: #1E1B4B;
     }
-    h3 {
-      font-size: 15px;
-      font-weight: 600;
-      margin: 20px 0 8px;
-      color: #4338CA;
-    }
     p {
-      line-height: 1.8;
-      margin: 8px 0;
+      line-height: 1.85;
+      margin: 0 0 12px;
       color: #374151;
+      font-size: 15px;
     }
-    ul, ol {
-      padding-left: 1.5em;
-      margin: 8px 0;
-      line-height: 1.8;
-      color: #374151;
-    }
-    code {
-      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-      font-size: 0.85em;
-      background: #EEF2FF;
-      padding: 2px 6px;
-      border-radius: 4px;
-      color: #3730A3;
-    }
-    pre {
-      background: #1E1B4B;
-      color: #e2e8f0;
-      padding: 20px;
-      border-radius: 10px;
-      overflow-x: auto;
-      font-size: 13px;
-      line-height: 1.6;
-      margin: 12px 0;
-    }
-    pre code {
-      background: none;
-      padding: 0;
-      color: inherit;
-      font-size: inherit;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 12px 0;
-      font-size: 14px;
-    }
-    th {
-      background: #EEF2FF;
-      padding: 10px 14px;
-      text-align: left;
-      font-weight: 600;
-      color: #1E1B4B;
-    }
-    td {
-      padding: 10px 14px;
-      border-bottom: 1px solid #E5E7EB;
-      color: #374151;
-    }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #F5F3FF; }
+    p:last-child { margin-bottom: 0; }
     .section-card {
       background: #FFFFFF;
       border: 1px solid #E5E7EB;
       border-radius: 16px;
-      padding: 24px;
+      padding: 24px 28px;
       margin-bottom: 20px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     }
-    .tag-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin: 10px 0;
-    }
-    .tag {
-      background: #EEF2FF;
-      color: #3730A3;
-      border-radius: 20px;
-      padding: 4px 12px;
-      font-size: 13px;
-      font-weight: 500;
-    }
-    .tag.no {
-      background: #FEE2E2;
-      color: #B91C1C;
-    }
-    .notice {
-      background: #FFF7ED;
-      border-left: 4px solid #F97316;
-      padding: 12px 16px;
-      border-radius: 0 8px 8px 0;
-      margin: 12px 0;
+    .contact-line {
       font-size: 14px;
-      color: #92400E;
+      color: #6B7280;
+      margin: 0;
+    }
+    .contact-line a {
+      color: #6366F1;
+      text-decoration: none;
+    }
+    .contact-line a:hover {
+      text-decoration: underline;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 28px;
+      font-size: 14px;
+      color: #6366F1;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <div class="doc-shell">
-    <h1>habit-tracker 設計ドキュメント</h1>
-    <p class="doc-subtitle">habit-tracker の設計思想・アーキテクチャ・データ構造・拡張方針。ARCHITECTURE.md と合わせて参照すること。</p>
+    <a class="back-link" href="../index.html">← アプリに戻る</a>
+    <h1>habit-tracker について</h1>
+    <p class="doc-subtitle">このアプリをどんな考えで作ったか、少しだけ書き残しておきます。</p>
 
     <div class="section-card">
-      <h2>設計思想</h2>
-      <p><strong>UXは「静かに続けられる道具」。</strong> 自己啓発感・過剰演出・ゲーミフィケーションを禁止する。機能追加より「続けやすさ」を重視する。iPhone Safari / PWA での動作を最優先に考える。</p>
-      <h3>判断基準</h3>
-      <ul>
-        <li>毎日使っても飽きない・疲れないか</li>
-        <li>記録する動作にストレスがないか</li>
-        <li>習慣を「終了」にしても過去記録が消えないか</li>
-        <li>新しい習慣を追加しても過去の達成率が壊れないか</li>
-      </ul>
+      <h2>作った理由</h2>
+      <p>
+        習慣を記録するアプリはたくさんあります。でも、使っていくうちに「疲れる」アプリが多いと感じていました。
+        グラフが増える、ストリークが切れると通知が来る、達成できない日が続くと画面を開きたくなくなる。
+      </p>
+      <p>
+        このアプリは、そういう疲れを感じずに使えるものを目指して作りました。
+        記録できた日を静かに残す。それだけでいい、という考え方です。
+      </p>
     </div>
 
     <div class="section-card">
-      <h2>アーキテクチャ概要</h2>
-      <p>React + Vite 構成。<code>src/</code> 以下にコンポーネントを配置し、Vite でビルドして <code>dist/</code> を生成する。GitHub Actions で <code>main</code> への push 時に自動ビルド・GitHub Pages へデプロイ。</p>
-      <pre><code>habit-tracker/
-├── src/
-│   ├── App.jsx             # 状態管理の中心
-│   ├── App.css
-│   ├── index.css           # グローバルスタイル
-│   ├── components/
-│   │   ├── Modal.jsx       # ボトムシート基盤
-│   │   ├── HabitButton.jsx
-│   │   ├── HabitEditItem.jsx
-│   │   ├── Calendar.jsx
-│   │   ├── AddHabitModal.jsx
-│   │   ├── LongPressModal.jsx
-│   │   ├── DayDetailModal.jsx
-│   │   ├── ConfirmModal.jsx
-│   │   ├── StatsModal.jsx
-│   │   ├── HelpModal.jsx
-│   │   ├── SettingsModal.jsx
-│   │   ├── ArchivedHabitItem.jsx
-│   │   └── Toast.jsx
-│   └── utils/
-│       ├── date.js         # 日付ユーティリティ
-│       └── validation.js   # インポートバリデーション
-├── public/
-├── docs/
-│   └── design.html
-└── ARCHITECTURE.md         # 詳細な実装仕様</code></pre>
-      <p>状態管理は <code>App.jsx</code> のみ。外部状態管理ライブラリは使用しない。</p>
+      <h2>大切にしていること</h2>
+      <p>
+        「続けること」より「戻ってこられること」を大事にしています。
+        数日できなかったとしても、また今日から再開できればそれで十分です。
+        アプリが責めたり、焦らせたりすることは一切ありません。
+      </p>
+      <p>
+        機能は少ないほうがいいと思っています。何でもできるより、毎日開いても飽きない、疲れない道具であることを優先しました。
+      </p>
     </div>
 
     <div class="section-card">
-      <h2>データ構造</h2>
-      <h3>localStorage キー</h3>
-      <table>
-        <tr><th>キー</th><th>内容</th></tr>
-        <tr><td><code>habit-tracker-v1</code></td><td>全データ（JSON）</td></tr>
-        <tr><td><code>habit-tracker-last-backup</code></td><td>最終バックアップ日時（ISO 8601）</td></tr>
-      </table>
-      <h3>データスキーマ</h3>
-      <pre><code>{
-  "habits": [
-    {
-      "id": "h_1234567890",
-      "name": "ランニング",
-      "color": "#54A0FF",
-      "createdAt": "2026-05-01",
-      "archivedAt": null
-    }
-  ],
-  "records": {
-    "2026-05-01": ["h_1234567890", "h_0987654321"]
-  }
-}</code></pre>
-      <ul>
-        <li><code>habits</code> — 習慣の定義リスト。配列の順序が表示順</li>
-        <li><code>habits[].id</code> — <code>h_</code> + タイムスタンプ形式</li>
-        <li><code>habits[].createdAt</code> — 習慣の追加日（<code>YYYY-MM-DD</code>）。旧データには存在しない場合があり、その場合は全日付で有効と見なす（後方互換）</li>
-        <li><code>habits[].archivedAt</code> — 終了日（<code>YYYY-MM-DD</code>）。<code>null</code> または未定義が現役。過去記録は保持</li>
-        <li><code>records</code> — 日付をキーに、その日に完了した habitId の配列を値とする</li>
-      </ul>
-      <h3>エクスポートのフォーマット</h3>
-      <pre><code>{
-  "version": 1,
-  "exportedAt": "2026-01-20T08:00:00.000Z",
-  "habits": [...],
-  "records": {...}
-}</code></pre>
-      <p>バリデーションロジックは <code>src/utils/validation.js</code> の <code>validateImportData</code> に集約。</p>
+      <h2>機能の紹介</h2>
+      <p>
+        続けたい習慣を登録して、できた日にタップするだけです。
+        ホーム画面のカレンダーで、どの日に何ができたかを一目で振り返られます。
+        日付をタップするとその日の記録が開き、前日分は長押しで遡って記録することもできます。
+      </p>
+      <p>
+        分析画面では、直近の達成率や曜日ごとの傾向を確認できます。
+        完璧な記録を目指すためではなく、「次にどう続けるか」を自分なりに考えるための画面です。
+      </p>
+      <p>
+        習慣を「終了」にしても、それまでの記録はすべて残ります。
+        新しく習慣を追加しても、過去の達成率は変わりません。
+      </p>
     </div>
 
     <div class="section-card">
-      <h2>重要な実装ルール</h2>
-      <h3>日付の扱い</h3>
-      <p>日付は常に <code>YYYY-MM-DD</code> 文字列で扱う。<code>new Date()</code> を直接使うとタイムゾーン問題が発生するため、日付のパースには <code>parseLocalDate</code>（<code>new Date(y, m-1, d)</code> 形式）を使うこと。</p>
-      <h3>確認ダイアログ</h3>
-      <p><code>window.confirm</code> / <code>window.alert</code> は使用しない（PWA の iOS Safari でブロックされる場合があるため）。すべて <code>ConfirmModal.jsx</code> を使用する。</p>
-      <h3>createdAt による集計フィルタ</h3>
-      <p>Calendar.jsx・DayDetailModal.jsx では <code>habits.filter(h =&gt; !h.createdAt || dateStr &gt;= h.createdAt)</code> で対象日に存在した習慣のみを母数に使う。これにより新規習慣追加で過去の達成率が壊れない。</p>
+      <h2>データについて</h2>
+      <p>
+        記録はすべてこの端末のブラウザ内に保存されます。サーバーには送られません。
+        アカウント登録も不要です。
+      </p>
+      <p>
+        端末を変えるときや、バックアップを取りたいときは、設定画面からデータをファイルに書き出せます。
+        同じ画面から読み込むことで、別の端末でも続きを使えます。
+      </p>
     </div>
 
     <div class="section-card">
-      <h2>今後の拡張方針・やらないこと</h2>
-      <h3>検討中の機能</h3>
-      <table>
-        <tr><th>機能</th><th>方針</th></tr>
-        <tr><td>スキップ機能</td><td><code>skipped: {date: [habitId]}</code> をデータモデルに追加。スキップはストリークを切らない</td></tr>
-        <tr><td>統計グラフ</td><td>過去7日の日別達成率をCSSバーで表示</td></tr>
-      </table>
-      <h3>やらないこと</h3>
-      <div class="tag-list">
-        <span class="tag no">スコアリング・ポイント・バッジ等のゲーミフィケーション</span>
-        <span class="tag no">クラウド同期・アカウント機能</span>
-        <span class="tag no">他ユーザーとの共有・比較</span>
-        <span class="tag no">プッシュ通知（Service Worker による定期通知）</span>
-        <span class="tag no">習慣のカテゴリ階層化</span>
-      </div>
+      <h2>作った人</h2>
+      <p class="contact-line">個人で作っています。感想や気になることがあれば <a href="mailto:sharon0630@icloud.com">sharon0630@icloud.com</a> までどうぞ。</p>
     </div>
   </div>
 </body>
