@@ -131,3 +131,19 @@
 .help-close-btn:active {
   opacity: 0.8;
 }
+
+.help-about-link {
+  text-align: center;
+  margin-bottom: 8px;
+  margin-top: 4px;
+}
+
+.help-about-link a {
+  font-size: 0.82rem;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.help-about-link a:active {
+  opacity: 0.7;
+}

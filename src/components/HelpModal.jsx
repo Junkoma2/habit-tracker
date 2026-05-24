@@ -106,6 +106,7 @@ export default function HelpModal({ onClose }) {
         </section>
       </div>
 
+      <p className="help-about-link"><a href="./docs/design.html" target="_blank" rel="noopener">このアプリについて →</a></p>
       <p className="help-version">バージョン {__APP_VERSION__}</p>
       <HelpCloseButton />
     </Modal>
