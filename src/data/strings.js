@@ -50,7 +50,6 @@ export const UI = {
     habit: '習慣',
     analysis: '分析',
     data: 'データ',
-    streakMode: '達成できなかった日の扱い',
     statsStartDate: '集計開始日',
     colorNames: '色の名前を設定',
     colorNameUnset: '未設定',

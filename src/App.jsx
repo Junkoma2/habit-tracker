@@ -37,7 +37,7 @@ import { useModalState } from './hooks/useModalState'
 import { useHabitActions } from './hooks/useHabitActions'
 import { useBackupManager } from './hooks/useBackupManager'
 import { getToday, getYesterday } from './utils/date'
-import { calcCurrentStreak, calcCurrentStreakWithMode } from './utils/stats'
+import { calcCurrentStreak } from './utils/stats'
 import './App.css'
 
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
@@ -73,7 +73,7 @@ export default function App() {
 
   const [toast, setToast] = useState(null)
   const onSaveError = useCallback((msg) => setToast(msg), [])
-  const { habits, records, colorCategories, statsStartDate, streakMode, setHabits, setRecords, setColorCategories, setStatsStartDate, setStreakMode } = useHabitsStorage({ onSaveError })
+  const { habits, records, colorCategories, statsStartDate, setHabits, setRecords, setColorCategories, setStatsStartDate } = useHabitsStorage({ onSaveError })
   const { themeId, handleThemeSelect } = useTheme({ onSaveError })
 
   // 記録の中で最も古い日付（未設定時の集計開始日フォールバック）
@@ -201,8 +201,6 @@ export default function App() {
     setColorCategories,
     statsStartDate,
     setStatsStartDate,
-    streakMode,
-    setStreakMode,
     setModal,
     setToast,
     modal,
@@ -559,7 +557,7 @@ export default function App() {
                       key={habit.id}
                       habit={habit}
                       completed={todayRecords.includes(habit.id)}
-                      streak={calcCurrentStreakWithMode(habit.id, records, 'accumulate')}
+                      streak={calcCurrentStreak(habit.id, records)}
                       onPress={(h) => toggleHabit(h.id, today)}
                       onLongPress={(h) => { dismissEditHint(); setModal({ type: 'longPress', habit: h }) }}
                     />
