@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from 'react'
 import { sanitizeImportData, validateImportData } from '../utils/validation'
 
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
-const BACKUP_DIR_NAME = 'habit-tracker-backups'
+const BACKUP_DIR_NAME = 'habit-tracker-backups'
 export const BACKUP_VERSION = 1
 
 /**
@@ -25,9 +25,7 @@ export function useBackupManager({
   setModal,
   setToast,
   statsStartDate,
-  streakMode,
   setStatsStartDate,
-  setStreakMode,
   modal,
 }) {
   const [lastBackupDate, setLastBackupDate] = useState(() => {
@@ -42,7 +40,6 @@ export function useBackupManager({
       ...sanitized.data,
       colorCategories,
       ...(statsStartDate ? { statsStartDate } : {}),
-      streakMode,
     }
     const json = JSON.stringify(backupData, null, 2)
     const blob = new Blob([json], { type: 'application/json' })
@@ -84,7 +81,7 @@ export function useBackupManager({
     URL.revokeObjectURL(url)
     markSaved()
     setToast(`バックアップを保存しました${skippedText}`)
-  }, [habits, records, today, colorCategories, statsStartDate, streakMode, setToast])
+  }, [habits, records, today, colorCategories, statsStartDate, setToast])
 
   const handleImportClick = useCallback(() => {
     fileInputRef.current?.click()
@@ -131,10 +128,9 @@ export function useBackupManager({
     setRecords(modal.data.records)
     if (modal.data.colorCategories) setColorCategories(modal.data.colorCategories)
     if (modal.data.statsStartDate) setStatsStartDate(modal.data.statsStartDate)
-    if (modal.data.streakMode) setStreakMode(modal.data.streakMode)
     setModal(null)
     setToast(`復元しました（${habitCount}件・${dayCount}日分）`)
-  }, [modal, setHabits, setRecords, setColorCategories, setStatsStartDate, setStreakMode, setModal, setToast])
+  }, [modal, setHabits, setRecords, setColorCategories, setStatsStartDate, setModal, setToast])
 
   return {
     lastBackupDate,

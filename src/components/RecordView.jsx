@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Modal from './Modal'
 import HabitProgressLine from './HabitProgressLine'
-import { calcCurrentStreakWithMode, MILESTONES, getNextMilestone } from '../utils/stats'
+import { calcCurrentStreak, MILESTONES, getNextMilestone } from '../utils/stats'
 import './RecordView.css'
 
 function formatMonthKey(date) {
@@ -52,7 +52,7 @@ export default function RecordView({
   const activeHabits = habits.filter(h => !h.archivedAt)
 
   const habitStreakList = activeHabits.map(habit => {
-    const streak = calcCurrentStreakWithMode(habit.id, records, 'accumulate')
+    const streak = calcCurrentStreak(habit.id, records)
     return { habit, streak }
   })
 

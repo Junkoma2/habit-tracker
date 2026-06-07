@@ -65,7 +65,6 @@ export function sanitizeImportData(data) {
         ? { colorCategories: data.colorCategories }
         : {}),
       ...(data.statsStartDate && typeof data.statsStartDate === 'string' ? { statsStartDate: data.statsStartDate } : {}),
-      ...(data.streakMode && typeof data.streakMode === 'string' ? { streakMode: data.streakMode } : {}),
     },
     skippedUnknownRecords,
   }
