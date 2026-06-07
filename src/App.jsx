@@ -37,7 +37,7 @@ import { useModalState } from './hooks/useModalState'
 import { useHabitActions } from './hooks/useHabitActions'
 import { useBackupManager } from './hooks/useBackupManager'
 import { getToday, getYesterday } from './utils/date'
-import { calcCurrentStreak } from './utils/stats'
+import { calcStats } from './utils/stats'
 import './App.css'
 
 const LAST_BACKUP_KEY = 'habit-tracker-last-backup'
@@ -557,7 +557,7 @@ export default function App() {
                       key={habit.id}
                       habit={habit}
                       completed={todayRecords.includes(habit.id)}
-                      streak={calcCurrentStreak(habit.id, records)}
+                      days={calcStats(habit.id, records).total}
                       onPress={(h) => toggleHabit(h.id, today)}
                       onLongPress={(h) => { dismissEditHint(); setModal({ type: 'longPress', habit: h }) }}
                     />
