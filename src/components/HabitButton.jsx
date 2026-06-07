@@ -3,7 +3,7 @@ import './HabitButton.css'
 
 const LONG_PRESS_DELAY = 500
 
-export default function HabitButton({ habit, completed, streak, onPress, onLongPress }) {
+export default function HabitButton({ habit, completed, days, onPress, onLongPress }) {
   const timerRef = useRef(null)
   const isLongPressRef = useRef(false)
   const startPosRef = useRef(null)
@@ -59,7 +59,7 @@ export default function HabitButton({ habit, completed, streak, onPress, onLongP
     <button
       className={`habit-btn${completed ? ' completed' : ''}${popping ? ' pop' : ''}${unpopping ? ' unpop' : ''}`}
       style={{ '--color': habit.color }}
-      aria-label={`${habit.name}${completed ? '（達成済み）' : ''}${streak > 1 ? `、${streak}日連続` : ''}`}
+      aria-label={`${habit.name}${completed ? '（達成済み）' : ''}${days > 1 ? `、${days}日達成` : ''}`}
       aria-pressed={completed}
       onClick={handleClick}
       onPointerDown={handlePointerDown}
@@ -73,7 +73,7 @@ export default function HabitButton({ habit, completed, streak, onPress, onLongP
         style={{ backgroundColor: completed ? '#fff' : habit.color }}
       />
       <span className="habit-name">{habit.name}</span>
-      {streak > 1 && <span className="habit-streak">{streak}日</span>}
+      {days > 1 && <span className="habit-streak">{days}日</span>}
       {completed && <span className="habit-check">✓</span>}
     </button>
   )
