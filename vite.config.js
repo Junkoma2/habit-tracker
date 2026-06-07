@@ -1,16 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import { execSync } from 'child_process'
 import { readFileSync, writeFileSync } from 'fs'
 import { resolve } from 'path'
-
-function getVersion() {
-  try {
-    return execSync('git describe --tags --always').toString().trim()
-  } catch {
-    return 'unknown'
-  }
-}
+import { APP_VERSION } from './src/version.js'
 
 function injectSwVersion(version) {
   return {
@@ -23,13 +15,11 @@ function injectSwVersion(version) {
   }
 }
 
-const version = getVersion()
-
 export default defineConfig({
   base: '/habit-tracker/',
-  plugins: [react(), injectSwVersion(version)],
+  plugins: [react(), injectSwVersion(APP_VERSION)],
   define: {
-    __APP_VERSION__: JSON.stringify(version),
+    __APP_VERSION__: JSON.stringify(APP_VERSION),
   },
   server: {
     port: process.env.PORT ? parseInt(process.env.PORT) : 5173,
