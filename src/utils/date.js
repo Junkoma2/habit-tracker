@@ -53,3 +53,14 @@ export const HABIT_COLORS = [
   '#FD79A8',
   '#6C5CE7',
 ]
+
+export const COLOR_NAMES = {
+  '#FF6B6B': 'レッド',
+  '#FF9F43': 'オレンジ',
+  '#FECA57': 'イエロー',
+  '#48DBB4': 'グリーン',
+  '#54A0FF': 'ブルー',
+  '#A29BFE': 'ラベンダー',
+  '#FD79A8': 'ピンク',
+  '#6C5CE7': 'パープル',
+}
