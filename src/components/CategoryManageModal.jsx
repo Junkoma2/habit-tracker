@@ -1,18 +1,8 @@
 import { useState } from 'react'
 import Modal from './Modal'
-import { HABIT_COLORS } from '../utils/date'
+import { HABIT_COLORS, COLOR_NAMES } from '../utils/date'
 import './CategoryManageModal.css'
 
-const COLOR_NAMES = {
-  '#FF6B6B': 'レッド',
-  '#FF9F43': 'オレンジ',
-  '#FECA57': 'イエロー',
-  '#48DBB4': 'グリーン',
-  '#54A0FF': 'ブルー',
-  '#A29BFE': 'ラベンダー',
-  '#FD79A8': 'ピンク',
-  '#6C5CE7': 'パープル',
-}
 
 export default function CategoryManageModal({ colorCategories, onUpdate, onClose }) {
   const [draft, setDraft] = useState({ ...colorCategories })
