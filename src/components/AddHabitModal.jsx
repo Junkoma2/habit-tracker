@@ -66,9 +66,10 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={MAX_NAME_LENGTH}
+            aria-invalid={showNameError}
           />
-          {!name.trim() && name.length === 0 && (
-            <p className="field-hint">名前を入力してから追加できます</p>
+          {showNameError && (
+            <p className="field-error" role="alert" aria-live="assertive">名前を入力してください</p>
           )}
         </div>
 

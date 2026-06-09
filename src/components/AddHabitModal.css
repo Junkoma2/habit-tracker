@@ -175,3 +175,9 @@
   color: var(--color-text-secondary);
   margin-top: -2px;
 }
+
+.field-error {
+  font-size: 0.78rem;
+  color: #e53e3e;
+  margin-top: -2px;
+}
