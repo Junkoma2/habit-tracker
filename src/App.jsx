@@ -72,6 +72,8 @@ export default function App() {
   }, [])
 
   const [toast, setToast] = useState(null)
+  const [deleteUndoAction, setDeleteUndoAction] = useState(null)
+  const deleteUndoTimerRef = useRef(null)
   const onSaveError = useCallback((msg) => setToast(msg), [])
   const { habits, records, colorCategories, statsStartDate, setHabits, setRecords, setColorCategories, setStatsStartDate } = useHabitsStorage({ onSaveError })
   const { themeId, handleThemeSelect } = useTheme({ onSaveError })
@@ -752,7 +754,27 @@ export default function App() {
           title="習慣を完全に削除"
           message={`「${modal.habitName}」を完全に削除しますか？\n\n⚠ 過去の記録もすべて消えます\n✗ この操作は取り消せません`}
           confirmLabel="完全に削除"
-          onConfirm={() => deleteHabit(modal.habitId)}
+          onConfirm={() => {
+            const habitId = modal.habitId
+            const habitName = modal.habitName
+            const habitSnapshot = habits.find(h => h.id === habitId)
+            const recordsSnapshot = records
+            setHabits(prev => prev.filter(h => h.id !== habitId))
+            closeModal()
+            clearTimeout(deleteUndoTimerRef.current)
+            setDeleteUndoAction({ habitId, habitName, habitSnapshot, recordsSnapshot })
+            deleteUndoTimerRef.current = setTimeout(() => {
+              setDeleteUndoAction(null)
+              setRecords(prev => {
+                const next = {}
+                for (const [date, ids] of Object.entries(prev)) {
+                  const filtered = ids.filter(id => id !== habitId)
+                  if (filtered.length > 0) next[date] = filtered
+                }
+                return next
+              })
+            }, 10000)
+          }}
           onClose={closeModal}
         />
       )}
@@ -774,6 +796,33 @@ export default function App() {
           action="元に戻す"
           onAction={handleUndo}
           onDismiss={() => {}}
+        />
+      )}
+      {deleteUndoAction && (
+        <Toast
+          message={`「${deleteUndoAction.habitName}」を削除しました`}
+          action="元に戻す"
+          onAction={() => {
+            clearTimeout(deleteUndoTimerRef.current)
+            setHabits(prev => {
+              if (prev.some(h => h.id === deleteUndoAction.habitId)) return prev
+              return [...prev, deleteUndoAction.habitSnapshot].filter(Boolean)
+            })
+            setRecords(deleteUndoAction.recordsSnapshot)
+            setDeleteUndoAction(null)
+          }}
+          onDismiss={() => {
+            clearTimeout(deleteUndoTimerRef.current)
+            setDeleteUndoAction(null)
+            setRecords(prev => {
+              const next = {}
+              for (const [date, ids] of Object.entries(prev)) {
+                const filtered = ids.filter(id => id !== deleteUndoAction.habitId)
+                if (filtered.length > 0) next[date] = filtered
+              }
+              return next
+            })
+          }}
         />
       )}
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
