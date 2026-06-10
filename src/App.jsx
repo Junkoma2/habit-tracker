@@ -93,8 +93,34 @@ export default function App() {
   const stableViewportRef = useRef({ width: window.innerWidth, height: 0 })
   const stableHandlersRef = useRef(null)
 
-  const today = getToday()
-  const yesterday = getYesterday()
+  const [today, setToday] = useState(() => getToday())
+  const [yesterday, setYesterday] = useState(() => getYesterday())
+
+  // 日付をまたいだまま使い続けた場合に today/yesterday を再評価する
+  useEffect(() => {
+    const checkDateChange = () => {
+      const freshToday = getToday()
+      setToday(prev => (prev === freshToday ? prev : freshToday))
+      setYesterday(prev => {
+        const freshYesterday = getYesterday()
+        return prev === freshYesterday ? prev : freshYesterday
+      })
+    }
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) checkDateChange()
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener('focus', checkDateChange)
+    const intervalId = setInterval(checkDateChange, 60 * 1000)
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+      window.removeEventListener('focus', checkDateChange)
+      clearInterval(intervalId)
+    }
+  }, [])
   const onRefresh = useCallback(() => {
     const fresh = loadData()
     setHabits(fresh.habits)
