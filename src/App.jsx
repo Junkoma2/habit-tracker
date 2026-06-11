@@ -55,6 +55,10 @@ export default function App() {
   const [showEditHint, setShowEditHint] = useState(() => {
     try { return !localStorage.getItem(EDIT_HINT_KEY) } catch { return false }
   })
+  const [toast, setToast] = useState(null)
+  const [deleteUndoAction, setDeleteUndoAction] = useState(null)
+  const deleteUndoTimerRef = useRef(null)
+  const onSaveError = useCallback((msg) => setToast(msg), [])
   const dismissWelcome = useCallback(() => {
     try { localStorage.setItem(ONBOARDING_KEY, '1') } catch {}
     setShowWelcome(false)
@@ -71,10 +75,6 @@ export default function App() {
     setShowEditHint(false)
   }, [])
 
-  const [toast, setToast] = useState(null)
-  const [deleteUndoAction, setDeleteUndoAction] = useState(null)
-  const deleteUndoTimerRef = useRef(null)
-  const onSaveError = useCallback((msg) => setToast(msg), [])
   const { habits, records, colorCategories, statsStartDate, setHabits, setRecords, setColorCategories, setStatsStartDate } = useHabitsStorage({ onSaveError })
   const { themeId, handleThemeSelect } = useTheme({ onSaveError })
 
