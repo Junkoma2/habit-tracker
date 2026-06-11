@@ -19,18 +19,16 @@ function isDismissed() {
 }
 
 export default function AddToHomePrompt() {
-  const [visible, setVisible] = useState(false)
-  const [deferredPrompt, setDeferredPrompt] = useState(null)
   const isIosDevice = isIos()
+  // iOS: 常にバナーを表示（beforeinstallpromptは使えない）。レンダー中に初期値を判定する
+  const [visible, setVisible] = useState(() => (
+    isIosDevice && !isStandalone() && !isDismissed()
+  ))
+  const [deferredPrompt, setDeferredPrompt] = useState(null)
 
   useEffect(() => {
+    if (isIosDevice) return
     if (isStandalone() || isDismissed()) return
-
-    if (isIosDevice) {
-      // iOS: 常にバナーを表示（beforeinstallpromptは使えない）
-      setVisible(true)
-      return
-    }
 
     // Android/PC: beforeinstallpromptイベントを待つ
     const handler = (e) => {

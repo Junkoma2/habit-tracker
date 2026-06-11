@@ -64,7 +64,9 @@ export default function Modal({ onClose, children, title }) {
   }, [closing, onClose])
 
   // ref を最新の requestClose で常に更新
-  requestCloseRef.current = requestClose
+  useEffect(() => {
+    requestCloseRef.current = requestClose
+  }, [requestClose])
 
   // アニメーション完了後にフォーカスを移動（重複effectを解消）
   useEffect(() => {
