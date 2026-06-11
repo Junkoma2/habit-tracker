@@ -67,5 +67,22 @@ export function useHabitsStorage({ onSaveError } = {}) {
     }
   }, [statsStartDate, onSaveError])
 
+  // 他タブの書き込みを検知して最新データを読み直す（後書きタブによる上書き消失を防ぐ）
+  useEffect(() => {
+    const handleStorage = (e) => {
+      if (e.key === STORAGE_KEY || e.key === null) {
+        const data = loadData()
+        setHabits(data.habits)
+        setRecords(data.records)
+        setColorCategories(data.colorCategories)
+      }
+      if (e.key === SETTINGS_KEY || e.key === null) {
+        setStatsStartDate(loadSettings().statsStartDate ?? null)
+      }
+    }
+    window.addEventListener('storage', handleStorage)
+    return () => window.removeEventListener('storage', handleStorage)
+  }, [])
+
   return { habits, records, colorCategories, statsStartDate, setHabits, setRecords, setColorCategories, setStatsStartDate }
 }
