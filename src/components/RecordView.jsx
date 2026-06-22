@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import Modal from './Modal'
 import HabitProgressLine from './HabitProgressLine'
-import { calcCurrentStreak, MILESTONES, getNextMilestone } from '../utils/stats'
+import { MILESTONES, getNextMilestone } from '../utils/stats'
+import { buildHabitRecordSummaries } from '../utils/recordSummary'
 import './RecordView.css'
 
 function formatMonthKey(date) {
@@ -35,12 +36,8 @@ function getStreakDisplay(streak) {
 
 export default function RecordView({
   calendarDate,
-  onCalendarDateChange,
   habits,
   records,
-  today,
-  onDayClick,
-  onMonthTitleClick,
   asModal = false,
   onClose,
 }) {
@@ -49,19 +46,12 @@ export default function RecordView({
   const monthCount = countRecordsInMonth(records, monthKey)
   const totalCount = countTotalRecords(records)
 
-  const activeHabits = habits.filter(h => !h.archivedAt)
-
-  const habitStreakList = activeHabits.map(habit => {
-    const streak = calcCurrentStreak(habit.id, records)
-    return { habit, streak }
-  })
-
-  const sortedHabits = [...habitStreakList].sort((a, b) => b.streak - a.streak)
+  const sortedHabits = buildHabitRecordSummaries(habits, records)
 
   const body = (
     <>
       {/* 習慣の進捗 */}
-      {activeHabits.length > 0 && (
+      {sortedHabits.length > 0 && (
         <section className="section record-phase-highlight-section">
           <div className="section-header">
             <h2 className="section-title">習慣の進捗</h2>
@@ -89,21 +79,21 @@ export default function RecordView({
           </div>
         </div>
 
-        {activeHabits.length === 0 ? (
+        {sortedHabits.length === 0 ? (
           <p className="record-empty">習慣を追加すると続いた日数が表示されます。</p>
         ) : (
           <div className="streak-summary-list">
-            {sortedHabits.map(({ habit, streak }) => {
-              const { currentLabel, next } = getStreakDisplay(streak)
+            {sortedHabits.map(({ habit, streak, total }) => {
+              const { next } = getStreakDisplay(streak)
               return (
                 <div key={habit.id} className="streak-summary-row">
                   <span className="streak-summary-dot" style={{ backgroundColor: habit.color }} />
                   <span className="streak-summary-name">{habit.name}</span>
                   <div className="streak-summary-right">
-                    {streak > 0 ? (
+                    {total > 0 ? (
                       <>
-                        <span className="streak-summary-days">累計 {streak}日</span>
-                        {next && (
+                        <span className="streak-summary-days">累計 {total}日</span>
+                        {streak > 0 && next && (
                           <span className="streak-summary-next">次は{next.label}</span>
                         )}
                       </>
