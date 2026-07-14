@@ -5,7 +5,10 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
   {
-    ignores: ['dist/**', 'node_modules/**'],
+    // .gitignore の運用ファイル・ツール設定ディレクトリと揃える。
+    // ローカルにのみ存在する補助ディレクトリ（一時的な作業用チェックアウト等）が
+    // 増えても本体コードのlint結果に影響しないようにする。
+    ignores: ['dist/**', 'node_modules/**', '.claude/**', '.codex/**', '.cursor/**', '.windsurf/**'],
   },
   js.configs.recommended,
   {
