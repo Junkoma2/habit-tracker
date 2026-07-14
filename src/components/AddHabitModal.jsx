@@ -4,6 +4,7 @@ import { HABIT_COLORS, COLOR_NAMES } from '../utils/date'
 import './AddHabitModal.css'
 
 const MAX_NAME_LENGTH = 20
+const NAME_EXAMPLES = ['5分歩く', '水を飲む', 'ストレッチする', '5分読む']
 
 
 export default function AddHabitModal({ onSave, onClose, initialHabit = null, colorCategories = {} }) {
@@ -52,7 +53,7 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
             id="habit-name-input"
             className="form-input"
             type="text"
-            placeholder="例：ランニング、読書..."
+            placeholder="例：5分歩く、水を飲む"
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={MAX_NAME_LENGTH}
@@ -60,6 +61,21 @@ export default function AddHabitModal({ onSave, onClose, initialHabit = null, co
           />
           {showNameError && (
             <p className="field-error" role="alert" aria-live="assertive">名前を入力してください</p>
+          )}
+          <p className="field-hint">小さく具体的にすると、できたかどうか振り返りやすくなります。</p>
+          {!isEdit && (
+            <div className="example-chip-row">
+              {NAME_EXAMPLES.map((example) => (
+                <button
+                  key={example}
+                  type="button"
+                  className="example-chip"
+                  onClick={() => setName(example)}
+                >
+                  {example}
+                </button>
+              ))}
+            </div>
           )}
         </div>
 

@@ -176,6 +176,27 @@
   margin-top: -2px;
 }
 
+.example-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.example-chip {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1.5px solid var(--color-border);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  transition: opacity 0.15s;
+}
+
+.example-chip:active {
+  opacity: 0.7;
+}
+
 .field-error {
   font-size: 0.78rem;
   color: #e53e3e;
