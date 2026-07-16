@@ -611,6 +611,17 @@ export default function App() {
             />
           </section>
           <HabitTip tip={currentTip} visible={showDeepTip} returning={deepTipReturning} />
+
+          <footer className="app-footer">
+            <a
+              className="app-footer-link"
+              href="https://nonsensicalnook.com/privacy-policy.html"
+              target="_blank"
+              rel="noreferrer"
+            >
+              NNook・プライバシーポリシー
+            </a>
+          </footer>
         </div>
       </main>
 

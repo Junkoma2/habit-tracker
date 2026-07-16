@@ -213,6 +213,24 @@
   padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
 }
 
+/* コンテンツ末尾のNNook導線。他アプリへ横展開しやすいよう最小構成にする */
+.app-footer {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 0;
+}
+
+.app-footer-link {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+.app-footer-link:hover,
+.app-footer-link:focus-visible {
+  text-decoration: underline;
+}
+
 .modal-open .app-main {
   overflow: hidden;
 }
