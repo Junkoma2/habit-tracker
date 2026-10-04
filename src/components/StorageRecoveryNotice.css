@@ -1,0 +1,32 @@
+.storage-recovery {
+  margin: 0 0 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--color-danger, #EF4444);
+  background: var(--color-surface, #fff);
+  color: var(--color-text, #1E1B4B);
+}
+
+.storage-recovery-title {
+  margin: 0 0 4px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.storage-recovery-body {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+.storage-recovery-btn {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border, #E5E7EB);
+  background: var(--color-bg, #F0F2F5);
+  color: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}

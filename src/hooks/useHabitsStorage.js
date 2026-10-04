@@ -1,31 +1,59 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 
 const STORAGE_KEY = 'habit-tracker-v1'
 const SETTINGS_KEY = 'habit-tracker-settings'
 
-export function loadData() {
+export const CORRUPT_BACKUP_KEY = 'habit-tracker-v1-corrupt-backup'
+
+function emptyData() {
+  return { habits: [], records: {}, colorCategories: {} }
+}
+
+function isPlainObject(v) {
+  return !!v && typeof v === 'object' && !Array.isArray(v)
+}
+
+// 保存データを読み、状態を ok / empty / corrupt で返す。corrupt のときは元の文字列も返す
+export function inspectStoredData(storage) {
+  let raw
   try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (raw) {
-      const data = JSON.parse(raw)
-      if (
-        data && typeof data === 'object' && !Array.isArray(data) &&
-        Array.isArray(data.habits) &&
-        data.records && typeof data.records === 'object' && !Array.isArray(data.records)
-      ) {
-        return {
+    raw = (storage ?? localStorage).getItem(STORAGE_KEY)
+  } catch {
+    return { status: 'empty', data: emptyData(), raw: null }
+  }
+  if (!raw) return { status: 'empty', data: emptyData(), raw: null }
+  try {
+    const data = JSON.parse(raw)
+    if (isPlainObject(data) && Array.isArray(data.habits) && isPlainObject(data.records)) {
+      return {
+        status: 'ok',
+        raw,
+        data: {
           habits: data.habits,
           records: data.records,
-          colorCategories: (
-            data.colorCategories &&
-            typeof data.colorCategories === 'object' &&
-            !Array.isArray(data.colorCategories)
-          ) ? data.colorCategories : {},
-        }
+          colorCategories: isPlainObject(data.colorCategories) ? data.colorCategories : {},
+        },
       }
     }
   } catch {}
-  return { habits: [], records: {}, colorCategories: {} }
+  return { status: 'corrupt', data: emptyData(), raw }
+}
+
+// 読めなかった元の文字列を別キーへ退避する。退避済みの内容は上書きしない
+export function quarantineCorruptData(raw, storage) {
+  try {
+    storage = storage ?? localStorage
+    if (storage.getItem(CORRUPT_BACKUP_KEY) === null) {
+      storage.setItem(CORRUPT_BACKUP_KEY, raw)
+    }
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function loadData() {
+  return inspectStoredData().data
 }
 
 function loadSettings() {
@@ -39,7 +67,11 @@ function loadSettings() {
   return {}
 }
 
-const _initial = loadData()
+const _initialInspect = inspectStoredData()
+const _initial = _initialInspect.data
+// 読めなかった元データは起動時に一度だけ退避する
+const _initialCorrupt = _initialInspect.status === 'corrupt'
+if (_initialCorrupt) quarantineCorruptData(_initialInspect.raw)
 const _initialSettings = loadSettings()
 
 export function useHabitsStorage({ onSaveError } = {}) {
@@ -47,9 +79,17 @@ export function useHabitsStorage({ onSaveError } = {}) {
   const [records, setRecords] = useState(_initial.records)
   const [colorCategories, setColorCategories] = useState(_initial.colorCategories)
   // 集計開始日（YYYY-MM-DD 形式。未設定なら null）
+  // 読めなかったデータがあるうちは、空の状態で元データを上書きしない
+  const [recoveryNotice, setRecoveryNotice] = useState(_initialCorrupt)
+  const saveBlockedRef = useRef(_initialCorrupt)
+  const dismissRecoveryNotice = useCallback(() => {
+    saveBlockedRef.current = false
+    setRecoveryNotice(false)
+  }, [])
   const [statsStartDate, setStatsStartDate] = useState(_initialSettings.statsStartDate ?? null)
 
   useEffect(() => {
+    if (saveBlockedRef.current) return
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ habits, records, colorCategories }))
     } catch {
@@ -84,5 +124,5 @@ export function useHabitsStorage({ onSaveError } = {}) {
     return () => window.removeEventListener('storage', handleStorage)
   }, [])
 
-  return { habits, records, colorCategories, statsStartDate, setHabits, setRecords, setColorCategories, setStatsStartDate }
+  return { habits, records, colorCategories, statsStartDate, recoveryNotice, dismissRecoveryNotice, setHabits, setRecords, setColorCategories, setStatsStartDate }
 }

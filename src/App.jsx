@@ -21,6 +21,7 @@ import ConfirmModal from './components/ConfirmModal'
 import StatsModal from './components/StatsModal'
 import SettingsModal from './components/SettingsModal'
 import Toast from './components/Toast'
+import StorageRecoveryNotice from './components/StorageRecoveryNotice'
 import ArchivedHabitItem from './components/ArchivedHabitItem'
 import AddToHomePrompt from './components/AddToHomePrompt'
 import MonthPickerModal from './components/MonthPickerModal'
@@ -75,7 +76,7 @@ export default function App() {
     setShowEditHint(false)
   }, [])
 
-  const { habits, records, colorCategories, statsStartDate, setHabits, setRecords, setColorCategories, setStatsStartDate } = useHabitsStorage({ onSaveError })
+  const { habits, records, colorCategories, statsStartDate, recoveryNotice, dismissRecoveryNotice, setHabits, setRecords, setColorCategories, setStatsStartDate } = useHabitsStorage({ onSaveError })
   const { themeId, handleThemeSelect } = useTheme({ onSaveError })
 
   // 記録の中で最も古い日付（未設定時の集計開始日フォールバック）
@@ -491,6 +492,7 @@ export default function App() {
       <main ref={mainRef} className="app-main">
         {/* 習慣セクション（トップ） */}
         <div className="main-content">
+          {recoveryNotice && <StorageRecoveryNotice onDismiss={dismissRecoveryNotice} />}
           <section className="section">
             <div className="section-header">
               <h2 className="section-title">今日の習慣</h2>
