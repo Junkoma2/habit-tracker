@@ -54,14 +54,11 @@ describe('getNextMilestone', () => {
 
 describe('calcStats', () => {
   it('記録なしは全てゼロ', () => {
-    expect(calcStats('h_1', {})).toEqual({ current: 0, longest: 0, total: 0 })
+    expect(calcStats('h_1', {})).toEqual({ current: 0, total: 0 })
   })
 
-  it('最長ストリークが正しく計算される', () => {
-    beforeEach(() => vi.useFakeTimers())
+  it('累計達成日数を数える', () => {
     const records = makeRecords(['2026-06-01', '2026-06-02', '2026-06-03', '2026-06-05', '2026-06-06'])
-    const stats = calcStats('h_1', records)
-    expect(stats.longest).toBe(3)
-    expect(stats.total).toBe(5)
+    expect(calcStats('h_1', records).total).toBe(5)
   })
 })

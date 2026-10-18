@@ -1,6 +1,4 @@
-import { formatDate, parseLocalDate } from './date'
-
-const MS_PER_DAY = 86400000
+import { formatDate } from './date'
 
 // 共通マイルストン定義（#273: 全画面で同じ定義を使う）
 export const MILESTONES = [
@@ -43,60 +41,7 @@ export function calcCurrentStreak(habitId, records) {
 }
 
 export function calcStats(habitId, records) {
-  const completedDates = Object.keys(records)
-    .filter(date => (records[date] || []).includes(habitId))
-    .sort()
-
-  const total = completedDates.length
-  if (total === 0) return { current: 0, longest: 0, total: 0 }
-
-  let longest = 1, run = 1
-  for (let i = 1; i < completedDates.length; i++) {
-    const prev = parseLocalDate(completedDates[i - 1])
-    const curr = parseLocalDate(completedDates[i])
-    const diff = (curr - prev) / MS_PER_DAY
-    if (diff === 1) {
-      run++
-      if (run > longest) longest = run
-    } else {
-      run = 1
-    }
-  }
-
-  const current = calcCurrentStreak(habitId, records)
-  return { current, longest, total }
-}
-
-export function calcPeriodStats(habitId, records, today, createdAt, archivedAt) {
-  const todayDate = parseLocalDate(today)
-  // 終了済み習慣は archivedAt を集計の上限にする
-  const endDate = archivedAt ? new Date(Math.min(todayDate, parseLocalDate(archivedAt))) : todayDate
-
-  function countRange(start, end) {
-    let achieved = 0, total = 0
-    const d = new Date(start)
-    while (d <= end) {
-      const dateStr = formatDate(d)
-      total++
-      if ((records[dateStr] || []).includes(habitId)) achieved++
-      d.setDate(d.getDate() + 1)
-    }
-    return { achieved, total }
-  }
-
-  const habitStart = createdAt ? parseLocalDate(createdAt) : null
-
-  // 今月
-  const monthStart = new Date(endDate.getFullYear(), endDate.getMonth(), 1)
-  const effectiveMonthStart = habitStart && habitStart > monthStart ? habitStart : monthStart
-  const { achieved: monthCount } = countRange(effectiveMonthStart, endDate)
-
-  // 直近30日
-  const thirtyAgo = new Date(endDate)
-  thirtyAgo.setDate(thirtyAgo.getDate() - 29)
-  const effective30Start = habitStart && habitStart > thirtyAgo ? habitStart : thirtyAgo
-  const { achieved: r30, total: t30 } = countRange(effective30Start, endDate)
-  const rate30 = t30 > 0 ? Math.round((r30 / t30) * 100) : null
-
-  return { monthCount, rate30 }
+  const total = Object.keys(records).filter(date => (records[date] || []).includes(habitId)).length
+  if (total === 0) return { current: 0, total: 0 }
+  return { current: calcCurrentStreak(habitId, records), total }
 }

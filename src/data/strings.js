@@ -9,7 +9,6 @@ export const UI = {
     habits: '習慣を追加してみよう',
     analysis: '習慣を追加すると達成率が表示されます。',
     record: '習慣を追加すると続いた日数が表示されます。',
-    stats: '習慣を追加すると統計が表示されます。',
     noHabitsOnDay: '習慣がまだ登録されていません',
     noColorCategory: '名前が設定された色の習慣がありません。',
   },
@@ -41,7 +40,6 @@ export const UI = {
     analysis: '分析',
     settings: '設定',
     help: '使い方',
-    stats: '統計',
   },
 
   // 設定ラベル
