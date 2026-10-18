@@ -18,7 +18,6 @@ import LongPressModal from './components/LongPressModal'
 import DayDetailModal from './components/DayDetailModal'
 import HelpModal from './components/HelpModal'
 import ConfirmModal from './components/ConfirmModal'
-import StatsModal from './components/StatsModal'
 import SettingsModal from './components/SettingsModal'
 import Toast from './components/Toast'
 import StorageRecoveryNotice from './components/StorageRecoveryNotice'
@@ -686,10 +685,6 @@ export default function App() {
           onEdit={(h) => setModal({ type: 'edit', habit: h })}
           onClose={closeModal}
         />
-      )}
-
-      {modal?.type === 'stats' && (
-        <StatsModal habits={habits} records={records} onClose={closeModal} />
       )}
 
       {modal?.type === 'help' && (
